@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Booking</title>
+
+    <link rel="stylesheet" href="style.css">
+
+</head>
+
+<body>
+
+    <nav>
+
+        <h1>Vaniday</h1>
+
+        <div>
+
+            <a href="index.html">Home</a>
+
+            <a href="merchants.html">Merchants</a>
+
+            <a href="booking.html">Book</a>
+
+            <a href="my-booking.html">My Bookings</a>
+
+            <a href="dashboard.html">Dashboard</a>
+
+            <a href="login.html">Login</a>
+
+            <a href="signup.html">Signup</a>
+
+        </div>
+
+    </nav>
+
+
+    <div class="form-container">
+
+        <h1>Book Appointment</h1>
+
+        <form id="bookingForm">
+
+            <input type="text"
+                   id="customerName"
+                   placeholder="Customer Name"
+                   required>
+
+            <input type="email"
+                   id="customerEmail"
+                   placeholder="Customer Email"
+                   required>
+
+            <select id="merchantName" required>
+                <option value="">Select Merchant</option>
+                <option>Glow Beauty Salon</option>
+                <option>Luxury Spa</option>
+                <option>Elite Barber</option>
+            </select>
+
+            <select id="serviceName" required>
+                <option value="">Select Service</option>
+                <option>Haircut</option>
+                <option>Massage</option>
+                <option>Facial</option>
+                <option>Hair Styling</option>
+            </select>
+
+            <input type="date" id="bookingDate" required>
+
+            <input type="time" id="bookingTime" required>
+
+            <button type="submit">
+                Confirm Booking
+            </button>
+
+        </form>
+
+    </div>
+<script>
+    const bookingForm = document.getElementById("bookingForm");
+
+    bookingForm.addEventListener("submit", function (event) {
+        event.preventDefault();
+
+        const bookingData = {
+            customerName: document.getElementById("customerName").value,
+            customerEmail: document.getElementById("customerEmail").value,
+            serviceName: document.getElementById("serviceName").value,
+            bookingDate: document.getElementById("bookingDate").value,
+            bookingTime: document.getElementById("bookingTime").value
+        };
+
+        fetch("http://localhost:5000/api/bookings", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(bookingData)
+        })
+            .then(function (response) {
+                return response.json();
+            })
+            .then(function (data) {
+                alert("Booking submitted successfully");
+                window.location.href = "my-booking.html";
+            })
+            .catch(function (error) {
+                alert("Booking failed");
+                console.log(error);
+            });
+    });
+</script>
+</body>
+
+</html>
