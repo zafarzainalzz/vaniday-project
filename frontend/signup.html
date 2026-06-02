@@ -13,7 +13,7 @@
 
 </head>
 
-<body>
+<body class="auth-page signup-page auth-split-page">
 
     <nav>
 
@@ -40,11 +40,19 @@
     </nav>
 
 
-    <div class="form-container">
+    <div class="auth-flower-scene">
+        <span class="auth-flower f1">✿</span>
+        <span class="auth-flower f2">✦</span>
+        <span class="auth-flower f3">✽</span>
+        <h2>Start your Vaniday glow</h2>
+        <p>Create your space for bookings, rewards, beauty merchants, and calm self-care planning.</p>
+    </div>
+
+    <div class="form-container auth-side-card">
 
         <h1>Create Account</h1>
 
-        <input type="text" placeholder="Full Name" required>
+        <input id="signupName" type="text" placeholder="Full Name" required>
 
         <input type="email" placeholder="Enter Email" required>
 
@@ -60,7 +68,7 @@
         </select>
 
 
-        <button onclick="window.location.href='dashboard.html'">
+        <button onclick="saveSignupName(); window.location.href='dashboard.html'">
 
             Signup
 
@@ -73,6 +81,17 @@
         </p>
 
     </div>
+
+    <script>
+        function saveSignupName() {
+            var input = document.getElementById('signupName');
+            var name = input.value;
+
+            if (name != '') {
+                localStorage.setItem('vanidayName', name);
+            }
+        }
+    </script>
 
 </body>
 
