@@ -39,4 +39,32 @@ router.post("/signup", async function (req, res) {
     }
 });
 
+// Login route
+router.post("/login", async function (req, res) {
+    try {
+        const { email, password } = req.body;
+
+        // Find user by email in MongoDB
+        const user = await User.findOne({ email: email });
+
+        if (!user) {
+            return res.status(404).send("User not found.");
+        }
+
+        // Compare entered password with hashed password stored in MongoDB
+        const isPasswordCorrect = await bcrypt.compare(password, user.password);
+
+        if (!isPasswordCorrect) {
+            return res.status(401).send("Incorrect password.");
+        }
+
+        // Redirect to dashboard after successful login
+        res.redirect("http://localhost:5500/dashboard.html");
+
+    } catch (error) {
+        console.log(error);
+        res.status(500).send("Login failed.");
+    }
+});
+
 module.exports = router;
