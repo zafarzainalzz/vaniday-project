@@ -1,12 +1,41 @@
-const mongoose = require('mongoose');
+const mongoose = require("mongoose");
 
 const bookingSchema = new mongoose.Schema({
-    customerName: String,
-    customerEmail: String,
-    serviceName: String,
-    bookingDate: String,
-    bookingTime: String,
-    status: String
+    customerName: {
+        type: String,
+        required: true
+    },
+
+    merchant: {
+        type: String,
+        required: true
+    },
+
+    service: {
+        type: String,
+        required: true
+    },
+
+    bookingDate: {
+        type: String,
+        required: true
+    },
+
+    bookingTime: {
+        type: String,
+        required: true
+    },
+
+    status: {
+        type: String,
+        enum: ["Pending", "Confirmed", "Cancelled"],
+        default: "Pending"
+    },
+
+    createdAt: {
+        type: Date,
+        default: Date.now
+    }
 });
 
 module.exports = mongoose.model("Booking", bookingSchema);
