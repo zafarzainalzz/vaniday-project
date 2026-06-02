@@ -2,149 +2,161 @@
 <html lang="en">
 
 <head>
-
     <meta charset="UTF-8">
-
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
     <title>Dashboard</title>
-
     <link rel="stylesheet" href="style.css">
-
 </head>
 
-<body>
+<body class="dashboard-page premium-dashboard">
 
     <nav>
-
         <h1>Vaniday</h1>
-
         <div>
-
             <a href="index.html">Home</a>
-
             <a href="merchants.html">Merchants</a>
-
             <a href="booking.html">Book</a>
-
             <a href="my-booking.html">My Bookings</a>
-
             <a href="dashboard.html">Dashboard</a>
-
             <a href="login.html">Login</a>
-
             <a href="signup.html">Signup</a>
-
         </div>
-
     </nav>
 
+    <main class="dashboard-studio">
 
-    <h1 class="page-title">
+        <section class="dashboard-hero-row">
+            <div>
+                <h1 id="dashboardGreeting">Hi there, welcome back</h1>
+                <p>
+                    Your Vaniday space brings your beauty bookings, rewards, wallet and quick actions together in one calm, glowing dashboard.
+                </p>
+            </div>
 
-        Customer Dashboard
+            <button class="liquid-action" onclick="window.location.href='booking.html'">
+                Book a Glow Session
+            </button>
+        </section>
 
-    </h1>
+        <section class="dashboard-feature-grid">
 
+            <div class="dashboard-panel dashboard-video-panel tall-panel">
+                <video autoplay muted loop playsinline>
+                    <source src="https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260507_150203_44a5bd32-516a-47ce-a077-8acbf9aa8991.mp4" type="video/mp4">
+                </video>
+                <div class="panel-overlay"></div>
+                <div class="panel-label">✦ YOUR VANIDAY ✦</div>
+                <div class="dashboard-timeline">
+                    <div><span>Today</span><b>Glow plan ready</b><em>Personal care</em></div>
+                    <div><span>This week</span><b>Merchant picks</b><em>Beauty & wellness</em></div>
+                    <div><span>Rewards</span><b>Points collected</b><em>Member perks</em></div>
+                </div>
+            </div>
 
+            <div class="dashboard-stack">
+                <div class="dashboard-panel soft-panel noise-overlay">
+                    <div class="panel-label left-label">✦ ACCOUNT SNAPSHOT</div>
+                    <p class="dashboard-quote">
+                        Plan your appointments smoothly, keep your rewards close, and move from booking to glow-up with less stress.
+                    </p>
+                    <p class="dashboard-signature"><b>Vaniday</b> — Click, Book, Glow.</p>
+                </div>
 
-    <div class="merchant-grid">
+                <div class="dashboard-panel dashboard-video-panel number-panel">
+                    <video autoplay muted loop playsinline>
+                        <source src="https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260507_154543_d5b83fc1-9cea-44f3-b5e8-8f325935211a.mp4" type="video/mp4">
+                    </video>
+                    <div class="panel-overlay"></div>
+                    <h2>Glow+</h2>
+                    <p>Member experience</p>
+                </div>
+            </div>
 
+            <div class="dashboard-stack">
+                <div class="dashboard-panel dashboard-video-panel action-panel">
+                    <video autoplay muted loop playsinline>
+                        <source src="https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260507_153148_d7a3e1dd-e5d0-4ce6-8306-00d7522ecc44.mp4" type="video/mp4">
+                    </video>
+                    <div class="panel-overlay"></div>
+                    <div class="panel-label">✦ QUICK ACTIONS ✦</div>
+                    <div class="quick-marquee">
+                        <button onclick="window.location.href='booking.html'">Book</button>
+                        <button onclick="window.location.href='my-booking.html'">My Bookings</button>
+                        <button onclick="window.location.href='merchants.html'">Merchants</button>
+                        <button onclick="window.location.href='index.html'">Logout</button>
+                    </div>
+                </div>
 
-        <div class="merchant-card">
+                <div class="dashboard-panel soft-panel contact-panel noise-overlay">
+                    <div class="panel-label left-label">✦ WALLET & REWARDS</div>
+                    <div class="dashboard-mini-stats">
+                        <div><span>Loyalty Points</span><strong>1,280</strong></div>
+                        <div><span>Wallet Balance</span><strong>$86</strong></div>
+                        <div><span>Total Bookings</span><strong>12</strong></div>
+                    </div>
+                </div>
+            </div>
 
-            <h2>Loyalty Points</h2>
+        </section>
 
-            <p>Points</p>
+        <section class="dashboard-glow-cards">
+            <div class="feature-glow-card card-pink">
+                <div class="glow-bg"></div>
+                <div class="glow-card-inner">
+                    <div class="feature-icon">✦</div>
+                    <div>
+                        <h2>Loyalty Points</h2>
+                        <p>Collect glow points each time you book and turn your regular self-care into little rewards.</p>
+                    </div>
+                </div>
+            </div>
 
-        </div>
+            <div class="feature-glow-card card-blue">
+                <div class="glow-bg"></div>
+                <div class="glow-card-inner">
+                    <div class="feature-icon">◌</div>
+                    <div>
+                        <h2>Wallet Balance</h2>
+                        <p>Keep your beauty budget clear with a simple wallet view made for quick planning.</p>
+                    </div>
+                </div>
+            </div>
 
+            <div class="feature-glow-card card-purple">
+                <div class="glow-bg"></div>
+                <div class="glow-card-inner">
+                    <div class="feature-icon">↗</div>
+                    <div>
+                        <h2>Total Bookings</h2>
+                        <p>Track your appointments and stay organised from your first booking to your next glow-up.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
 
+        <section class="dashboard-extra-row">
+            <div class="dashboard-panel soft-panel noise-overlay">
+                <h2>Promotions</h2>
+                <p>Enjoy 10% off your first booking with code <b>FIRST10</b>.</p>
+            </div>
 
-        <div class="merchant-card">
+            <div class="dashboard-panel soft-panel noise-overlay">
+                <h2>QR Booking</h2>
+                <p>Scan QR code at merchant store for quick booking.</p>
+                <div class="qr-box">QR CODE</div>
+            </div>
+        </section>
 
-            <h2>Wallet Balance</h2>
+    </main>
 
-            <p>$</p>
+    <script>
+        var savedName = localStorage.getItem('vanidayName');
+        var greeting = document.getElementById('dashboardGreeting');
 
-        </div>
-
-
-
-        <div class="merchant-card">
-
-            <h2>Total Bookings</h2>
-
-            <p></p>
-
-        </div>
-
-
-    </div>
-
-
-
-    <div class="card">
-
-        <h2>Quick Actions</h2>
-
-
-        <button onclick="window.location.href='booking.html'">
-
-            Book Appointment
-
-        </button>
-
-
-        <button onclick="window.location.href='my-booking.html'">
-
-            My Bookings
-
-        </button>
-
-
-        <button onclick="window.location.href='merchants.html'">
-
-            View Merchants
-
-        </button>
-
-
-        <button onclick="window.location.href='index.html'">
-
-            Logout
-
-        </button>
-
-    </div>
-
-
-
-    <div class="card">
-
-        <h2>Promotions</h2>
-
-        <p>10% OFF First Booking</p>
-
-        <p>Use Code: FIRST10</p>
-
-    </div>
-
-
-
-    <div class="card">
-
-        <h2>QR Booking</h2>
-
-        <p>Scan QR code at merchant store for quick booking.</p>
-
-        <div class="qr-box">
-
-            QR CODE
-
-        </div>
-
-    </div>
+        if (savedName != null && savedName != '') {
+            greeting.innerHTML = 'Hi ' + savedName + ', welcome back';
+        }
+    </script>
 
 </body>
 
