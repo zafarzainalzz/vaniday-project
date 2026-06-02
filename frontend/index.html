@@ -2,100 +2,313 @@
 <html lang="en">
 
 <head>
-
     <meta charset="UTF-8">
-
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-    <title>Vaniday</title>
-
+    <title>Click Book Glow</title>
     <link rel="stylesheet" href="style.css">
-
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Barlow:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 </head>
 
-<body>
+<body class="home-body">
 
-    <nav>
+    <main class="landing-shell" id="landingShell">
 
-        <h1>Vaniday</h1>
+        <section class="space-section hero-section" id="heroSection">
+            <video class="section-video hero-video fading-video" autoplay muted playsinline preload="auto">
+                <source src="https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260418_080021_d598092b-c4c2-4e53-8e46-94cf9064cd50.mp4" type="video/mp4">
+            </video>
 
-        <div>
+            <div class="space-depth" id="spaceDepth">
+                <span class="glow-orb orb-a"></span>
+                <span class="glow-orb orb-b"></span>
+                <span class="glow-orb orb-c"></span>
+                <span class="flower-petal petal-one">✦</span>
+                <span class="flower-petal petal-two">✧</span>
+                <span class="flower-petal petal-three">✦</span>
+                <span class="flower-petal petal-four">✧</span>
+                <span class="grid-floor"></span>
+            </div>
 
-            <a href="index.html">Home</a>
+            <nav class="glass-navbar">
+                <a class="brand-mark" href="index.html">Vaniday</a>
 
-            <a href="merchants.html">Merchants</a>
+                <div class="nav-links liquid-glass">
+                    <a href="index.html">Home</a>
+                    <a href="merchants.html">Merchants</a>
+                    <a href="booking.html">Book</a>
+                    <a href="my-booking.html">My Bookings</a>
+                    <a href="dashboard.html">Dashboard</a>
+                    <a href="login.html">Login</a>
+                    <a href="signup.html">Signup</a>
+                    <a class="nav-cta" href="booking.html">Book Now <span>↗</span></a>
+                </div>
 
-            <a href="booking.html">Book</a>
+                <span class="nav-spacer"></span>
+            </nav>
 
-            <a href="my-booking.html">My Bookings</a>
+            <div class="hero-content interactive-card" id="heroCard">
+                <div class="badge liquid-glass">
+                    <span>New</span>
+                    <p>Premium booking experience with interactive page</p>
+                </div>
 
-            <a href="dashboard.html">Dashboard</a>
+                <h1 class="blur-title" id="blurTitle">Click Book Glow</h1>
 
-            <a href="login.html">Login</a>
+                <p class="hero-subtitle hero-subtitle-bold">
+                    Book appointments from multiple merchants using one smooth, modern and professional platform.
+                </p>
 
-            <a href="signup.html">Signup</a>
+                <div class="hero-actions">
+                    <button class="primary-btn liquid-glass-strong" onclick="window.location.href='booking.html'">
+                        Book Appointment <span>↗</span>
+                    </button>
 
+                    <button class="secondary-btn" onclick="window.location.href='merchants.html'">
+                        Explore Merchants <span>▶</span>
+                    </button>
+                </div>
+
+                <div class="stats-row">
+                    <div class="stat-card liquid-glass">
+                        <div class="stat-icon">◷</div>
+                        <h3>Fast</h3>
+                        <p>Quick appointment flow</p>
+                    </div>
+
+                    <div class="stat-card liquid-glass">
+                        <div class="stat-icon">◎</div>
+                        <h3>Simple</h3>
+                        <p>One platform for merchants</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="partners-line">
+                <div class="partners-names">
+                    <span>Beauty</span>
+                    <span>Wellness</span>
+                    <span>Salon</span>
+                    <span>Spa</span>
+                    <span>Care</span>
+                </div>
+            </div>
+        </section>
+
+        <section class="space-section capabilities-section">
+            <video class="section-video fading-video" autoplay muted playsinline preload="auto">
+                <source src="https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260418_094631_d30ab262-45ee-4b7d-99f3-5d5848c8ef13.mp4" type="video/mp4">
+            </video>
+
+            <div class="capabilities-content">
+                <div class="section-header">
+                    <h2>Booking<br>Evolved</h2>
+                </div>
+
+                <div class="capability-grid">
+                    <article class="capability-card liquid-glass">
+                        <div class="capability-top">
+                            <div class="capability-icon liquid-glass">✦</div>
+                            <div class="tags">
+                            </div>
+                        </div>
+
+                        <div class="capability-bottom">
+                            <h3>Find Merchants</h3>
+                            <p>Discover trusted beauty and wellness merchants, compare their services, and choose the perfect place before you book.</p>
+                            <a href="merchants.html">View merchants ↗</a>
+                        </div>
+                    </article>
+
+                    <article class="capability-card liquid-glass">
+                        <div class="capability-top">
+                            <div class="capability-icon liquid-glass">◉</div>
+                            <div class="tags">
+                            </div>
+                        </div>
+
+                        <div class="capability-bottom">
+                            <h3>Book Appointments</h3>
+                            <p>Select your merchant, service, date, and time in one clean flow without losing the original booking function.</p>
+                            <a href="booking.html">Start booking ↗</a>
+                        </div>
+                    </article>
+
+                    <article class="capability-card liquid-glass">
+                        <div class="capability-top">
+                            <div class="capability-icon liquid-glass">⬡</div>
+                            <div class="tags">
+                            </div>
+                        </div>
+
+                        <div class="capability-bottom">
+                            <h3>Stay Organized</h3>
+                            <p>Keep your upcoming appointments, quick actions, and booking details neatly organised in one Vaniday space.</p>
+                            <a href="my-booking.html">My bookings ↗</a>
+                        </div>
+                    </article>
+                </div>
+
+                <div class="home-extra-grid">
+                    <section class="mini-card liquid-glass">
+                        <h2>Promotions</h2>
+                        <p>10% OFF First Booking</p>
+                        <p>Voucher Code: FIRST10</p>
+                    </section>
+
+                    <section class="mini-card liquid-glass">
+                        <h2>QR Booking</h2>
+                        <p>Scan QR code to instantly access booking page.</p>
+                        <div class="qr-box">QR CODE</div>
+                    </section>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <footer class="home-footer professional-footer liquid-glass">
+        <div class="footer-brand-block">
+            <div class="footer-logo-mark">✦</div>
+            <div>
+                <h2>Vaniday</h2>
+                <p>Click, Book, Glow.</p>
+            </div>
         </div>
 
-    </nav>
+        <div class="footer-links-block">
+            <div>
+                <h3>Insights</h3>
+                <a href="merchants.html">Beauty Picks</a>
+                <a href="booking.html">Booking Flow</a>
+                <a href="dashboard.html">Glow Dashboard</a>
+                <a href="my-booking.html">Appointment Care</a>
+            </div>
 
-
-    <section class="hero">
-
-        <h1>Unified Booking System</h1>
-
-        <p>
-            Book appointments from multiple merchants using one platform.
-        </p>
-
-        <button onclick="window.location.href='merchants.html'">
-
-            Explore Merchants
-
-        </button>
-
-        <button onclick="window.location.href='booking.html'">
-
-            Book Appointment
-
-        </button>
-
-    </section>
-
-
-    <section class="card">
-
-        <h2>Promotions</h2>
-
-        <p>10% OFF First Booking</p>
-
-        <p>Voucher Code: FIRST10</p>
-
-    </section>
-
-
-    <section class="card">
-
-        <h2>QR Booking</h2>
-
-        <p>
-            Scan QR code to instantly access booking page.
-        </p>
-
-        <div class="qr-box">
-
-            QR CODE
-
+            <div>
+                <h3>Connect</h3>
+                <a href="https://www.linkedin.com" target="_blank">LinkedIn</a>
+                <a href="https://www.instagram.com" target="_blank">Instagram</a>
+                <a href="https://www.facebook.com" target="_blank">Facebook</a>
+                <a href="mailto:hello@vaniday.sg">hello@vaniday.sg</a>
+            </div>
         </div>
 
-    </section>
-
-
-    <footer>
-
-        <p>Vaniday Booking System</p>
-
+        <div class="footer-contact-row">
+            <span>hello@vaniday.sg</span>
+            <span>+65 8123 4567</span>
+            <span>© Vaniday Singapore 2026</span>
+        </div>
     </footer>
+
+    <script>
+        var videos = document.querySelectorAll('.fading-video');
+
+        for (var i = 0; i < videos.length; i++) {
+            setupFadingVideo(videos[i]);
+        }
+
+        function setupFadingVideo(video) {
+            var fadeId = null;
+            var fadingOut = false;
+            var fadeMs = 500;
+            var fadeOutLead = 0.55;
+
+            video.style.opacity = 0;
+            video.removeAttribute('loop');
+
+            function fadeTo(target, duration) {
+                if (fadeId) {
+                    cancelAnimationFrame(fadeId);
+                }
+
+                var startOpacity = parseFloat(video.style.opacity);
+
+                if (isNaN(startOpacity)) {
+                    startOpacity = 0;
+                }
+
+                var startTime = performance.now();
+
+                function step(now) {
+                    var progress = (now - startTime) / duration;
+
+                    if (progress > 1) {
+                        progress = 1;
+                    }
+
+                    var value = startOpacity + (target - startOpacity) * progress;
+                    video.style.opacity = value;
+
+                    if (progress < 1) {
+                        fadeId = requestAnimationFrame(step);
+                    }
+                }
+
+                fadeId = requestAnimationFrame(step);
+            }
+
+            video.addEventListener('loadeddata', function () {
+                video.style.opacity = 0;
+                video.play();
+                fadeTo(1, fadeMs);
+            });
+
+            video.addEventListener('timeupdate', function () {
+                if (!fadingOut && video.duration - video.currentTime <= fadeOutLead && video.duration - video.currentTime > 0) {
+                    fadingOut = true;
+                    fadeTo(0, fadeMs);
+                }
+            });
+
+            video.addEventListener('ended', function () {
+                video.style.opacity = 0;
+
+                setTimeout(function () {
+                    video.currentTime = 0;
+                    video.play();
+                    fadingOut = false;
+                    fadeTo(1, fadeMs);
+                }, 100);
+            });
+        }
+
+        var shell = document.getElementById('landingShell');
+        var heroCard = document.getElementById('heroCard');
+        var spaceDepth = document.getElementById('spaceDepth');
+
+        shell.addEventListener('mousemove', function (event) {
+            var box = shell.getBoundingClientRect();
+            var x = event.clientX - box.left;
+            var y = event.clientY - box.top;
+            var middleX = box.width / 2;
+            var middleY = window.innerHeight / 2;
+            var rotateY = (x - middleX) / middleX * 7;
+            var rotateX = (middleY - y) / middleY * 7;
+            var moveX = (x - middleX) / middleX * 24;
+            var moveY = (y - middleY) / middleY * 24;
+
+            heroCard.style.transform = 'rotateX(' + rotateX + 'deg) rotateY(' + rotateY + 'deg) translateZ(50px)';
+            spaceDepth.style.transform = 'translate3d(' + moveX + 'px, ' + moveY + 'px, 0)';
+        });
+
+        shell.addEventListener('mouseleave', function () {
+            heroCard.style.transform = 'rotateX(0deg) rotateY(0deg) translateZ(0px)';
+            spaceDepth.style.transform = 'translate3d(0px, 0px, 0px)';
+        });
+
+        var blurTitle = document.getElementById('blurTitle');
+        var words = blurTitle.innerText.split(' ');
+        blurTitle.innerHTML = '';
+
+        for (var w = 0; w < words.length; w++) {
+            var span = document.createElement('span');
+            span.innerText = words[w];
+            span.style.animationDelay = (w * 0.12) + 's';
+            blurTitle.appendChild(span);
+        }
+    </script>
 
 </body>
 
