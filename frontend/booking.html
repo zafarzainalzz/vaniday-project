@@ -2,120 +2,97 @@
 <html lang="en">
 
 <head>
-
     <meta charset="UTF-8">
-
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
     <title>Booking</title>
-
     <link rel="stylesheet" href="style.css">
-
 </head>
 
-<body>
+<body class="booking-page">
 
     <nav>
-
         <h1>Vaniday</h1>
 
         <div>
-
             <a href="index.html">Home</a>
-
             <a href="merchants.html">Merchants</a>
-
             <a href="booking.html">Book</a>
-
             <a href="my-booking.html">My Bookings</a>
-
             <a href="dashboard.html">Dashboard</a>
-
             <a href="login.html">Login</a>
-
             <a href="signup.html">Signup</a>
-
         </div>
-
     </nav>
-
 
     <div class="form-container">
 
         <h1>Book Appointment</h1>
 
-        <form id="bookingForm">
+        <input id="customerName" type="text" placeholder="Customer Name" required>
 
-            <input type="text"
-                   id="customerName"
-                   placeholder="Customer Name"
-                   required>
+        <select id="merchant">
+            <option value="">Select Merchant</option>
+            <option>Glow Beauty Salon</option>
+            <option>Luxury Spa</option>
+            <option>Elite Barber</option>
+            <option>Urban Nails Studio</option>
+            <option>Beauty Bliss</option>
+            <option>Golden Touch Spa</option>
+            <option>Fresh Fade Barber</option>
+            <option>Royal Hair Salon</option>
+            <option>Heavenly Massage</option>
+            <option>Chic Beauty Lounge</option>
+            <option>Velvet Skin Care</option>
+        </select>
 
-            <input type="email"
-                   id="customerEmail"
-                   placeholder="Customer Email"
-                   required>
+        <select id="service">
+            <option value="">Select Service</option>
+            <option>Haircut</option>
+            <option>Massage</option>
+            <option>Facial</option>
+            <option>Hair Styling</option>
+            <option>Manicure</option>
+            <option>Pedicure</option>
+            <option>Hair Coloring</option>
+            <option>Waxing</option>
+            <option>Beard Trim</option>
+            <option>Head Spa</option>
+        </select>
 
-            <select id="merchantName" required>
-                <option value="">Select Merchant</option>
-                <option>Glow Beauty Salon</option>
-                <option>Luxury Spa</option>
-                <option>Elite Barber</option>
-            </select>
+        <input id="bookingDate" type="date" required>
 
-            <select id="serviceName" required>
-                <option value="">Select Service</option>
-                <option>Haircut</option>
-                <option>Massage</option>
-                <option>Facial</option>
-                <option>Hair Styling</option>
-            </select>
+        <input id="bookingTime" type="time" required>
 
-            <input type="date" id="bookingDate" required>
-
-            <input type="time" id="bookingTime" required>
-
-            <button type="submit">
-                Confirm Booking
-            </button>
-
-        </form>
+        <button onclick="saveBooking()">
+            Confirm Booking
+        </button>
 
     </div>
-<script>
-    const bookingForm = document.getElementById("bookingForm");
 
-    bookingForm.addEventListener("submit", function (event) {
-        event.preventDefault();
+    <script>
+        function saveBooking() {
 
-        const bookingData = {
-            customerName: document.getElementById("customerName").value,
-            customerEmail: document.getElementById("customerEmail").value,
-            serviceName: document.getElementById("serviceName").value,
-            bookingDate: document.getElementById("bookingDate").value,
-            bookingTime: document.getElementById("bookingTime").value
-        };
+            var customerName = document.getElementById("customerName").value;
+            var merchant = document.getElementById("merchant").value;
+            var service = document.getElementById("service").value;
+            var bookingDate = document.getElementById("bookingDate").value;
+            var bookingTime = document.getElementById("bookingTime").value;
 
-        fetch("http://localhost:5000/api/bookings", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify(bookingData)
-        })
-            .then(function (response) {
-                return response.json();
-            })
-            .then(function (data) {
-                alert("Booking submitted successfully");
+            if (customerName == "" || merchant == "" || service == "" || bookingDate == "" || bookingTime == "") {
+                alert("Please fill in all booking details.");
+            }
+            else {
+                localStorage.setItem("customerName", customerName);
+                localStorage.setItem("merchant", merchant);
+                localStorage.setItem("service", service);
+                localStorage.setItem("bookingDate", bookingDate);
+                localStorage.setItem("bookingTime", bookingTime);
+
                 window.location.href = "my-booking.html";
-            })
-            .catch(function (error) {
-                alert("Booking failed");
-                console.log(error);
-            });
-    });
-</script>
+            }
+        }
+    </script>
+
 </body>
 
 </html>
