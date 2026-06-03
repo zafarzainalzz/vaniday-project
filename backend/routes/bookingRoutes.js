@@ -6,8 +6,8 @@ const router = express.Router();
 router.post("/", function (req, res) {
   const booking = new Booking({
     customerName: req.body.customerName,
-    customerEmail: req.body.customerEmail,
-    serviceName: req.body.serviceName,
+    merchant: req.body.merchant,
+    service: req.body.service,
     bookingDate: req.body.bookingDate,
     bookingTime: req.body.bookingTime,
     status: "Pending"
@@ -18,7 +18,7 @@ router.post("/", function (req, res) {
       res.json(savedBooking);
     })
     .catch(function (error) {
-      res.json(error);
+      res.status(500).json(error);
     });
 });
 
@@ -28,7 +28,7 @@ router.get("/", function (req, res) {
       res.json(bookings);
     })
     .catch(function (error) {
-      res.json(error);
+      res.status(500).json(error);
     });
 });
 

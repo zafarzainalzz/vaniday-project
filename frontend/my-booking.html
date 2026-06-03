@@ -28,42 +28,58 @@
         My Bookings
     </h1>
 
-    <div id="bookingDetails" class="card">
-        <h2>No Booking Found</h2>
-        <p>Please book an appointment first.</p>
+    <div id="bookingDetails">
+        <div class="card">
+            <h2>No Booking Found</h2>
+            <p>Please book an appointment first.</p>
+        </div>
     </div>
 
     <script>
-        var customerName = localStorage.getItem("customerName");
-        var merchant = localStorage.getItem("merchant");
-        var service = localStorage.getItem("service");
-        var bookingDate = localStorage.getItem("bookingDate");
-        var bookingTime = localStorage.getItem("bookingTime");
+        var bookingDetails = document.getElementById("bookingDetails");
 
-        if (customerName != null && merchant != null && service != null && bookingDate != null && bookingTime != null) {
+        fetch("http://localhost:5000/api/bookings")
+            .then(function (response) {
+                return response.json();
+            })
+            .then(function (bookings) {
+                bookingDetails.innerHTML = "";
 
-            document.getElementById("bookingDetails").innerHTML =
-                "<h2>Upcoming Booking</h2>" +
-                "<p><b>Customer:</b> " + customerName + "</p>" +
-                "<p><b>Merchant:</b> " + merchant + "</p>" +
-                "<p><b>Service:</b> " + service + "</p>" +
-                "<p><b>Date:</b> " + bookingDate + "</p>" +
-                "<p><b>Time:</b> " + bookingTime + "</p>" +
-                "<button onclick='cancelBooking()'>Cancel</button>" +
-                "<button onclick='rescheduleBooking()'>Reschedule</button>";
-        }
+                if (bookings.length == 0) {
+                    bookingDetails.innerHTML =
+                        "<h2>No Booking Found</h2>" +
+                        "<p>Please book an appointment first.</p>";
 
-        function cancelBooking() {
-            localStorage.clear();
-            alert("Booking cancelled");
-            window.location.href = "my-booking.html";
-        }
+                }
+
+                bookings.forEach(function (booking) {
+                    bookingDetails.innerHTML =
+                        bookingDetails.innerHTML +
+                        "<div class='card'>" +
+                        "<h2>Upcoming Booking</h2>" +
+                        "<p><b>Customer:</b> " + booking.customerName + "</p>" +
+                        "<p><b>Merchant:</b> " + booking.merchant + "</p>" +
+                        "<p><b>Service:</b> " + booking.service + "</p>" +
+                        "<p><b>Date:</b> " + booking.bookingDate + "</p>" +
+                        "<p><b>Time:</b> " + booking.bookingTime + "</p>" +
+                        "<p><b>Status:</b> " + booking.status + "</p>" +
+                        "<button onclick='rescheduleBooking()'>Reschedule</button>" +
+                        "</div>";
+
+                });
+            })
+            .catch(function (error) {
+                console.log(error);
+
+                bookingDetails.innerHTML =
+                    "<h2>Failed to load bookings</h2>" +
+                    "<p>Please check if the backend server is running.</p>";
+            });
 
         function rescheduleBooking() {
             window.location.href = "booking.html";
         }
     </script>
-
 </body>
 
 </html>

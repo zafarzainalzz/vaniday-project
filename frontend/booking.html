@@ -68,10 +68,8 @@
         </button>
 
     </div>
-
     <script>
         function saveBooking() {
-
             var customerName = document.getElementById("customerName").value;
             var merchant = document.getElementById("merchant").value;
             var service = document.getElementById("service").value;
@@ -80,16 +78,37 @@
 
             if (customerName == "" || merchant == "" || service == "" || bookingDate == "" || bookingTime == "") {
                 alert("Please fill in all booking details.");
+                return;
             }
-            else {
-                localStorage.setItem("customerName", customerName);
-                localStorage.setItem("merchant", merchant);
-                localStorage.setItem("service", service);
-                localStorage.setItem("bookingDate", bookingDate);
-                localStorage.setItem("bookingTime", bookingTime);
 
-                window.location.href = "my-booking.html";
-            }
+            fetch("http://localhost:5000/api/bookings", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    customerName: customerName,
+                    merchant: merchant,
+                    service: service,
+                    bookingDate: bookingDate,
+                    bookingTime: bookingTime
+                })
+            })
+                .then(function (response) {
+                    if (response.ok == false) {
+                        throw new Error("Booking was not saved.");
+                    }
+
+                    return response.json();
+                })
+                .then(function (data) {
+                    alert("Booking saved successfully.");
+                    window.location.href = "my-booking.html";
+                })
+                .catch(function (error) {
+                    console.log(error);
+                    alert("Booking failed. Please check the backend terminal.");
+                });
         }
     </script>
 
