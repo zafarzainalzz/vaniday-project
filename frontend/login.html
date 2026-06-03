@@ -55,9 +55,9 @@
 
         <h1>Login</h1>
 
-        <input id="loginName" type="text" placeholder="Enter Name or Email" required>
+        <input id="loginEmail" type="email" pllaceholder="Enter Email" required>
 
-        <input type="password" placeholder="Enter Password" required>
+        <input id="loginPassword" type="password" placeholder="Enter Password" required>
 
         <select id="loginRole">
 
@@ -81,33 +81,49 @@
     </div>
 
     <script>
-
         function loginUser() {
+            var email = document.getElementById("loginEmail").value;
+            var password = document.getElementById("loginPassword").value;
+            var role = document.getElementById("loginRole").value;
 
-            var input = document.getElementById('loginName');
-            var value = input.value;
-            var role = document.getElementById('loginRole').value;
-
-            var name = value;
-
-            if (value.indexOf('@') != -1) {
-                name = value.substring(0, value.indexOf('@'));
+            if (email == "" || password == "") {
+                alert("Please enter your email and password.");
+                return;
             }
 
-            if (name != '') {
-                localStorage.setItem('vanidayName', name);
-            }
+            fetch("http://localhost:5000/api/users/login", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    email: email,
+                    password: password
+                })
+            })
+                .then(function (response) {
+                    if (response.ok == false) {
+                        throw new Error("Login failed.");
+                    }
 
-            localStorage.setItem('vanidayRole', role);
+                    return response.json();
+                })
+                .then(function (data) {
+                    localStorage.setItem("vanidayName", data.fullName);
+                    localStorage.setItem("vanidayRole", data.role);
 
-            if (role == 'Merchant Admin') {
-                window.location.href = 'merchant-admin.html';
-            }
-            else {
-                window.location.href = 'dashboard.html';
-            }
+                    if (data.role == "Shop Owner" || role == "Merchant Admin") {
+                        window.location.href = "merchant-admin.html";
+                    }
+                    else {
+                        window.location.href = "dashboard.html";
+                    }
+                })
+                .catch(function (error) {
+                    console.log(error);
+                    alert("Login failed. Please check your email or password.");
+                });
         }
-
     </script>
 
 </body>

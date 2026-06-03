@@ -27,11 +27,13 @@ router.post("/signup", async function (req, res) {
             role: role
         });
 
-        // Save user into MongoDB
+        // saves user into MongoDB
         await newUser.save();
 
         // Redirect to login page after successful signup
-        res.redirect("http://localhost:5500/login.html");
+        res.status(201).json({
+            message: "Signup successful."
+        });
 
     } catch (error) {
         console.log(error);
@@ -59,7 +61,11 @@ router.post("/login", async function (req, res) {
         }
 
         // Redirect to dashboard after successful login
-        res.redirect("http://localhost:5500/dashboard.html");
+        res.status(200).json({
+            message: "Login successful.",
+            fullName: user.fullName,
+            role: user.role
+        });
 
     } catch (error) {
         console.log(error);
