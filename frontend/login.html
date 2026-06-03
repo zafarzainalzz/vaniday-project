@@ -51,23 +51,27 @@
 
         <h1>Login</h1>
 
-        <input id="loginName" type="text" placeholder="Enter Name or Email" required>
+        <form action="http://localhost:3000/api/users/login" method="POST">
 
-        <input type="password" placeholder="Enter Password" required>
+            <input type="email" name="email" placeholder="Enter Email" required>
 
-        <select id="loginRole">
+            <input type="password" name="password" placeholder="Enter Password" required>
 
-            <option>Customer</option>
+            <select name="role">
 
-            <option>Shop Owner</option>
+                <option value="Customer">Customer</option>
 
-            <option>Merchant Admin</option>
+                <option value="Shop Owner">Shop Owner</option>
 
-        </select>
+                <option value="Merchant Admin">Merchant Admin</option>
 
-        <button onclick="loginUser()">
-            Login
-        </button>
+            </select>
+
+            <button type="submit">
+                Login
+            </button>
+
+        </form>
 
         <p>
             Don't have an account?
@@ -75,36 +79,6 @@
         </p>
 
     </div>
-
-    <script>
-
-        function loginUser() {
-
-            var input = document.getElementById('loginName');
-            var value = input.value;
-            var role = document.getElementById('loginRole').value;
-
-            var name = value;
-
-            if (value.indexOf('@') != -1) {
-                name = value.substring(0, value.indexOf('@'));
-            }
-
-            if (name != '') {
-                localStorage.setItem('vanidayName', name);
-            }
-
-            localStorage.setItem('vanidayRole', role);
-
-            if (role == 'Merchant Admin') {
-                window.location.href = 'merchant-admin.html';
-            }
-            else {
-                window.location.href = 'dashboard.html';
-            }
-        }
-
-    </script>
 
 </body>
 
