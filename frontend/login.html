@@ -43,35 +43,35 @@
         <span class="auth-flower f1">✿</span>
         <span class="auth-flower f2">✦</span>
         <span class="auth-flower f3">✽</span>
+
         <h2>Welcome back to Vaniday</h2>
-        <p>Your next appointment, glow session, and wellness moment are just one click away.</p>
+
+        <p>
+            Your next appointment, glow session, and wellness moment are just one click away.
+        </p>
     </div>
 
     <div class="form-container auth-side-card">
 
         <h1>Login</h1>
 
-        <form action="http://localhost:3000/api/users/login" method="POST">
+        <input id="loginName" type="text" placeholder="Enter Name or Email" required>
 
-            <input type="email" name="email" placeholder="Enter Email" required>
+        <input type="password" placeholder="Enter Password" required>
 
-            <input type="password" name="password" placeholder="Enter Password" required>
+        <select id="loginRole">
 
-            <select name="role">
+            <option>Customer</option>
 
-                <option value="Customer">Customer</option>
+            <option>Shop Owner</option>
 
-                <option value="Shop Owner">Shop Owner</option>
+            <option>Merchant Admin</option>
 
-                <option value="Merchant Admin">Merchant Admin</option>
+        </select>
 
-            </select>
-
-            <button type="submit">
-                Login
-            </button>
-
-        </form>
+        <button onclick="loginUser()">
+            Login
+        </button>
 
         <p>
             Don't have an account?
@@ -79,6 +79,36 @@
         </p>
 
     </div>
+
+    <script>
+
+        function loginUser() {
+
+            var input = document.getElementById('loginName');
+            var value = input.value;
+            var role = document.getElementById('loginRole').value;
+
+            var name = value;
+
+            if (value.indexOf('@') != -1) {
+                name = value.substring(0, value.indexOf('@'));
+            }
+
+            if (name != '') {
+                localStorage.setItem('vanidayName', name);
+            }
+
+            localStorage.setItem('vanidayRole', role);
+
+            if (role == 'Merchant Admin') {
+                window.location.href = 'merchant-admin.html';
+            }
+            else {
+                window.location.href = 'dashboard.html';
+            }
+        }
+
+    </script>
 
 </body>
 
