@@ -88,28 +88,37 @@
             var value = input.value;
             var role = document.getElementById('loginRole').value;
 
-            var name = value;
-
-            if (value.indexOf('@') != -1) {
-                name = value.substring(0, value.indexOf('@'));
-            }
-
-            if (name != '') {
-                localStorage.setItem('vanidayName', name);
-            }
-
-            localStorage.setItem('vanidayRole', role);
-
-            if (role == 'Merchant Admin') {
-                window.location.href = 'merchant-admin.html';
+            if (value == '') {
+                alert('Please enter your name or email.');
             }
             else {
-                window.location.href = 'dashboard.html';
+                var name = value;
+
+                if (value.indexOf('@') != -1) {
+                    name = value.substring(0, value.indexOf('@'));
+                }
+
+                localStorage.setItem('vanidayName', name);
+                localStorage.setItem('vanidayRole', role);
+                if (role == 'Shop Owner') {
+                    localStorage.removeItem('ownerAssignedShop');
+                }
+
+                if (role == 'Customer') {
+                    window.location.href = 'dashboard.html';
+                }
+                else if (role == 'Shop Owner') {
+                    window.location.href = 'shop-owner-dashboard.html';
+                }
+                else if (role == 'Merchant Admin') {
+                    window.location.href = 'merchant-admin.html';
+                }
             }
         }
 
     </script>
 
+    <script src="app.js"></script>
 </body>
 
 </html>
