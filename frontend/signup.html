@@ -59,16 +59,17 @@
         <input type="password" placeholder="Enter Password" required>
 
 
-        <select>
+        <select id="signupRole">
 
             <option>Customer</option>
 
             <option>Shop Owner</option>
 
+
         </select>
 
 
-        <button onclick="saveSignupName(); window.location.href='dashboard.html'">
+        <button onclick="signupUser()">
 
             Signup
 
@@ -83,16 +84,29 @@
     </div>
 
     <script>
-        function saveSignupName() {
+        function signupUser() {
             var input = document.getElementById('signupName');
             var name = input.value;
+            var role = document.getElementById('signupRole').value;
 
-            if (name != '') {
+            if (name == '') {
+                alert('Please enter your full name.');
+            }
+            else {
                 localStorage.setItem('vanidayName', name);
+                localStorage.setItem('vanidayRole', role);
+
+                if (role == 'Customer') {
+                    window.location.href = 'dashboard.html';
+                }
+                else if (role == 'Shop Owner') {
+                    window.location.href = 'shop-owner-dashboard.html';
+                }
             }
         }
     </script>
 
+    <script src="app.js"></script>
 </body>
 
 </html>
