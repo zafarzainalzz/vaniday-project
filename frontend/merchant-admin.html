@@ -8,35 +8,128 @@
     <link rel="stylesheet" href="style.css">
 </head>
 
-<body>
+<body class="dashboard-page premium-dashboard">
 
     <nav>
-
-        <h1>Vaniday Admin</h1>
-
+        <h1>Vaniday</h1>
         <div>
-
             <a href="index.html">Home</a>
-
             <a href="merchants.html">Merchants</a>
-
-            <a href="my-booking.html">Bookings</a>
-
-            <a href="login.html">Logout</a>
-
+            <a href="merchant-admin.html">Dashboard</a>
+            <a href="index.html" onclick="logoutUser()">Logout</a>
         </div>
-
     </nav>
 
-    <div class="form-container">
+    <main class="dashboard-studio">
 
-        <h1>Merchant Admin Dashboard</h1>
+        <section class="dashboard-hero-row">
+            <div>
+                <h1 id="adminGreeting">Merchant Admin Dashboard</h1>
+                <p>
+                    Full platform control for managing all shops, all bookings, and platform-level activities.
+                </p>
+            </div>
 
-        <p>Welcome to the Vaniday Admin Panel.</p>
+            <button class="liquid-action" onclick="document.getElementById('allShops').scrollIntoView()">
+                Manage Platform
+            </button>
+        </section>
 
-        <p>Manage merchants, bookings and platform activities here.</p>
+        <section class="dashboard-feature-grid">
 
-    </div>
+            <div class="dashboard-panel soft-panel noise-overlay" id="allShops">
+                <div class="panel-label left-label">✦ MANAGE ALL SHOPS</div>
+                <h2>All Shops</h2>
+                <p>Glow Beauty Salon</p>
+                <p>Women-Free</p>
+                <p>Luxury Spa</p>
+                <p>Wellness Center</p>
+                <p>Make Up Studio</p>
+                <p>Elite Barber</p>
+                <p>Manly Mane Salon</p>
+                <p>Blink Glam</p>
+                <p>Cosmos Tattoo Art</p>
+                <p>The Nail Hub</p>
+            </div>
+
+            <div class="dashboard-panel soft-panel noise-overlay" id="allBookings">
+                <div class="panel-label left-label">✦ MANAGE ALL BOOKINGS</div>
+                <h2>Latest Booking</h2>
+                <div id="adminBookingBox">
+                    <p>No bookings found yet.</p>
+                </div>
+            </div>
+
+            <div class="dashboard-panel soft-panel noise-overlay" id="platformControl">
+                <div class="panel-label left-label">✦ FULL PLATFORM CONTROL</div>
+                <h2>Platform Actions</h2>
+                <button onclick="window.location.href='merchants.html'">View Merchant List</button>
+                <button onclick="clearBookingData()">Clear Test Booking</button>
+                <button onclick="window.location.href='signup.html'">Create New Account</button>
+                <p id="adminActionText">Admin actions will appear here.</p>
+            </div>
+
+        </section>
+
+        <section class="dashboard-feature-grid dashboard-section-spaced">
+            <div class="dashboard-panel soft-panel noise-overlay" id="adminCalendarPanel">
+                <div class="panel-label left-label">✦ PLATFORM BOOKING CALENDAR</div>
+                <h2>All Booking Dates</h2>
+                <div id="adminCalendar" class="booking-calendar"></div>
+                <div id="adminCalendarDetails" class="calendar-details">Click a booked date to view all shop bookings.</div>
+            </div>
+        </section>
+
+
+    </main>
+
+    <script src="app.js"></script>
+    <script>
+        protectMerchantAdminOnlyPage();
+
+        var savedName = localStorage.getItem('vanidayName');
+
+        if (savedName != null && savedName != '') {
+            document.getElementById('adminGreeting').innerHTML = 'Hi ' + savedName + ', merchant admin dashboard';
+        }
+
+        function loadAdminBooking() {
+            var bookingsText = localStorage.getItem('allBookings');
+            var output = '';
+
+            if (bookingsText != null && bookingsText != '') {
+                var bookings = JSON.parse(bookingsText);
+
+                for (var i = bookings.length - 1; i >= 0; i = i - 1) {
+                    output = output + '<p><b>Customer:</b> ' + bookings[i].customer + '</p>' + '<p><b>Merchant:</b> ' + bookings[i].merchant + '</p>' + '<p><b>Service:</b> ' + bookings[i].service + '</p>' + '<p><b>Date:</b> ' + bookings[i].date + '</p>' + '<p><b>Time:</b> ' + bookings[i].time + '</p><hr>';
+                }
+            }
+
+            if (output != '') {
+                document.getElementById('adminBookingBox').innerHTML = output;
+            }
+        }
+
+        function clearBookingData() {
+            var confirmDelete = confirm('Are you sure you want to clear all test booking data?');
+
+            if (confirmDelete == false) {
+                return;
+            }
+
+            localStorage.removeItem('customerName');
+            localStorage.removeItem('merchant');
+            localStorage.removeItem('service');
+            localStorage.removeItem('bookingDate');
+            localStorage.removeItem('bookingTime');
+            localStorage.removeItem('allBookings');
+            document.getElementById('adminActionText').innerHTML = 'All test booking data cleared.';
+            document.getElementById('adminBookingBox').innerHTML = '<p>No bookings found yet.</p>';
+        }
+
+        loadAdminBooking();
+        renderBookingCalendar('adminCalendar', 'adminCalendarDetails', 'ALL');
+    </script>
 
 </body>
 
