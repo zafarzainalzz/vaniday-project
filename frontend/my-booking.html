@@ -54,7 +54,11 @@
         }
 
         function cancelBooking() {
-            localStorage.clear();
+            localStorage.removeItem("customerName");
+            localStorage.removeItem("merchant");
+            localStorage.removeItem("service");
+            localStorage.removeItem("bookingDate");
+            localStorage.removeItem("bookingTime");
             alert("Booking cancelled");
             window.location.href = "my-booking.html";
         }
@@ -62,8 +66,22 @@
         function rescheduleBooking() {
             window.location.href = "booking.html";
         }
-    </script>
+    
+        function protectCustomerPage() {
+            var savedRole = localStorage.getItem('vanidayRole');
 
+            if (savedRole == 'Shop Owner') {
+                window.location.href = 'shop-owner-dashboard.html';
+            }
+            else if (savedRole == 'Merchant Admin') {
+                window.location.href = 'merchant-admin.html';
+            }
+        }
+
+        protectCustomerPage();
+</script>
+
+    <script src="app.js"></script>
 </body>
 
 </html>
