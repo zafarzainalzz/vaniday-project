@@ -17,9 +17,8 @@
             <a href="merchants.html">Merchants</a>
             <a href="booking.html">Book</a>
             <a href="my-booking.html">My Bookings</a>
-            <a href="dashboard.html">Dashboard</a>
-            <a href="login.html">Login</a>
-            <a href="signup.html">Signup</a>
+            <a href="dashboard.html">Customer Dashboard</a>
+            <a href="login.html" onclick="logoutUser()">Logout</a>
         </div>
     </nav>
 
@@ -29,7 +28,7 @@
             <div>
                 <h1 id="dashboardGreeting">Hi there, welcome back</h1>
                 <p>
-                    Your Vaniday space brings your beauty bookings, rewards, wallet and quick actions together in one calm, glowing dashboard.
+                    Book appointments, view your own bookings, and collect loyalty rewards from your Customer Dashboard.
                 </p>
             </div>
 
@@ -55,9 +54,9 @@
 
             <div class="dashboard-stack">
                 <div class="dashboard-panel soft-panel noise-overlay">
-                    <div class="panel-label left-label">✦ ACCOUNT SNAPSHOT</div>
+                    <div class="panel-label left-label">✦ CUSTOMER SNAPSHOT</div>
                     <p class="dashboard-quote">
-                        Plan your appointments smoothly, keep your rewards close, and move from booking to glow-up with less stress.
+                        Your customer account only shows booking pages, your own bookings, merchants, and rewards.
                     </p>
                     <p class="dashboard-signature"><b>Vaniday</b> — Click, Book, Glow.</p>
                 </div>
@@ -83,12 +82,12 @@
                         <button onclick="window.location.href='booking.html'">Book</button>
                         <button onclick="window.location.href='my-booking.html'">My Bookings</button>
                         <button onclick="window.location.href='merchants.html'">Merchants</button>
-                        <button onclick="window.location.href='index.html'">Logout</button>
+                        <button onclick="logoutUser()">Logout</button>
                     </div>
                 </div>
 
                 <div class="dashboard-panel soft-panel contact-panel noise-overlay">
-                    <div class="panel-label left-label">✦ WALLET & REWARDS</div>
+                    <div class="panel-label left-label">✦ LOYALTY REWARDS</div>
                     <div class="dashboard-mini-stats">
                         <div><span>Loyalty Points</span><strong>1,280</strong></div>
                         <div><span>Wallet Balance</span><strong>$86</strong></div>
@@ -151,13 +150,29 @@
 
     <script>
         var savedName = localStorage.getItem('vanidayName');
+        var savedRole = localStorage.getItem('vanidayRole');
         var greeting = document.getElementById('dashboardGreeting');
 
-        if (savedName != null && savedName != '') {
-            greeting.innerHTML = 'Hi ' + savedName + ', welcome back';
+        if (savedRole == 'Shop Owner') {
+            window.location.href = 'shop-owner-dashboard.html';
+        }
+        else if (savedRole == 'Merchant Admin') {
+            window.location.href = 'merchant-admin.html';
+        }
+        else {
+            if (savedName != null && savedName != '') {
+                greeting.innerHTML = 'Hi ' + savedName + ', customer dashboard';
+            }
+        }
+
+        function logoutUser() {
+            localStorage.removeItem('vanidayRole');
+            localStorage.removeItem('vanidayName');
+            window.location.href = 'index.html';
         }
     </script>
 
+    <script src="app.js"></script>
 </body>
 
 </html>
