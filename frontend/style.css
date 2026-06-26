@@ -1919,3 +1919,141 @@ body.dashboard-page .page-title {
         margin: 20px auto 50px;
     }
 }
+
+/* ---------- Clean image updates for merchant and booking pages ---------- */
+.merchant-card {
+    overflow: hidden;
+}
+
+.merchant-image {
+    width: 100%;
+    height: 170px;
+    object-fit: cover;
+    border-radius: 10px;
+    margin-bottom: 15px;
+    display: block;
+}
+
+.booking-page {
+    min-height: 100vh;
+    background: #111;
+    position: relative;
+    overflow-x: hidden;
+}
+
+#bookingBackground {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    filter: blur(3px);
+    opacity: 0.82;
+    transform: scale(1.03);
+    z-index: -2;
+}
+
+.booking-page::after {
+    content: "";
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.45);
+    z-index: -1;
+}
+
+.booking-page nav,
+.booking-form {
+    position: relative;
+    z-index: 2;
+}
+
+.booking-form {
+    background-color: rgba(28, 28, 28, 0.88);
+    box-shadow: 0 0 25px rgba(255, 215, 0, 0.35);
+}
+
+/* Role access polish only - theme/background unchanged */
+.dashboard-feature-grid {
+    gap: 28px;
+    margin-bottom: 28px;
+}
+
+.dashboard-feature-grid + .dashboard-feature-grid {
+    margin-top: 36px;
+}
+
+.owner-shop-actions {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin-top: 18px;
+}
+
+.owner-shop-actions button {
+    margin-right: 0;
+}
+
+
+/* Role update extras - keeps original theme, only spaces new dashboard items */
+.dashboard-section-spaced {
+    margin-top: 46px;
+}
+
+.booking-calendar {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 8px;
+    margin-top: 18px;
+}
+
+.calendar-title {
+    grid-column: 1 / 8;
+    font-size: 24px;
+    font-weight: 700;
+    margin-bottom: 10px;
+}
+
+.calendar-week {
+    font-size: 13px;
+    opacity: 0.75;
+    text-align: center;
+}
+
+.calendar-empty {
+    min-height: 42px;
+}
+
+.calendar-day {
+    min-height: 42px;
+    border-radius: 14px;
+    border: 1px solid rgba(255,255,255,0.18);
+    background: rgba(255,255,255,0.08);
+    color: white;
+    cursor: pointer;
+}
+
+.calendar-day.booked-day {
+    background: rgba(255,255,255,0.30);
+    box-shadow: 0 0 18px rgba(255,255,255,0.55);
+}
+
+.calendar-details {
+    margin-top: 22px;
+    line-height: 1.7;
+}
+
+.taken-time {
+    opacity: 0.55;
+    border: 1px solid rgba(255,255,255,0.35) !important;
+}
+
+#bookingTimeMessage {
+    color: white;
+    opacity: 0.85;
+}

@@ -39,13 +39,16 @@
 
     </nav>
 
-
     <div class="auth-flower-scene">
         <span class="auth-flower f1">✿</span>
         <span class="auth-flower f2">✦</span>
         <span class="auth-flower f3">✽</span>
+
         <h2>Start your Vaniday glow</h2>
-        <p>Create your space for bookings, rewards, beauty merchants, and calm self-care planning.</p>
+
+        <p>
+            Create your space for bookings, rewards, beauty merchants, and calm self-care planning.
+        </p>
     </div>
 
     <div class="form-container auth-side-card">
@@ -66,11 +69,9 @@
 
         </select>
 
-
         <button onclick="signupUser()">
             Signup
         </button>
-
 
         <p>
             Already have an account?
@@ -78,6 +79,8 @@
         </p>
 
     </div>
+
+    <script src="app.js"></script>
 
     <script>
         function signupUser() {
@@ -108,6 +111,9 @@
                         throw new Error("Signup failed.");
                     }
 
+                    return response.json();
+                })
+                .then(function (data) {
                     alert("Signup successful. Please login.");
                     window.location.href = "login.html";
                 })

@@ -1,311 +1,157 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-
     <meta charset="UTF-8">
-
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
     <title>Merchants</title>
-
     <link rel="stylesheet" href="style.css">
-
 </head>
-
 <body class="merchant-page">
-
     <nav>
-
         <h1>Vaniday</h1>
-
         <div>
-
             <a href="index.html">Home</a>
-
             <a href="merchants.html">Merchants</a>
-
             <a href="booking.html">Book</a>
-
             <a href="my-booking.html">My Bookings</a>
-
             <a href="dashboard.html">Dashboard</a>
-
             <a href="login.html">Login</a>
-
             <a href="signup.html">Signup</a>
-
         </div>
-
     </nav>
 
-
-    <h1 class="page-title">
-
-        Available Merchants
-
-    </h1>
-
+    <h1 class="page-title">Available Merchants</h1>
 
     <div class="merchant-grid">
-
-
         <div class="merchant-card">
-
+            <img class="merchant-image" src="assets/images/Glow beauty salon.jpeg" alt="Glow Beauty Salon">
             <h2>Glow Beauty Salon</h2>
-
             <p>Haircut - $20</p>
-
             <p>Golden Facial - $65</p>
-
             <p>HydraFacial - $90</p>
-
             <p>Fruit Facial - $55</p>
-
-            <p>Anti-Aging Facial- $200</p>
-
-            <p> Chemical Peel Facial- $150</p>
-
+            <p>Anti-Aging Facial - $200</p>
+            <p>Chemical Peel Facial - $150</p>
             <p>Available: Mon - Fri</p>
-
-            <button onclick="window.location.href='booking.html'">
-
-                Book Now
-
-            </button>
-
+            <button onclick="bookMerchant('Glow Beauty Salon')">Book Now</button>
         </div>
 
-                <div class="merchant-card">
-
+        <div class="merchant-card">
+            <img class="merchant-image" src="assets/images/Women-Free.jpeg" alt="Women-Free">
             <h2>Women-Free</h2>
-
-            <p>Waxing- $90</p>
-
-            <p> Hair treatement - $89</p>
-
-             <p> Steam Bath- $110</p>
-
-             <p>Scrub Therapy - $69</p>
-
-             <p> Fish pedicure - $78</p>
-
+            <p>Waxing - $90</p>
+            <p>Hair Treatment - $89</p>
+            <p>Steam Bath - $110</p>
+            <p>Scrub Therapy - $69</p>
+            <p>Fish Pedicure - $78</p>
             <p>Available: Daily</p>
-
-            <button onclick="window.location.href='booking.html'">
-
-                Book Now
-
-            </button>
-
+            <button onclick="bookMerchant('Women-Free')">Book Now</button>
         </div>
 
-
         <div class="merchant-card">
-
+            <img class="merchant-image" src="assets/images/luxery spa.jpeg" alt="Luxury Spa">
             <h2>Luxury Spa</h2>
-
             <p>Thai Massage - $90</p>
-
-            <p> Ayurvedic Oil Massage - $120</p>
-
-             <p>Swedish Massage - $80</p>
-
-             <p>Aromatherapy Massage - $69</p>
-
-             <p>Foot Massage - $55</p>
-
+            <p>Ayurvedic Oil Massage - $120</p>
+            <p>Swedish Massage - $80</p>
+            <p>Aromatherapy Massage - $69</p>
+            <p>Foot Massage - $55</p>
             <p>Available: Daily</p>
-
-            <button onclick="window.location.href='booking.html'">
-
-                Book Now
-
-            </button>
-
+            <button onclick="bookMerchant('Luxury Spa')">Book Now</button>
         </div>
 
         <div class="merchant-card">
-
+            <img class="merchant-image" src="assets/images/wellness center.jpeg" alt="Wellness Center">
             <h2>Wellness Center</h2>
-
             <p>Yoga Session - $25</p>
-
             <p>Meditation - $25</p>
-
-            <p> Zumba - $35</p>
-
-            <p> Chiropractic - $30</p>
-
+            <p>Zumba - $35</p>
+            <p>Chiropractic - $30</p>
             <p>Available: Tue - Sun</p>
-
-            <button onclick="window.location.href='booking.html'">
-
-                Book Now
-
-            </button>
-
+            <button onclick="bookMerchant('Wellness Center')">Book Now</button>
         </div>
 
-
         <div class="merchant-card">
-
+            <img class="merchant-image" src="assets/images/make up studio.jpeg" alt="Make Up Studio">
             <h2>Make Up Studio</h2>
-
             <p>Bridal Makeup - $190</p>
-
             <p>Party Makeup - $188</p>
-
             <p>Photoshoot Makeup - $188</p>
-
-            <p>Hair Styling- $90</p>
-
+            <p>Hair Styling - $90</p>
             <p>Customized Makeup - $135</p>
-
-            <p>Available: mon - fri</p>
-
-            <button onclick="window.location.href='booking.html'">
-
-                Book Now
-
-            </button>
-
+            <p>Available: Mon - Fri</p>
+            <button onclick="bookMerchant('Make Up Studio')">Book Now</button>
         </div>
 
-
-
         <div class="merchant-card">
-
+            <img class="merchant-image" src="assets/images/elite barber.jpeg" alt="Elite Barber">
             <h2>Elite Barber</h2>
-
             <p>Hair Styling - $25</p>
-
             <p>Beard Trim - $15</p>
-
-            <p> Keratin Treatment - $50</p>
-
-            <p> Eyebrow Trim - $15</p>
-
+            <p>Keratin Treatment - $50</p>
+            <p>Eyebrow Trim - $15</p>
             <p>Available: Tue - Sun</p>
-
-            <button onclick="window.location.href='booking.html'">
-
-                Book Now
-
-            </button>
-
+            <button onclick="bookMerchant('Elite Barber')">Book Now</button>
         </div>
 
-
         <div class="merchant-card">
-
+            <img class="merchant-image" src="assets/images/Manly Mane Salon.jpeg" alt="Manly Mane Salon">
             <h2>Manly Mane Salon</h2>
-
             <p>Hair Styling - $25</p>
-
-            <p>Hair wash - $10</p>
-
+            <p>Hair Wash - $10</p>
             <p>Beard Trim - $15</p>
-
-            <p>hair dye - $125</p>
-
-            <p>Available: mon - fri</p>
-
-            <button onclick="window.location.href='booking.html'">
-
-                Book Now
-
-            </button>
-
+            <p>Hair Dye - $125</p>
+            <p>Available: Mon - Fri</p>
+            <button onclick="bookMerchant('Manly Mane Salon')">Book Now</button>
         </div>
 
         <div class="merchant-card">
-
-            <h2> Blink Glam </h2>
-
-            <p>Eye Lash Extensions - $90</p>
-
-            <p> Eyelash Lift- $77</p>
-
-             <p>Under Eye Treatment - $80</p>
-
-             <p>Eye Spa - $58</p>
-
-             <p>Eyelash Tint - $45</p>
-
+            <img class="merchant-image" src="assets/images/Blink Glam.jpeg" alt="Blink Glam">
+            <h2>Blink Glam</h2>
+            <p>Eyelash Extensions - $90</p>
+            <p>Eyelash Lift - $77</p>
+            <p>Under Eye Treatment - $80</p>
+            <p>Eye Spa - $58</p>
+            <p>Eyelash Tint - $45</p>
             <p>Available: Daily</p>
-
-            <button onclick="window.location.href='booking.html'">
-
-                Book Now
-
-            </button>
-
+            <button onclick="bookMerchant('Blink Glam')">Book Now</button>
         </div>
 
         <div class="merchant-card">
-
+            <img class="merchant-image" src="assets/images/Cosmos Tattoo Art.jpeg" alt="Cosmos Tattoo Art">
             <h2>Cosmos Tattoo Art</h2>
-
-            <p> Colour Tattoo - $99</p>
-
-            <p> Hand Tattoo - $54</p>
-
-             <p>Chest Tattoo - $80</p>
-
-             <p>Leg Tattoo - $69</p>
-
-             <p>Sleeve Tattoo - $55</p>
-
-             <p> Tattoo Removal - $190</p>
-
-             <p> Tattoo Touch-Up - $67</p>
-
-
+            <p>Colour Tattoo - $99</p>
+            <p>Hand Tattoo - $54</p>
+            <p>Chest Tattoo - $80</p>
+            <p>Leg Tattoo - $69</p>
+            <p>Sleeve Tattoo - $55</p>
+            <p>Tattoo Removal - $190</p>
+            <p>Tattoo Touch-Up - $67</p>
             <p>Available: Daily</p>
-
-            <button onclick="window.location.href='booking.html'">
-
-                Book Now
-
-            </button>
-
+            <button onclick="bookMerchant('Cosmos Tattoo Art')">Book Now</button>
         </div>
-
-
-
 
         <div class="merchant-card">
-
+            <img class="merchant-image" src="assets/images/The Nail Hub.jpeg" alt="The Nail Hub">
             <h2>The Nail Hub</h2>
-
             <p>Nail Art - $20</p>
-
             <p>Manicure - $15</p>
-
             <p>Pedicure - $20</p>
-
-            <p>Gel Manicure+Pedicure - $35</p>
-
+            <p>Gel Manicure + Pedicure - $35</p>
             <p>Gel Extensions - $35</p>
-
             <p>Nail Extensions - $35</p>
-
             <p>Available: Tue - Sun</p>
-
-            <button onclick="window.location.href='booking.html'">
-
-                Book Now
-
-            </button>
-
+            <button onclick="bookMerchant('The Nail Hub')">Book Now</button>
         </div>
-
 
     </div>
 
-
     <script>
+        function bookMerchant(merchantName) {
+            localStorage.setItem("selectedMerchant", merchantName);
+            window.location.href = "booking.html";
+        }
+
         var cards = document.querySelectorAll('.merchant-card');
 
         for (var i = 0; i < cards.length; i = i + 1) {
@@ -319,7 +165,6 @@
             });
         }
     </script>
-
+    <script src="app.js"></script>
 </body>
-
 </html>

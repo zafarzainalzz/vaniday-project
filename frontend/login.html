@@ -55,7 +55,7 @@
 
         <h1>Login</h1>
 
-        <input id="loginEmail" type="email" pllaceholder="Enter Email" required>
+        <input id="loginEmail" type="email" placeholder="Enter Email" required>
 
         <input id="loginPassword" type="password" placeholder="Enter Password" required>
 
@@ -80,11 +80,12 @@
 
     </div>
 
+    <script src="app.js"></script>
+
     <script>
         function loginUser() {
             var email = document.getElementById("loginEmail").value;
             var password = document.getElementById("loginPassword").value;
-            var role = document.getElementById("loginRole").value;
 
             if (email == "" || password == "") {
                 alert("Please enter your email and password.");
@@ -112,11 +113,15 @@
                     localStorage.setItem("vanidayName", data.fullName);
                     localStorage.setItem("vanidayRole", data.role);
 
-                    if (data.role == "Shop Owner" || role == "Merchant Admin") {
-                        window.location.href = "merchant-admin.html";
-                    }
-                    else {
+                    if (data.role == "Customer") {
                         window.location.href = "dashboard.html";
+                    }
+                    else if (data.role == "Shop Owner") {
+                        localStorage.removeItem("ownerAssignedShop");
+                        window.location.href = "shop-owner-dashboard.html";
+                    }
+                    else if (data.role == "Merchant Admin") {
+                        window.location.href = "merchant-admin.html";
                     }
                 })
                 .catch(function (error) {

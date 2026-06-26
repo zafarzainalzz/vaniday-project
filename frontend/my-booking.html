@@ -35,6 +35,8 @@
         </div>
     </div>
 
+    <script src="app.js"></script>
+
     <script>
         var bookingDetails = document.getElementById("bookingDetails");
 
@@ -47,9 +49,12 @@
 
                 if (bookings.length == 0) {
                     bookingDetails.innerHTML =
+                        "<div class='card'>" +
                         "<h2>No Booking Found</h2>" +
-                        "<p>Please book an appointment first.</p>";
+                        "<p>Please book an appointment first.</p>" +
+                        "</div>";
 
+                    return;
                 }
 
                 bookings.forEach(function (booking) {
@@ -65,21 +70,36 @@
                         "<p><b>Status:</b> " + booking.status + "</p>" +
                         "<button onclick='rescheduleBooking()'>Reschedule</button>" +
                         "</div>";
-
                 });
             })
             .catch(function (error) {
                 console.log(error);
 
                 bookingDetails.innerHTML =
+                    "<div class='card'>" +
                     "<h2>Failed to load bookings</h2>" +
-                    "<p>Please check if the backend server is running.</p>";
+                    "<p>Please check if the backend server is running.</p>" +
+                    "</div>";
             });
 
         function rescheduleBooking() {
             window.location.href = "booking.html";
         }
+
+        function protectCustomerPage() {
+            var savedRole = localStorage.getItem("vanidayRole");
+
+            if (savedRole == "Shop Owner") {
+                window.location.href = "shop-owner-dashboard.html";
+            }
+            else if (savedRole == "Merchant Admin") {
+                window.location.href = "merchant-admin.html";
+            }
+        }
+
+        protectCustomerPage();
     </script>
+
 </body>
 
 </html>

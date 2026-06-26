@@ -9,10 +9,10 @@
 </head>
 
 <body class="booking-page">
+    <div id="bookingBackground"></div>
 
     <nav>
         <h1>Vaniday</h1>
-
         <div>
             <a href="index.html">Home</a>
             <a href="merchants.html">Merchants</a>
@@ -24,25 +24,23 @@
         </div>
     </nav>
 
-    <div class="form-container">
-
+    <div class="form-container booking-form">
         <h1>Book Appointment</h1>
 
         <input id="customerName" type="text" placeholder="Customer Name" required>
 
-        <select id="merchant">
+        <select id="merchant" onchange="changeBookingBackground()">
             <option value="">Select Merchant</option>
-            <option>Glow Beauty Salon</option>
-            <option>Luxury Spa</option>
-            <option>Elite Barber</option>
-            <option>Urban Nails Studio</option>
-            <option>Beauty Bliss</option>
-            <option>Golden Touch Spa</option>
-            <option>Fresh Fade Barber</option>
-            <option>Royal Hair Salon</option>
-            <option>Heavenly Massage</option>
-            <option>Chic Beauty Lounge</option>
-            <option>Velvet Skin Care</option>
+            <option value="Glow Beauty Salon">Glow Beauty Salon</option>
+            <option value="Women-Free">Women-Free</option>
+            <option value="Luxury Spa">Luxury Spa</option>
+            <option value="Wellness Center">Wellness Center</option>
+            <option value="Make Up Studio">Make Up Studio</option>
+            <option value="Elite Barber">Elite Barber</option>
+            <option value="Manly Mane Salon">Manly Mane Salon</option>
+            <option value="Blink Glam">Blink Glam</option>
+            <option value="Cosmos Tattoo Art">Cosmos Tattoo Art</option>
+            <option value="The Nail Hub">The Nail Hub</option>
         </select>
 
         <select id="service">
@@ -57,18 +55,81 @@
             <option>Waxing</option>
             <option>Beard Trim</option>
             <option>Head Spa</option>
+            <option>Tattoo Service</option>
+            <option>Makeup Service</option>
+            <option>Wellness Session</option>
+            <option>Eyelash Service</option>
         </select>
 
         <input id="bookingDate" type="date" required>
-
         <input id="bookingTime" type="time" required>
+        <p id="bookingTimeMessage"></p>
 
-        <button onclick="saveBooking()">
-            Confirm Booking
-        </button>
-
+        <button onclick="saveBooking()">Confirm Booking</button>
     </div>
+
+    <script src="app.js"></script>
+
     <script>
+        var glowBeautySalonImage = "assets/images/Glow beauty salon.jpeg";
+        var womenFreeImage = "assets/images/Women-Free.jpeg";
+        var luxurySpaImage = "assets/images/luxery spa.jpeg";
+        var wellnessCenterImage = "assets/images/wellness center.jpeg";
+        var makeUpStudioImage = "assets/images/make up studio.jpeg";
+        var eliteBarberImage = "assets/images/elite barber.jpeg";
+        var manlyManeSalonImage = "assets/images/Manly Mane Salon.jpeg";
+        var blinkGlamImage = "assets/images/Blink Glam.jpeg";
+        var cosmosTattooArtImage = "assets/images/Cosmos Tattoo Art.jpeg";
+        var theNailHubImage = "assets/images/The Nail Hub.jpeg";
+
+        function changeBookingBackground() {
+            var merchant = document.getElementById("merchant").value;
+            var background = document.getElementById("bookingBackground");
+
+            if (merchant == "") {
+                background.style.backgroundImage = "";
+            }
+            else if (merchant == "Glow Beauty Salon") {
+                background.style.backgroundImage = "url('" + glowBeautySalonImage + "')";
+            }
+            else if (merchant == "Women-Free") {
+                background.style.backgroundImage = "url('" + womenFreeImage + "')";
+            }
+            else if (merchant == "Luxury Spa") {
+                background.style.backgroundImage = "url('" + luxurySpaImage + "')";
+            }
+            else if (merchant == "Wellness Center") {
+                background.style.backgroundImage = "url('" + wellnessCenterImage + "')";
+            }
+            else if (merchant == "Make Up Studio") {
+                background.style.backgroundImage = "url('" + makeUpStudioImage + "')";
+            }
+            else if (merchant == "Elite Barber") {
+                background.style.backgroundImage = "url('" + eliteBarberImage + "')";
+            }
+            else if (merchant == "Manly Mane Salon") {
+                background.style.backgroundImage = "url('" + manlyManeSalonImage + "')";
+            }
+            else if (merchant == "Blink Glam") {
+                background.style.backgroundImage = "url('" + blinkGlamImage + "')";
+            }
+            else if (merchant == "Cosmos Tattoo Art") {
+                background.style.backgroundImage = "url('" + cosmosTattooArtImage + "')";
+            }
+            else if (merchant == "The Nail Hub") {
+                background.style.backgroundImage = "url('" + theNailHubImage + "')";
+            }
+        }
+
+        function loadSelectedMerchant() {
+            var selectedMerchant = localStorage.getItem("selectedMerchant");
+
+            if (selectedMerchant != "" && selectedMerchant != null) {
+                document.getElementById("merchant").value = selectedMerchant;
+                changeBookingBackground();
+            }
+        }
+
         function saveBooking() {
             var customerName = document.getElementById("customerName").value;
             var merchant = document.getElementById("merchant").value;
@@ -102,6 +163,7 @@
                     return response.json();
                 })
                 .then(function (data) {
+                    localStorage.removeItem("selectedMerchant");
                     alert("Booking saved successfully.");
                     window.location.href = "my-booking.html";
                 })
@@ -110,8 +172,22 @@
                     alert("Booking failed. Please check the backend terminal.");
                 });
         }
-    </script>
 
+        loadSelectedMerchant();
+
+        function protectCustomerPage() {
+            var savedRole = localStorage.getItem("vanidayRole");
+
+            if (savedRole == "Shop Owner") {
+                window.location.href = "shop-owner-dashboard.html";
+            }
+            else if (savedRole == "Merchant Admin") {
+                window.location.href = "merchant-admin.html";
+            }
+        }
+
+        protectCustomerPage();
+    </script>
 </body>
 
 </html>
