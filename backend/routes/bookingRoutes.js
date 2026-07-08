@@ -32,4 +32,22 @@ router.get("/", function (req, res) {
     });
 });
 
+router.put("/:id/status", function (req, res) {
+  Booking.findByIdAndUpdate(
+    req.params.id,
+    {
+      status: req.body.status
+    },
+    {
+      new: true
+    }
+  )
+    .then(function (updatedBooking) {
+      res.json(updatedBooking);
+    })
+    .catch(function (error) {
+      res.status(500).json(error);
+    });
+});
+
 module.exports = router;

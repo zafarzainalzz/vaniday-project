@@ -76,7 +76,8 @@
                 <div class="panel-label left-label">✦ PLATFORM BOOKING CALENDAR</div>
                 <h2>All Booking Dates</h2>
                 <div id="adminCalendar" class="booking-calendar"></div>
-                <div id="adminCalendarDetails" class="calendar-details">Click a booked date to view all shop bookings.</div>
+                <div id="adminCalendarDetails" class="calendar-details">Click a booked date to view all shop bookings.
+                </div>
             </div>
         </section>
 
@@ -94,20 +95,55 @@
         }
 
         function loadAdminBooking() {
-            var bookingsText = localStorage.getItem('allBookings');
-            var output = '';
+            fetch("http://localhost:5000/api/bookings")
+                .then(function (response) {
+                    return response.json();
+                })
+                .then(function (bookings) {
+                    var output = "";
 
-            if (bookingsText != null && bookingsText != '') {
-                var bookings = JSON.parse(bookingsText);
+                    for (var i = bookings.length - 1; i >= 0; i = i - 1) {
+                        output = output +
+                            "<p><b>Customer:</b> " + bookings[i].customerName + "</p>" +
+                            "<p><b>Merchant:</b> " + bookings[i].merchant + "</p>" +
+                            "<p><b>Service:</b> " + bookings[i].service + "</p>" +
+                            "<p><b>Date:</b> " + bookings[i].bookingDate + "</p>" +
+                            "<p><b>Time:</b> " + bookings[i].bookingTime + "</p>" +
+                            "<p><b>Status:</b> " + bookings[i].status + "</p>" +
+                            "<button onclick=\"changeBookingStatus('" + bookings[i]._id + "', 'Confirmed')\">Confirm</button> " +
+                            "<button onclick=\"changeBookingStatus('" + bookings[i]._id + "', 'Cancelled')\">Cancel</button> " +
+                            "<hr>";
+                    }
 
-                for (var i = bookings.length - 1; i >= 0; i = i - 1) {
-                    output = output + '<p><b>Customer:</b> ' + bookings[i].customer + '</p>' + '<p><b>Merchant:</b> ' + bookings[i].merchant + '</p>' + '<p><b>Service:</b> ' + bookings[i].service + '</p>' + '<p><b>Date:</b> ' + bookings[i].date + '</p>' + '<p><b>Time:</b> ' + bookings[i].time + '</p><hr>';
-                }
-            }
+                    document.getElementById("adminBookingBox").innerHTML = output || "<p>No bookings found yet.</p>";
+                })
+                .catch(function (error) {
+                    console.log(error);
+                    document.getElementById("adminBookingBox").innerHTML = "<p>Failed to load bookings. Check if the backend is running.</p>";
+                });
+        }
 
-            if (output != '') {
-                document.getElementById('adminBookingBox').innerHTML = output;
-            }
+        function changeBookingStatus(bookingId, newStatus) {
+            fetch("http://localhost:5000/api/bookings/" + bookingId + "/status", {
+                method: "PUT",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    status: newStatus
+                })
+            })
+                .then(function (response) {
+                    return response.json();
+                })
+                .then(function (updatedBooking) {
+                    document.getElementById("adminActionText").innerHTML = "Booking status updated to " + updatedBooking.status;
+                    loadAdminBooking();
+                })
+                .catch(function (error) {
+                    console.log(error);
+                    document.getElementById("adminActionText").innerHTML = "Failed to update booking status.";
+                });
         }
 
         function clearBookingData() {

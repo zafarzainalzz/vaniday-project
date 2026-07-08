@@ -25,7 +25,8 @@
         <section class="dashboard-hero-row">
             <div>
                 <h1 id="shopOwnerGreeting">Shop Owner Dashboard</h1>
-                <p id="shopOwnerSubText">Manage your own shop, update services, and view only your shop customer bookings.</p>
+                <p id="shopOwnerSubText">Manage your own shop, update services, and view only your shop customer
+                    bookings.</p>
             </div>
 
             <button class="liquid-action" onclick="document.getElementById('addNewShop').scrollIntoView()">
@@ -81,7 +82,8 @@
                 <div class="panel-label left-label">✦ BOOKING CALENDAR</div>
                 <h2>Calendar</h2>
                 <div id="ownerCalendar" class="booking-calendar"></div>
-                <div id="ownerCalendarDetails" class="calendar-details">Click a booked date to view booking details.</div>
+                <div id="ownerCalendarDetails" class="calendar-details">Click a booked date to view booking details.
+                </div>
             </div>
 
 
@@ -90,174 +92,215 @@
     </main>
 
     <script src="app.js"></script>
-    <script>
-        protectShopOwnerOnlyPage();
+<script>
+    protectShopOwnerOnlyPage();
 
-        var savedName = localStorage.getItem('vanidayName');
-        var ownerName = getOwnerRealName();
-        var ownerShop = getOwnerShopName();
+    var savedName = localStorage.getItem('vanidayName');
+    var ownerName = getOwnerRealName();
+    var ownerShop = getOwnerShopName();
 
-        if (ownerName != null && ownerName != '') {
-            document.getElementById('shopOwnerGreeting').innerHTML = 'Hi ' + ownerName + ', shop owner dashboard';
+    if (ownerName != null && ownerName != '') {
+        document.getElementById('shopOwnerGreeting').innerHTML = 'Hi ' + ownerName + ', shop owner dashboard';
+    }
+
+    if (ownerShop != '') {
+        document.getElementById('assignedShopTitle').innerHTML = ownerShop;
+        document.getElementById('shopName').value = ownerShop;
+        document.getElementById('shopOwnerSubText').innerHTML = 'You are managing ' + ownerShop + '. Only this shop is highlighted for you.';
+    }
+
+    function saveShopDetails() {
+        var shopName = document.getElementById('shopName').value;
+        var shopLocation = document.getElementById('shopLocation').value;
+        var shopDays = document.getElementById('shopDays').value;
+
+        if (shopName == '' || shopLocation == '' || shopDays == '') {
+            alert('Please fill in all shop details.');
         }
+        else {
+            var confirmUpdate = confirm('Are you sure you want to update this shop?');
 
-        if (ownerShop != '') {
-            document.getElementById('assignedShopTitle').innerHTML = ownerShop;
-            document.getElementById('shopName').value = ownerShop;
-            document.getElementById('shopOwnerSubText').innerHTML = 'You are managing ' + ownerShop + '. Only this shop is highlighted for you.';
-        }
-
-        function saveShopDetails() {
-            var shopName = document.getElementById('shopName').value;
-            var shopLocation = document.getElementById('shopLocation').value;
-            var shopDays = document.getElementById('shopDays').value;
-
-            if (shopName == '' || shopLocation == '' || shopDays == '') {
-                alert('Please fill in all shop details.');
-            }
-            else {
-                var confirmUpdate = confirm('Are you sure you want to update this shop?');
-
-                if (confirmUpdate == false) {
-                    return;
-                }
-
-                localStorage.setItem('ownerAssignedShop', shopName);
-                localStorage.setItem('ownerShopName', shopName);
-                localStorage.setItem('ownerShopLocation', shopLocation);
-                localStorage.setItem('ownerShopDays', shopDays);
-                document.getElementById('assignedShopTitle').innerHTML = shopName;
-                document.getElementById('shopSavedText').innerHTML = '<b>Shop:</b> ' + shopName + '<br><b>Location:</b> ' + shopLocation + '<br><b>Available:</b> ' + shopDays;
-            }
-        }
-
-        function deleteShopDetails() {
-            var confirmDelete = confirm('Are you sure you want to delete this shop?');
-
-            if (confirmDelete == false) {
+            if (confirmUpdate == false) {
                 return;
             }
 
-            localStorage.removeItem('ownerAssignedShop');
-            localStorage.removeItem('ownerShopName');
-            localStorage.removeItem('ownerShopLocation');
-            localStorage.removeItem('ownerShopDays');
-            document.getElementById('shopName').value = '';
-            document.getElementById('shopLocation').value = '';
-            document.getElementById('shopDays').value = '';
-            document.getElementById('shopSavedText').innerHTML = 'Shop details deleted.';
+            localStorage.setItem('ownerAssignedShop', shopName);
+            localStorage.setItem('ownerShopName', shopName);
+            localStorage.setItem('ownerShopLocation', shopLocation);
+            localStorage.setItem('ownerShopDays', shopDays);
+            document.getElementById('assignedShopTitle').innerHTML = shopName;
+            document.getElementById('shopSavedText').innerHTML = '<b>Shop:</b> ' + shopName + '<br><b>Location:</b> ' + shopLocation + '<br><b>Available:</b> ' + shopDays;
+        }
+    }
+
+    function deleteShopDetails() {
+        var confirmDelete = confirm('Are you sure you want to delete this shop?');
+
+        if (confirmDelete == false) {
+            return;
         }
 
-        function addNewShop() {
-            var shopName = document.getElementById('newShopName').value;
-            var shopLocation = document.getElementById('newShopLocation').value;
-            var shopDays = document.getElementById('newShopDays').value;
+        localStorage.removeItem('ownerAssignedShop');
+        localStorage.removeItem('ownerShopName');
+        localStorage.removeItem('ownerShopLocation');
+        localStorage.removeItem('ownerShopDays');
+        document.getElementById('shopName').value = '';
+        document.getElementById('shopLocation').value = '';
+        document.getElementById('shopDays').value = '';
+        document.getElementById('shopSavedText').innerHTML = 'Shop details deleted.';
+    }
 
-            if (shopName == '' || shopLocation == '' || shopDays == '') {
-                alert('Please fill in all new shop details.');
-            }
-            else {
-                localStorage.setItem('ownerAssignedShop', shopName);
-                localStorage.setItem('ownerShopName', shopName);
-                localStorage.setItem('ownerShopLocation', shopLocation);
-                localStorage.setItem('ownerShopDays', shopDays);
-                document.getElementById('shopName').value = shopName;
-                document.getElementById('shopLocation').value = shopLocation;
-                document.getElementById('shopDays').value = shopDays;
-                document.getElementById('assignedShopTitle').innerHTML = shopName;
-                document.getElementById('newShopSavedText').innerHTML = '<b>New Shop Added:</b> ' + shopName + '<br><b>Location:</b> ' + shopLocation + '<br><b>Available:</b> ' + shopDays;
-            }
+    function addNewShop() {
+        var shopName = document.getElementById('newShopName').value;
+        var shopLocation = document.getElementById('newShopLocation').value;
+        var shopDays = document.getElementById('newShopDays').value;
+
+        if (shopName == '' || shopLocation == '' || shopDays == '') {
+            alert('Please fill in all new shop details.');
         }
-
-        function saveServiceDetails() {
-            var serviceName = document.getElementById('serviceName').value;
-            var servicePrice = document.getElementById('servicePrice').value;
-
-            if (serviceName == '' || servicePrice == '') {
-                alert('Please fill in all service details.');
-            }
-            else {
-                var confirmUpdate = confirm('Are you sure you want to update this service?');
-
-                if (confirmUpdate == false) {
-                    return;
-                }
-
-                localStorage.setItem('ownerServiceName', serviceName);
-                localStorage.setItem('ownerServicePrice', servicePrice);
-                document.getElementById('serviceSavedText').innerHTML = '<b>Service:</b> ' + serviceName + '<br><b>Price:</b> ' + servicePrice;
-            }
+        else {
+            localStorage.setItem('ownerAssignedShop', shopName);
+            localStorage.setItem('ownerShopName', shopName);
+            localStorage.setItem('ownerShopLocation', shopLocation);
+            localStorage.setItem('ownerShopDays', shopDays);
+            document.getElementById('shopName').value = shopName;
+            document.getElementById('shopLocation').value = shopLocation;
+            document.getElementById('shopDays').value = shopDays;
+            document.getElementById('assignedShopTitle').innerHTML = shopName;
+            document.getElementById('newShopSavedText').innerHTML = '<b>New Shop Added:</b> ' + shopName + '<br><b>Location:</b> ' + shopLocation + '<br><b>Available:</b> ' + shopDays;
         }
+    }
 
-        function deleteServiceDetails() {
-            var confirmDelete = confirm('Are you sure you want to delete this service?');
+    function saveServiceDetails() {
+        var serviceName = document.getElementById('serviceName').value;
+        var servicePrice = document.getElementById('servicePrice').value;
 
-            if (confirmDelete == false) {
+        if (serviceName == '' || servicePrice == '') {
+            alert('Please fill in all service details.');
+        }
+        else {
+            var confirmUpdate = confirm('Are you sure you want to update this service?');
+
+            if (confirmUpdate == false) {
                 return;
             }
 
-            localStorage.removeItem('ownerServiceName');
-            localStorage.removeItem('ownerServicePrice');
-            document.getElementById('serviceName').value = '';
-            document.getElementById('servicePrice').value = '';
-            document.getElementById('serviceSavedText').innerHTML = 'Service details deleted.';
+            localStorage.setItem('ownerServiceName', serviceName);
+            localStorage.setItem('ownerServicePrice', servicePrice);
+            document.getElementById('serviceSavedText').innerHTML = '<b>Service:</b> ' + serviceName + '<br><b>Price:</b> ' + servicePrice;
+        }
+    }
+
+    function deleteServiceDetails() {
+        var confirmDelete = confirm('Are you sure you want to delete this service?');
+
+        if (confirmDelete == false) {
+            return;
         }
 
-        function loadSavedShopAndService() {
-            var shopName = localStorage.getItem('ownerShopName');
-            var shopLocation = localStorage.getItem('ownerShopLocation');
-            var shopDays = localStorage.getItem('ownerShopDays');
-            var serviceName = localStorage.getItem('ownerServiceName');
-            var servicePrice = localStorage.getItem('ownerServicePrice');
+        localStorage.removeItem('ownerServiceName');
+        localStorage.removeItem('ownerServicePrice');
+        document.getElementById('serviceName').value = '';
+        document.getElementById('servicePrice').value = '';
+        document.getElementById('serviceSavedText').innerHTML = 'Service details deleted.';
+    }
 
-            if (shopName != null && shopName != '') {
-                document.getElementById('shopName').value = shopName;
-                document.getElementById('assignedShopTitle').innerHTML = shopName;
-            }
-            if (shopLocation != null) {
-                document.getElementById('shopLocation').value = shopLocation;
-            }
-            if (shopDays != null) {
-                document.getElementById('shopDays').value = shopDays;
-            }
-            if (shopName != null && shopLocation != null && shopDays != null) {
-                document.getElementById('shopSavedText').innerHTML = '<b>Shop:</b> ' + shopName + '<br><b>Location:</b> ' + shopLocation + '<br><b>Available:</b> ' + shopDays;
-            }
-            if (serviceName != null) {
-                document.getElementById('serviceName').value = serviceName;
-            }
-            if (servicePrice != null) {
-                document.getElementById('servicePrice').value = servicePrice;
-            }
-            if (serviceName != null && servicePrice != null) {
-                document.getElementById('serviceSavedText').innerHTML = '<b>Service:</b> ' + serviceName + '<br><b>Price:</b> ' + servicePrice;
-            }
+    function loadSavedShopAndService() {
+        var shopName = localStorage.getItem('ownerShopName');
+        var shopLocation = localStorage.getItem('ownerShopLocation');
+        var shopDays = localStorage.getItem('ownerShopDays');
+        var serviceName = localStorage.getItem('ownerServiceName');
+        var servicePrice = localStorage.getItem('ownerServicePrice');
+
+        if (shopName != null && shopName != '') {
+            document.getElementById('shopName').value = shopName;
+            document.getElementById('assignedShopTitle').innerHTML = shopName;
         }
 
-        function loadOwnerBooking() {
-            var ownerShopName = getOwnerShopName();
-            var bookingsText = localStorage.getItem('allBookings');
-            var output = '';
+        if (shopLocation != null) {
+            document.getElementById('shopLocation').value = shopLocation;
+        }
 
-            if (bookingsText != null && bookingsText != '') {
-                var bookings = JSON.parse(bookingsText);
+        if (shopDays != null) {
+            document.getElementById('shopDays').value = shopDays;
+        }
 
-                for (var i = 0; i < bookings.length; i = i + 1) {
+        if (shopName != null && shopLocation != null && shopDays != null) {
+            document.getElementById('shopSavedText').innerHTML = '<b>Shop:</b> ' + shopName + '<br><b>Location:</b> ' + shopLocation + '<br><b>Available:</b> ' + shopDays;
+        }
+
+        if (serviceName != null) {
+            document.getElementById('serviceName').value = serviceName;
+        }
+
+        if (servicePrice != null) {
+            document.getElementById('servicePrice').value = servicePrice;
+        }
+
+        if (serviceName != null && servicePrice != null) {
+            document.getElementById('serviceSavedText').innerHTML = '<b>Service:</b> ' + serviceName + '<br><b>Price:</b> ' + servicePrice;
+        }
+    }
+
+    function loadOwnerBooking() {
+        var ownerShopName = getOwnerShopName();
+
+        fetch("http://localhost:5000/api/bookings")
+            .then(function (response) {
+                return response.json();
+            })
+            .then(function (bookings) {
+                var output = "";
+
+                for (var i = bookings.length - 1; i >= 0; i = i - 1) {
                     if (bookings[i].merchant == ownerShopName) {
-                        output = output + '<p><b>Customer:</b> ' + bookings[i].customer + '</p>' + '<p><b>Merchant:</b> ' + bookings[i].merchant + '</p>' + '<p><b>Service:</b> ' + bookings[i].service + '</p>' + '<p><b>Date:</b> ' + bookings[i].date + '</p>' + '<p><b>Time:</b> ' + bookings[i].time + '</p><hr>';
+                        output = output +
+                            "<p><b>Customer:</b> " + bookings[i].customerName + "</p>" +
+                            "<p><b>Merchant:</b> " + bookings[i].merchant + "</p>" +
+                            "<p><b>Service:</b> " + bookings[i].service + "</p>" +
+                            "<p><b>Date:</b> " + bookings[i].bookingDate + "</p>" +
+                            "<p><b>Time:</b> " + bookings[i].bookingTime + "</p>" +
+                            "<p><b>Status:</b> " + bookings[i].status + "</p>" +
+                            "<button onclick=\"changeOwnerBookingStatus('" + bookings[i]._id + "', 'Confirmed')\">Confirm</button> " +
+                            "<button onclick=\"changeOwnerBookingStatus('" + bookings[i]._id + "', 'Cancelled')\">Cancel</button>" +
+                            "<hr>";
                     }
                 }
-            }
 
-            if (output != '') {
-                document.getElementById('ownerBookingBox').innerHTML = output;
-            }
-        }
+                document.getElementById("ownerBookingBox").innerHTML = output || "<p>No customer bookings found for your shop yet.</p>";
+            })
+            .catch(function (error) {
+                console.log(error);
+                document.getElementById("ownerBookingBox").innerHTML = "<p>Failed to load bookings. Check if the backend is running.</p>";
+            });
+    }
 
-        loadSavedShopAndService();
-        loadOwnerBooking();
-        renderBookingCalendar('ownerCalendar', 'ownerCalendarDetails', getOwnerShopName());
-    </script>
+    function changeOwnerBookingStatus(bookingId, newStatus) {
+        fetch("http://localhost:5000/api/bookings/" + bookingId + "/status", {
+            method: "PUT",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                status: newStatus
+            })
+        })
+            .then(function (response) {
+                return response.json();
+            })
+            .then(function () {
+                loadOwnerBooking();
+            })
+            .catch(function (error) {
+                console.log(error);
+                document.getElementById("ownerBookingBox").innerHTML = "<p>Failed to update booking status.</p>";
+            });
+    }
+
+    loadSavedShopAndService();
+    loadOwnerBooking();
+    renderBookingCalendar('ownerCalendar', 'ownerCalendarDetails', getOwnerShopName());
+</script>
 
 </body>
 
