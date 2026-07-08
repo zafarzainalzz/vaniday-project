@@ -134,3 +134,7 @@ dist
 .yarn/build-state.yml
 .yarn/install-state.gz
 .pnp.*
+
+# dotenv environment variable files
+PORT=5000
+MONGO_URI=mongodb+srv://fypuser:fypissoeasy67@vaniday-cluster.s6mx0c6.mongodb.net/?appName=vaniday-cluster
