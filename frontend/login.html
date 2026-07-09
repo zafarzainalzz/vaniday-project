@@ -55,9 +55,9 @@
 
         <h1>Login</h1>
 
-        <input id="loginEmail" type="email" placeholder="Enter Email" required>
+        <input id="loginName" type="text" placeholder="Enter Name or Email" required>
 
-        <input id="loginPassword" type="password" placeholder="Enter Password" required>
+        <input type="password" placeholder="Enter Password" required>
 
         <select id="loginRole">
 
@@ -80,57 +80,50 @@
 
     </div>
 
-    <script src="app.js"></script>
-
     <script>
+
         function loginUser() {
-            var email = document.getElementById("loginEmail").value;
-            var password = document.getElementById("loginPassword").value;
 
-            if (email == "" || password == "") {
-                alert("Please enter your email and password.");
-                return;
+            var input = document.getElementById('loginName');
+            var value = input.value;
+            var role = document.getElementById('loginRole').value;
+
+            if (value == '') {
+                alert('Please enter your name or email.');
             }
+            else {
+                var name = value;
 
-            fetch("http://localhost:5000/api/users/login", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify({
-                    email: email,
-                    password: password
-                })
-            })
-                .then(function (response) {
-                    if (response.ok == false) {
-                        throw new Error("Login failed.");
-                    }
+                if (value.indexOf('@') != -1) {
+                    name = value.substring(0, value.indexOf('@'));
+                }
 
-                    return response.json();
-                })
-                .then(function (data) {
-                    localStorage.setItem("vanidayName", data.fullName);
-                    localStorage.setItem("vanidayRole", data.role);
+                if (name.toLowerCase() == 'merchant') {
+                    role = 'Merchant Admin';
+                }
 
-                    if (data.role == "Customer") {
-                        window.location.href = "dashboard.html";
-                    }
-                    else if (data.role == "Shop Owner") {
-                        localStorage.removeItem("ownerAssignedShop");
-                        window.location.href = "shop-owner-dashboard.html";
-                    }
-                    else if (data.role == "Merchant Admin") {
-                        window.location.href = "merchant-admin.html";
-                    }
-                })
-                .catch(function (error) {
-                    console.log(error);
-                    alert("Login failed. Please check your email or password.");
-                });
+                localStorage.setItem('vanidayName', name);
+                localStorage.setItem('vanidayRole', role);
+                if (role == 'Shop Owner') {
+                    localStorage.removeItem('ownerAssignedShop');
+                }
+
+                if (role == 'Customer') {
+                    window.location.href = 'dashboard.html';
+                }
+                else if (role == 'Shop Owner') {
+                    window.location.href = 'shop-owner-dashboard.html';
+                }
+                else if (role == 'Merchant Admin') {
+                    window.location.href = 'merchant-admin.html';
+                }
+            }
         }
+
     </script>
 
+    <script src="app.js"></script>
 </body>
 
 </html>
+
