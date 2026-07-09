@@ -2017,6 +2017,9 @@ body.dashboard-page .page-title {
     font-size: 24px;
     font-weight: 700;
     margin-bottom: 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
 }
 
 .calendar-week {
@@ -2030,10 +2033,30 @@ body.dashboard-page .page-title {
 }
 
 .calendar-day {
-    min-height: 42px;
+    min-height: 56px;
     border-radius: 14px;
     border: 1px solid rgba(255,255,255,0.18);
     background: rgba(255,255,255,0.08);
+    color: white;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.calendar-day small {
+    font-size: 10px;
+    opacity: 0.85;
+    margin-top: 4px;
+}
+
+.calendar-nav-btn {
+    width: 42px;
+    height: 34px;
+    border-radius: 14px;
+    border: 1px solid rgba(255,255,255,0.22);
+    background: rgba(255,255,255,0.12);
     color: white;
     cursor: pointer;
 }
@@ -2057,3 +2080,2810 @@ body.dashboard-page .page-title {
     color: white;
     opacity: 0.85;
 }
+
+
+/* Reward system updates - keeps dashboard theme */
+.reward-summary-row {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 18px;
+    margin-top: 18px;
+}
+
+.reward-stat-card {
+    min-height: 145px;
+}
+
+.reward-stat-card span {
+    display: block;
+    color: rgba(255,255,255,0.72);
+    font-size: 13px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+}
+
+.reward-stat-card strong {
+    display: block;
+    margin-top: 12px;
+    color: white;
+    font-size: 36px;
+    line-height: 1;
+}
+
+.reward-stat-card p,
+.promotion-panel p,
+.claim-panel p {
+    color: rgb(156, 163, 175);
+    line-height: 1.7;
+}
+
+.claim-panel button {
+    width: 100%;
+    margin: 8px 0;
+}
+
+#claimMessage {
+    margin-top: 12px;
+    color: white;
+}
+
+@media (max-width: 900px) {
+    .reward-summary-row {
+        grid-template-columns: 1fr;
+        display: grid;
+    }
+}
+
+/* Customer dashboard reward card polish */
+.reward-summary-row.dashboard-glow-cards {
+    margin-top: 32px;
+}
+
+.reward-summary-row .reward-stat-card {
+    min-height: 210px;
+}
+
+.reward-summary-row .glow-card-inner {
+    min-height: 210px;
+    padding: 28px 34px;
+}
+
+.reward-summary-row .reward-stat-card span {
+    display: block;
+    color: rgba(255,255,255,0.76);
+    font-size: 13px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    margin-bottom: 14px;
+}
+
+.reward-summary-row .reward-stat-card strong {
+    display: block;
+    margin: 0 0 16px;
+    color: white;
+    font-size: clamp(34px, 4vw, 50px);
+    line-height: 1;
+}
+
+.reward-summary-row .reward-stat-card p {
+    margin: 0;
+    color: rgb(156, 163, 175);
+    line-height: 1.6;
+}
+
+/* Promotion claim rows */
+.promotion-panel {
+    padding: 28px 34px;
+}
+
+.promotion-claim-row {
+    display: grid;
+    grid-template-columns: 38px 1fr 110px;
+    gap: 18px;
+    align-items: center;
+    padding: 17px 0;
+    border-bottom: 1px solid rgba(255,255,255,0.10);
+}
+
+.promotion-claim-row:last-child {
+    border-bottom: 0;
+}
+
+.promotion-icon {
+    width: 34px;
+    height: 34px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 800;
+    border: 1px solid rgba(255,255,255,0.18);
+}
+
+.pink-promo { color: #ff5da2; }
+.orange-promo { color: #ff9d3c; }
+.blue-promo { color: #55d6ff; }
+.purple-promo { color: #b985ff; }
+.green-promo { color: #9ee493; }
+
+.promotion-claim-row p {
+    margin: 0;
+}
+
+.promotion-claim-row button,
+.claim-panel button {
+    border-radius: 999px;
+    background: linear-gradient(120deg, #ff3d77, #ff9d3c);
+    color: white;
+    border: 0;
+    padding: 12px 20px;
+    font-weight: 700;
+    box-shadow: 0 14px 35px rgba(255,61,119,0.22);
+}
+
+.promotion-claim-row:nth-of-type(3) button,
+.promotion-claim-row:nth-of-type(4) button {
+    background: linear-gradient(120deg, #4361ee, #55d6ff);
+}
+
+.promotion-claim-row:nth-of-type(5) button {
+    background: linear-gradient(120deg, #63c96f, #c4f081);
+}
+
+.claim-panel button {
+    background: rgba(255,255,255,0.08);
+    border: 1px solid rgba(255,255,255,0.16);
+    box-shadow: none;
+}
+
+/* Shop owner calendar should not be cut off */
+#ownerCalendarPanel {
+    grid-column: span 2;
+    overflow: hidden;
+}
+
+#ownerCalendarPanel .booking-calendar {
+    width: 100%;
+    gap: 12px;
+}
+
+#ownerCalendarPanel .calendar-day {
+    min-width: 0;
+}
+
+@media (max-width: 900px) {
+    .promotion-claim-row {
+        grid-template-columns: 34px 1fr;
+    }
+
+    .promotion-claim-row button {
+        grid-column: 1 / 3;
+        width: 100%;
+    }
+
+    #ownerCalendarPanel {
+        grid-column: auto;
+    }
+}
+
+/* vaniday-22 clean customer dashboard changes */
+
+.reward-summary-row.dashboard-glow-cards {
+    margin-top: 32px;
+    margin-bottom: 26px;
+}
+
+.reward-summary-row .reward-stat-card {
+    min-height: 190px;
+}
+
+.reward-summary-row .glow-card-inner {
+    min-height: 190px;
+}
+
+.promotion-claim-row button,
+.claim-panel button,
+.reward-claim-item button {
+    background: rgba(255,255,255,0.06);
+    color: white;
+    border: 1px solid rgba(255,255,255,0.24);
+    box-shadow: none;
+    padding: 10px 22px;
+    border-radius: 999px;
+    font-weight: 700;
+}
+
+.promotion-claim-row:nth-of-type(3) button,
+.promotion-claim-row:nth-of-type(4) button,
+.promotion-claim-row:nth-of-type(5) button {
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.24);
+    box-shadow: none;
+}
+
+.reward-claim-list {
+    display: grid;
+    gap: 14px;
+    margin-top: 26px;
+}
+
+.reward-claim-item {
+    display: grid;
+    grid-template-columns: 62px 1fr 120px;
+    align-items: center;
+    gap: 18px;
+    padding: 18px 20px;
+    border-radius: 18px;
+    background: rgba(255,255,255,0.055);
+    border: 1px solid rgba(255,255,255,0.14);
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.08);
+}
+
+.reward-claim-icon {
+    width: 44px;
+    height: 44px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid rgba(255,255,255,0.25);
+    color: rgba(255,255,255,0.9);
+    font-weight: 800;
+}
+
+.reward-claim-item strong {
+    color: white;
+    font-size: 17px;
+}
+
+#claimMessage {
+    margin-top: 18px;
+}
+
+/* vaniday-22 wider merchant/shop owner calendar */
+#ownerCalendarPanel {
+    grid-column: 1 / -1;
+    width: 100%;
+}
+
+#ownerCalendarPanel .booking-calendar {
+    grid-template-columns: repeat(7, minmax(80px, 1fr));
+    gap: 14px;
+}
+
+#ownerCalendarPanel .calendar-day {
+    min-height: 72px;
+    border-radius: 20px;
+}
+
+#ownerCalendarPanel .calendar-empty {
+    min-height: 72px;
+}
+
+@media (max-width: 900px) {
+    .reward-claim-item {
+        grid-template-columns: 48px 1fr;
+    }
+
+    .reward-claim-item button {
+        grid-column: 1 / 3;
+        width: 100%;
+    }
+
+    #ownerCalendarPanel .booking-calendar {
+        grid-template-columns: repeat(7, minmax(38px, 1fr));
+        gap: 8px;
+    }
+}
+
+/* vaniday-2oclock merchant admin updates */
+.shop-link-button {
+    background: transparent;
+    border: 0;
+    color: white;
+    padding: 0;
+    margin: 0;
+    font: inherit;
+    font-weight: 700;
+    cursor: pointer;
+    text-align: left;
+}
+
+.shop-link-button:hover {
+    text-decoration: underline;
+}
+
+.admin-wide-bar {
+    grid-column: 2 / 4;
+    min-height: 160px;
+}
+
+.activity-bar-track {
+    width: 100%;
+    height: 18px;
+    border-radius: 999px;
+    background: rgba(255,255,255,0.08);
+    border: 1px solid rgba(255,255,255,0.16);
+    overflow: hidden;
+    margin: 18px 0 12px;
+}
+
+.activity-bar-fill {
+    width: 8%;
+    height: 100%;
+    border-radius: 999px;
+    background: rgba(255,255,255,0.55);
+    box-shadow: 0 0 20px rgba(255,255,255,0.24);
+}
+
+#adminCalendarPanel {
+    max-width: 390px;
+}
+
+/* vaniday-2oclock shop owner compact calendar */
+.owner-bottom-grid {
+    align-items: start;
+}
+
+.owner-bottom-grid #services {
+    grid-column: 1 / 2;
+}
+
+.owner-bottom-grid #ownerCalendarPanel {
+    grid-column: 2 / 4;
+    width: auto;
+    min-height: auto;
+}
+
+.owner-bottom-grid #ownerCalendarPanel .booking-calendar {
+    grid-template-columns: repeat(7, minmax(42px, 1fr));
+    gap: 8px;
+    margin-top: 14px;
+}
+
+.owner-bottom-grid #ownerCalendarPanel .calendar-title {
+    font-size: 22px;
+    margin-bottom: 8px;
+}
+
+.owner-bottom-grid #ownerCalendarPanel .calendar-day {
+    min-height: 48px;
+    border-radius: 14px;
+}
+
+.owner-bottom-grid #ownerCalendarPanel .calendar-empty {
+    min-height: 48px;
+}
+
+.owner-bottom-grid #ownerCalendarPanel .calendar-details {
+    margin-top: 14px;
+}
+
+@media (max-width: 900px) {
+    .admin-wide-bar,
+    .owner-bottom-grid #services,
+    .owner-bottom-grid #ownerCalendarPanel {
+        grid-column: auto;
+    }
+
+    #adminCalendarPanel {
+        max-width: none;
+    }
+}
+
+/* vaniday latest merchant admin chart layout */
+.admin-top-grid {
+    align-items: stretch;
+    gap: 22px;
+}
+
+.admin-top-grid #allShops {
+    min-height: 500px;
+    max-height: 500px;
+    overflow: auto;
+}
+
+.admin-top-grid #allBookings,
+.admin-top-grid #platformControl {
+    min-height: 300px;
+    max-height: 300px;
+    overflow: auto;
+}
+
+.admin-top-grid .admin-wide-bar {
+    grid-column: 2 / 4;
+    min-height: 155px;
+    max-height: 155px;
+    margin-top: 0;
+}
+
+.admin-chart-calendar-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 22px;
+    align-items: start;
+    margin-top: 22px;
+}
+
+#adminShopChartPanel,
+#adminCalendarPanel {
+    width: auto;
+    max-width: none;
+    min-height: 520px;
+}
+
+.admin-shop-line-chart {
+    width: 100%;
+    min-height: 360px;
+    margin-top: 18px;
+    border-radius: 24px;
+    background: rgba(255,255,255,0.035);
+    border: 1px solid rgba(255,255,255,0.12);
+    padding: 18px;
+}
+
+.admin-shop-line-chart svg {
+    width: 100%;
+    height: 320px;
+    display: block;
+}
+
+.chart-axis-line,
+.chart-grid-line {
+    stroke: rgba(255,255,255,0.18);
+    stroke-width: 1;
+}
+
+.chart-line-path {
+    fill: none;
+    stroke: rgba(255,255,255,0.78);
+    stroke-width: 3;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    filter: drop-shadow(0 0 8px rgba(255,255,255,0.28));
+}
+
+.chart-point {
+    fill: rgba(255,255,255,0.92);
+    stroke: rgba(0,0,0,0.45);
+    stroke-width: 2;
+}
+
+.chart-label,
+.chart-number {
+    fill: rgba(255,255,255,0.78);
+    font-size: 10px;
+}
+
+.chart-number {
+    fill: white;
+    font-weight: 700;
+}
+
+.chart-shop-list {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px 18px;
+    margin-top: 12px;
+    color: rgba(255,255,255,0.72);
+    font-size: 12px;
+}
+
+.chart-shop-list span b {
+    color: white;
+}
+
+.admin-chart-calendar-row #adminCalendarPanel .booking-calendar {
+    grid-template-columns: repeat(7, minmax(42px, 1fr));
+    gap: 9px;
+}
+
+.admin-chart-calendar-row #adminCalendarPanel .calendar-day {
+    min-height: 52px;
+    border-radius: 15px;
+}
+
+.admin-chart-calendar-row #adminCalendarPanel .calendar-empty {
+    min-height: 52px;
+}
+
+@media (max-width: 900px) {
+    .admin-top-grid #allBookings,
+    .admin-top-grid #platformControl,
+    .admin-top-grid #allShops,
+    .admin-top-grid .admin-wide-bar {
+        min-height: auto;
+        max-height: none;
+    }
+
+    .admin-top-grid .admin-wide-bar {
+        grid-column: auto;
+    }
+
+    .admin-chart-calendar-row {
+        grid-template-columns: 1fr;
+    }
+
+    #adminShopChartPanel,
+    #adminCalendarPanel {
+        min-height: auto;
+    }
+
+    .chart-shop-list {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* vaniday spacing cleanup for merchant dashboard */
+.admin-top-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    grid-template-areas:
+        "shops bookings actions"
+        "shops activity activity";
+    gap: 18px;
+    align-items: start;
+}
+
+.admin-top-grid #allShops {
+    grid-area: shops;
+    min-height: 410px;
+    max-height: 410px;
+    overflow: auto;
+}
+
+.admin-top-grid #allBookings {
+    grid-area: bookings;
+    min-height: 245px;
+    max-height: 245px;
+    overflow: auto;
+}
+
+.admin-top-grid #platformControl {
+    grid-area: actions;
+    min-height: 245px;
+    max-height: 245px;
+    overflow: auto;
+}
+
+.admin-top-grid .admin-wide-bar {
+    grid-area: activity;
+    grid-column: auto;
+    min-height: 145px;
+    max-height: 145px;
+    margin-top: 0;
+}
+
+.admin-chart-calendar-row {
+    margin-top: 18px;
+    gap: 18px;
+}
+
+#adminShopChartPanel,
+#adminCalendarPanel {
+    min-height: 500px;
+}
+
+.admin-shop-line-chart {
+    min-height: 340px;
+}
+
+.admin-shop-line-chart svg {
+    height: 300px;
+}
+
+@media (max-width: 900px) {
+    .admin-top-grid {
+        grid-template-columns: 1fr;
+        grid-template-areas:
+            "shops"
+            "bookings"
+            "actions"
+            "activity";
+    }
+}
+
+/* vaniday-mon: widen only Booking Activity Bar to fill the marked empty space */
+.admin-top-grid .admin-wide-bar {
+    grid-area: activity !important;
+    grid-column: 2 / 4 !important;
+    width: 100% !important;
+}
+
+/* ---------- Requested booking + merchant premium updates ---------- */
+.booking-date-time-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+}
+
+.booking-label {
+    display: block;
+    color: rgba(255, 215, 0, 0.9);
+    font-size: 13px;
+    margin-bottom: 2px;
+}
+
+.available-slot-panel,
+.booking-summary-box,
+.premium-booking-card {
+    border: 1px solid rgba(255, 215, 0, 0.35);
+    background: linear-gradient(135deg, rgba(255,255,255,0.12), rgba(255,215,0,0.08), rgba(0,0,0,0.62));
+    box-shadow: 0 0 28px rgba(255, 215, 0, 0.22), inset 0 1px 0 rgba(255,255,255,0.18);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+}
+
+.available-slot-panel {
+    padding: 15px;
+    border-radius: 16px;
+    margin-bottom: 18px;
+}
+
+.mini-calendar-title {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+    color: gold;
+    font-weight: bold;
+}
+
+.mini-calendar-title small {
+    color: rgba(255,255,255,0.75);
+    font-weight: normal;
+}
+
+.slot-buttons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.slot-buttons button {
+    margin: 0;
+    padding: 9px 12px;
+    border-radius: 999px;
+    background: rgba(255, 215, 0, 0.18);
+    color: white;
+    border: 1px solid rgba(255, 215, 0, 0.45);
+}
+
+.slot-buttons button:hover {
+    background: gold;
+    color: black;
+}
+
+.no-slot-text {
+    margin: 0;
+    color: rgba(255,255,255,0.78);
+}
+
+.booking-summary-box {
+    padding: 18px;
+    border-radius: 18px;
+    margin: 18px 0;
+}
+
+.booking-summary-box h3 {
+    margin-top: 0;
+    color: gold;
+}
+
+.booking-summary-box p {
+    margin: 8px 0;
+}
+
+.merchant-search-panel {
+    width: min(920px, calc(100% - 36px));
+    margin: 0 auto 28px;
+    padding: 18px;
+    border-radius: 22px;
+    text-align: center;
+}
+
+.merchant-search-panel input {
+    max-width: 560px;
+    margin: 0 auto 14px;
+    display: block;
+    border: 1px solid rgba(255, 215, 0, 0.35);
+    background: rgba(255,255,255,0.94);
+}
+
+.merchant-filter-buttons {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.merchant-filter-buttons button {
+    margin: 0;
+    border-radius: 999px;
+    padding: 10px 16px;
+}
+
+#merchantSearchMessage {
+    margin-bottom: 0;
+    color: rgba(255,255,255,0.8);
+}
+
+.premium-booking-card {
+    position: relative;
+    max-width: 560px;
+    margin: 28px auto;
+    padding: 30px;
+    border-radius: 28px;
+    overflow: hidden;
+}
+
+.premium-booking-card::before {
+    content: "";
+    position: absolute;
+    top: -40%;
+    left: -60%;
+    width: 70%;
+    height: 180%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.24), transparent);
+    transform: rotate(22deg);
+    animation: premiumSweep 3.8s infinite;
+}
+
+.premium-booking-card h2,
+.premium-booking-card p,
+.premium-booking-card button,
+.gold-success-tick,
+.booking-status-pill,
+.premium-booking-lines,
+.premium-booking-actions {
+    position: relative;
+    z-index: 2;
+}
+
+.gold-success-tick {
+    width: 74px;
+    height: 74px;
+    margin: 0 auto 15px;
+    border-radius: 50%;
+    background: radial-gradient(circle, #fff8b8, gold, #b8860b);
+    color: #111;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 0 28px rgba(255, 215, 0, 0.9), 0 0 55px rgba(255, 215, 0, 0.35);
+    animation: glitterTick 1.6s infinite alternate;
+}
+
+.gold-success-tick span {
+    font-size: 42px;
+    font-weight: 900;
+}
+
+.booking-status-pill {
+    width: fit-content;
+    margin: 0 auto 16px;
+    padding: 8px 16px;
+    border-radius: 999px;
+    color: #111;
+    background: gold;
+    font-weight: bold;
+    box-shadow: 0 0 18px rgba(255, 215, 0, 0.55);
+}
+
+.premium-booking-card h2 {
+    color: gold;
+    text-align: center;
+}
+
+.premium-booking-lines {
+    background: rgba(0,0,0,0.28);
+    border-radius: 18px;
+    padding: 16px;
+    margin-top: 16px;
+}
+
+.premium-booking-actions {
+    text-align: center;
+    margin-top: 18px;
+}
+
+@keyframes glitterTick {
+    from {
+        transform: scale(1) rotate(-4deg);
+        filter: brightness(1);
+    }
+    to {
+        transform: scale(1.08) rotate(4deg);
+        filter: brightness(1.32);
+    }
+}
+
+@keyframes premiumSweep {
+    0% {
+        left: -70%;
+    }
+    55% {
+        left: 120%;
+    }
+    100% {
+        left: 120%;
+    }
+}
+
+@media (max-width: 650px) {
+    .booking-date-time-row {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* ---------- Corrected realistic booking availability UI ---------- */
+.mini-calendar-days {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 8px;
+    margin-bottom: 14px;
+}
+
+.mini-day-card {
+    margin: 0;
+    padding: 9px 6px;
+    min-width: 0;
+    border-radius: 14px;
+    border: 1px solid rgba(255, 215, 0, 0.28);
+    background: rgba(255, 255, 255, 0.08);
+    color: white;
+    box-shadow: none;
+}
+
+.mini-day-card span {
+    display: block;
+    font-size: 11px;
+    color: rgba(255, 255, 255, 0.72);
+    margin-bottom: 3px;
+}
+
+.mini-day-card b {
+    display: block;
+    font-size: 17px;
+    color: gold;
+}
+
+.mini-day-card:hover,
+.active-mini-day {
+    background: gold;
+    color: black;
+    transform: translateY(-2px);
+}
+
+.mini-day-card:hover span,
+.mini-day-card:hover b,
+.active-mini-day span,
+.active-mini-day b {
+    color: black;
+}
+
+.merchant-filter-buttons .active-filter {
+    background: gold;
+    color: black;
+    box-shadow: none;
+    border-color: gold;
+}
+
+.booking-summary-box {
+    text-align: left;
+}
+
+.booking-summary-box h3::after {
+    content: "";
+    display: block;
+    width: 56px;
+    height: 2px;
+    background: gold;
+    margin-top: 8px;
+}
+
+.booking-status-pill {
+    letter-spacing: 0.4px;
+}
+
+@media (max-width: 650px) {
+    .mini-calendar-days {
+        grid-template-columns: repeat(4, 1fr);
+    }
+}
+
+/* Simple merchant search section */
+.simple-search-panel {
+    width: min(620px, calc(100% - 36px));
+    margin: 0 auto 24px;
+    padding: 0;
+    border: none;
+    background: transparent;
+    box-shadow: none;
+}
+
+.simple-search-panel input {
+    width: 100%;
+    max-width: 100%;
+    margin: 0 auto 8px;
+    padding: 14px 18px;
+    border-radius: 14px;
+    border: 1px solid rgba(255, 215, 0, 0.35);
+    background: rgba(255,255,255,0.96);
+}
+
+.simple-search-panel #merchantSearchMessage {
+    margin: 6px 0 0;
+    font-size: 14px;
+    color: rgba(255,255,255,0.72);
+}
+
+
+/* vaniday-26 shop detail page updates */
+.shop-title-link {
+    color: gold;
+    text-decoration: none;
+}
+
+.shop-title-link:hover {
+    color: orange;
+}
+
+.heart-like-btn {
+    background: rgba(255,255,255,0.92);
+    color: #111;
+    border: 1px solid rgba(255,215,0,0.45);
+    border-radius: 999px;
+    padding: 9px 14px;
+}
+
+.heart-like-btn:hover,
+.detail-heart {
+    background: #ffe6ef;
+    color: #d0003b;
+}
+
+.shop-detail-shell {
+    width: min(1180px, calc(100% - 36px));
+    margin: 35px auto;
+}
+
+.shop-detail-hero {
+    display: grid;
+    grid-template-columns: 1.1fr 0.9fr;
+    gap: 24px;
+    align-items: center;
+    background: rgba(28,28,28,0.88);
+    border: 1px solid rgba(255,215,0,0.28);
+    border-radius: 28px;
+    padding: 24px;
+    box-shadow: 0 0 32px rgba(255,215,0,0.18);
+}
+
+.shop-detail-hero img {
+    width: 100%;
+    height: 360px;
+    object-fit: cover;
+    border-radius: 24px;
+}
+
+.shop-detail-hero h1 {
+    color: gold;
+    font-size: 42px;
+    margin-bottom: 10px;
+}
+
+.shop-detail-layout {
+    display: grid;
+    grid-template-columns: 1fr 360px;
+    gap: 24px;
+    margin-top: 24px;
+}
+
+.shop-left-panel,
+.shop-right-panel {
+    background: rgba(28,28,28,0.9);
+    border: 1px solid rgba(255,215,0,0.25);
+    border-radius: 24px;
+    padding: 24px;
+}
+
+.shop-left-panel h2,
+.shop-right-panel h2 {
+    color: gold;
+}
+
+.shop-left-panel p,
+.shop-right-panel p {
+    color: rgba(255,255,255,0.86);
+    line-height: 1.7;
+}
+
+.comment-item,
+.user-msg,
+.ai-msg {
+    background: rgba(255,255,255,0.08);
+    border-radius: 14px;
+    padding: 10px 12px;
+    margin: 8px 0;
+}
+
+.detail-calendar {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+}
+
+.detail-calendar-day {
+    margin: 0;
+    padding: 12px;
+    border-radius: 16px;
+    background: rgba(255,255,255,0.09);
+    color: white;
+    border: 1px solid rgba(255,255,255,0.12);
+}
+
+.detail-calendar-day span {
+    display: block;
+    margin-top: 5px;
+    font-size: 12px;
+}
+
+.detail-date-free {
+    border-color: rgba(126, 255, 155, 0.65);
+}
+
+.detail-date-some {
+    border-color: rgba(255, 215, 0, 0.75);
+}
+
+.detail-date-full {
+    border-color: rgba(255, 80, 80, 0.75);
+    opacity: 0.75;
+}
+
+.tele-chat-box {
+    margin-top: 24px;
+}
+
+.chat-messages {
+    max-height: 220px;
+    overflow-y: auto;
+    background: rgba(0,0,0,0.25);
+    border-radius: 18px;
+    padding: 12px;
+    margin-bottom: 12px;
+}
+
+.ai-msg {
+    border-left: 3px solid gold;
+}
+
+.user-msg {
+    border-left: 3px solid white;
+}
+
+.owner-glow-shop {
+    filter: drop-shadow(0 0 22px rgba(255, 215, 0, 0.35));
+}
+
+.booking-summary-box,
+.booking-summary-box h3,
+.booking-summary-box p,
+.booking-summary-box b {
+    color: #111 !important;
+}
+
+.booking-summary-box {
+    background: rgba(255,255,255,0.92) !important;
+}
+
+@media (max-width: 850px) {
+    .shop-detail-hero,
+    .shop-detail-layout {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* vaniday-shops premium polish */
+.premium-search-wrap {
+    position: relative;
+    width: 100%;
+}
+
+.premium-search-wrap input {
+    padding-left: 54px !important;
+    background: linear-gradient(135deg, rgba(255,255,255,0.98), rgba(255,248,220,0.94)) !important;
+    border: 1px solid rgba(255, 215, 0, 0.55) !important;
+    box-shadow: 0 16px 35px rgba(0,0,0,0.25), inset 0 0 0 1px rgba(255,255,255,0.25);
+}
+
+.search-glass {
+    position: absolute;
+    left: 18px;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 2;
+    width: 25px;
+    height: 25px;
+    display: grid;
+    place-items: center;
+    border-radius: 50%;
+    color: #1b1b1b;
+    font-size: 28px;
+    font-weight: 900;
+}
+
+.shop-detail-page nav {
+    backdrop-filter: blur(14px);
+}
+
+.shop-detail-shell {
+    animation: shopFadeIn 0.45s ease both;
+}
+
+@keyframes shopFadeIn {
+    from { opacity: 0; transform: translateY(16px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.shop-detail-hero {
+    background:
+        radial-gradient(circle at 18% 18%, rgba(255,215,0,0.13), transparent 28%),
+        linear-gradient(135deg, rgba(38,38,38,0.96), rgba(14,14,14,0.94));
+    border: 1px solid rgba(255,215,0,0.38);
+    box-shadow: 0 24px 70px rgba(0,0,0,0.42), 0 0 42px rgba(255,215,0,0.14);
+}
+
+.shop-detail-hero img {
+    box-shadow: 0 20px 45px rgba(0,0,0,0.45);
+    border: 1px solid rgba(255,255,255,0.18);
+}
+
+.shop-detail-hero h1 {
+    letter-spacing: -1px;
+    text-shadow: 0 0 28px rgba(255,215,0,0.25);
+}
+
+.shop-detail-hero button,
+.shop-left-panel button,
+.shop-right-panel button {
+    border: 1px solid rgba(255,255,255,0.16);
+    box-shadow: 0 12px 25px rgba(0,0,0,0.22);
+}
+
+.shop-left-panel,
+.shop-right-panel {
+    background:
+        linear-gradient(145deg, rgba(30,30,30,0.96), rgba(15,15,15,0.94));
+    border: 1px solid rgba(255,215,0,0.32);
+    box-shadow: 0 20px 45px rgba(0,0,0,0.35);
+}
+
+.shop-left-panel h2,
+.shop-right-panel h2 {
+    font-size: 25px;
+    margin-top: 6px;
+}
+
+.service-lux-list p {
+    background: rgba(255,255,255,0.055);
+    border: 1px solid rgba(255,255,255,0.09);
+    border-radius: 16px;
+    padding: 14px 16px;
+    margin: 10px 0;
+}
+
+.service-lux-list b {
+    color: #ffd700;
+}
+
+.review-small-text,
+.empty-review-text {
+    color: rgba(255,255,255,0.72) !important;
+    font-size: 14px;
+}
+
+.review-section input,
+.review-section select,
+.tele-chat-box input,
+.reply-input {
+    width: 100%;
+    box-sizing: border-box;
+    margin: 8px 0;
+    padding: 14px 16px;
+    color: white;
+    background: rgba(255,255,255,0.09);
+    border: 1px solid rgba(255,255,255,0.16);
+    border-radius: 16px;
+    outline: none;
+}
+
+.review-section select option {
+    color: #111;
+}
+
+.review-card {
+    border: 1px solid rgba(255,215,0,0.17);
+    background: linear-gradient(135deg, rgba(255,255,255,0.10), rgba(255,255,255,0.045));
+}
+
+.review-top-line {
+    display: flex;
+    justify-content: space-between;
+    gap: 14px;
+    align-items: center;
+}
+
+.review-stars {
+    color: #ffd700;
+    letter-spacing: 2px;
+    white-space: nowrap;
+}
+
+.tiny-review-btn {
+    padding: 8px 12px !important;
+    font-size: 12px;
+    border-radius: 999px !important;
+    margin: 4px 6px 4px 0;
+}
+
+.owner-reply-box {
+    margin-top: 10px;
+    padding: 12px 14px;
+    border-radius: 16px;
+    background: rgba(255,215,0,0.10);
+    border-left: 3px solid #ffd700;
+}
+
+.owner-reply-box b {
+    color: #ffd700;
+}
+
+.owner-reply-box p {
+    margin: 6px 0 0;
+}
+
+.detail-calendar {
+    display: block;
+}
+
+.lux-calendar-head {
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+    align-items: center;
+    margin: 12px 0;
+    color: white;
+}
+
+.lux-calendar-head span {
+    font-size: 11px;
+    color: rgba(255,255,255,0.7);
+}
+
+.lux-calendar-head i {
+    display: inline-block;
+    width: 7px;
+    height: 7px;
+    margin-left: 7px;
+    border-radius: 50%;
+    background: #7eff9b;
+}
+
+.lux-calendar-head i:nth-child(2) {
+    background: #ffd700;
+}
+
+.lux-calendar-head i:nth-child(3) {
+    background: #ff6666;
+}
+
+.lux-calendar-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+}
+
+.detail-calendar-day {
+    text-align: left;
+    min-height: 96px;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.detail-calendar-day:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 12px 25px rgba(0,0,0,0.26);
+}
+
+.detail-calendar-day strong {
+    display: block;
+    font-size: 28px;
+    color: white;
+    margin: 3px 0;
+}
+
+.detail-calendar-day small {
+    color: rgba(255,255,255,0.66);
+}
+
+.detail-date-free {
+    background: linear-gradient(145deg, rgba(126,255,155,0.14), rgba(255,255,255,0.05));
+}
+
+.detail-date-some {
+    background: linear-gradient(145deg, rgba(255,215,0,0.15), rgba(255,255,255,0.05));
+}
+
+.detail-date-full {
+    background: linear-gradient(145deg, rgba(255,80,80,0.14), rgba(255,255,255,0.04));
+}
+
+.tele-chat-box {
+    padding-top: 6px;
+}
+
+.chat-messages {
+    background:
+        radial-gradient(circle at top right, rgba(255,215,0,0.12), transparent 35%),
+        rgba(0,0,0,0.35);
+    border: 1px solid rgba(255,255,255,0.09);
+    box-shadow: inset 0 0 25px rgba(0,0,0,0.18);
+}
+
+.ai-msg,
+.user-msg {
+    color: rgba(255,255,255,0.9);
+}
+
+.ai-msg b,
+.user-msg b {
+    color: #ffd700;
+}
+
+.ai-msg p,
+.user-msg p {
+    margin: 4px 0 0;
+    color: rgba(255,255,255,0.84);
+}
+
+.user-msg {
+    margin-left: 18px;
+    background: rgba(255,255,255,0.12);
+}
+
+.ai-msg {
+    margin-right: 18px;
+    background: rgba(255,215,0,0.09);
+}
+
+.heart-like-btn.detail-heart,
+.heart-like-btn:hover {
+    background: linear-gradient(135deg, #ffeaf1, #ffffff);
+    color: #d0003b;
+}
+
+@media (max-width: 650px) {
+    .lux-calendar-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .review-top-line {
+        display: block;
+    }
+}
+
+/* vaniday-apppp requested final polish */
+.premium-search-row {
+    width: min(900px, 92vw);
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 14px;
+}
+
+.search-glass-outside {
+    width: 52px;
+    height: 52px;
+    display: grid;
+    place-items: center;
+    border-radius: 50%;
+    background: linear-gradient(135deg, rgba(255,255,255,0.98), rgba(255,248,220,0.94));
+    border: 1px solid rgba(255, 215, 0, 0.65);
+    box-shadow: 0 16px 35px rgba(0,0,0,0.25);
+    font-size: 28px;
+}
+
+.premium-search-wrap input {
+    padding-left: 28px !important;
+    color: #171717 !important;
+}
+
+.premium-search-wrap input::placeholder {
+    color: rgba(25,25,25,0.72) !important;
+}
+
+.shop-detail-hero {
+    grid-template-columns: 1.45fr 0.75fr !important;
+}
+
+.shop-detail-hero img {
+    height: 420px !important;
+    object-fit: cover;
+}
+
+.shop-contact-info {
+    margin: 16px 0 18px;
+    padding: 16px 18px;
+    border-radius: 20px;
+    background: rgba(255,255,255,0.07);
+    border: 1px solid rgba(255,255,255,0.12);
+}
+
+.shop-contact-info p {
+    margin: 6px 0;
+    color: rgba(255,255,255,0.88);
+}
+
+.shop-contact-info b {
+    color: #ffd700;
+}
+
+#detailDescription {
+    max-width: 780px;
+    line-height: 1.75;
+}
+
+.shop-calendar-view {
+    display: grid !important;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 7px;
+    padding: 14px;
+    border-radius: 22px;
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.10);
+}
+
+.detail-real-calendar-title {
+    grid-column: 1 / -1;
+}
+
+.shop-calendar-view .calendar-week {
+    text-align: center;
+    font-size: 11px;
+    color: #ffd700;
+    font-weight: 700;
+}
+
+.shop-calendar-view .calendar-empty {
+    min-height: 42px;
+}
+
+.shop-calendar-view .calendar-day {
+    min-height: 50px;
+    padding: 7px 4px !important;
+    border-radius: 14px !important;
+    text-align: center;
+    background: rgba(255,255,255,0.08);
+}
+
+.shop-calendar-view .calendar-day span {
+    display: block;
+    font-size: 15px;
+    color: white;
+}
+
+.shop-calendar-view .calendar-day small {
+    display: block;
+    font-size: 9px;
+    margin-top: 3px;
+}
+
+.shop-status-day.free-day {
+    border-color: rgba(77, 255, 151, 0.75) !important;
+    background: linear-gradient(145deg, rgba(77,255,151,0.18), rgba(255,255,255,0.05)) !important;
+}
+
+.shop-status-day.some-day {
+    border-color: rgba(255, 215, 0, 0.85) !important;
+    background: linear-gradient(145deg, rgba(255,215,0,0.20), rgba(255,255,255,0.05)) !important;
+}
+
+.shop-status-day.full-day {
+    border-color: rgba(255, 92, 92, 0.85) !important;
+    background: linear-gradient(145deg, rgba(255,92,92,0.18), rgba(255,255,255,0.04)) !important;
+}
+
+.shop-calendar-details {
+    margin: 12px 0 22px;
+    padding: 14px;
+    border-radius: 18px;
+    background: rgba(255,255,255,0.07);
+    color: rgba(255,255,255,0.86);
+}
+
+.shop-calendar-details h3,
+.shop-calendar-details p {
+    margin: 5px 0;
+}
+
+.telegram-style-chat {
+    border-radius: 24px;
+    padding: 16px;
+    background:
+        linear-gradient(rgba(10, 37, 56, 0.78), rgba(10, 37, 56, 0.78)),
+        radial-gradient(circle at 20% 20%, rgba(54, 170, 255, 0.34), transparent 28%),
+        radial-gradient(circle at 80% 10%, rgba(255,255,255,0.13), transparent 25%);
+    border: 1px solid rgba(65, 179, 255, 0.35);
+    box-shadow: inset 0 0 35px rgba(0,0,0,0.28), 0 18px 36px rgba(0,0,0,0.28);
+}
+
+.telegram-style-chat h2 {
+    color: #ffffff;
+    display: flex;
+    align-items: center;
+    gap: 9px;
+}
+
+.telegram-style-chat h2 span {
+    width: 30px;
+    height: 30px;
+    display: grid;
+    place-items: center;
+    border-radius: 50%;
+    background: #2aabee;
+    color: white;
+}
+
+.telegram-style-chat .chat-messages {
+    min-height: 260px;
+    background:
+        linear-gradient(135deg, rgba(229, 246, 255, 0.10), rgba(255,255,255,0.03));
+    border: 1px solid rgba(255,255,255,0.12);
+}
+
+.telegram-style-chat .ai-msg {
+    margin-right: 34px;
+    background: rgba(255,255,255,0.92);
+    color: #123;
+    border-left: none;
+    border-radius: 18px 18px 18px 6px;
+}
+
+.telegram-style-chat .user-msg {
+    margin-left: 34px;
+    background: rgba(208, 245, 196, 0.94);
+    color: #123;
+    border-left: none;
+    border-radius: 18px 18px 6px 18px;
+}
+
+.telegram-style-chat .ai-msg b,
+.telegram-style-chat .user-msg b,
+.telegram-style-chat .ai-msg p,
+.telegram-style-chat .user-msg p {
+    color: #123 !important;
+}
+
+.telegram-style-chat input {
+    background: rgba(255,255,255,0.96) !important;
+    color: #111 !important;
+    border: 1px solid rgba(255,255,255,0.45) !important;
+}
+
+.telegram-style-chat input::placeholder {
+    color: rgba(20,20,20,0.60);
+}
+
+@media (max-width: 900px) {
+    .shop-detail-hero {
+        grid-template-columns: 1fr !important;
+    }
+
+    .shop-detail-hero img {
+        height: 320px !important;
+    }
+
+    .premium-search-row {
+        gap: 8px;
+    }
+}
+
+/* vaniday-woopwooop search bar update */
+.merchant-page .merchant-search-panel {
+    margin-top: 26px;
+}
+
+.merchant-page .premium-search-row {
+    width: min(760px, 88vw);
+    height: 58px;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 0;
+    background: #252525;
+    border-radius: 999px;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.06), 0 16px 45px rgba(0,0,0,0.32);
+    padding: 0 18px 0 10px;
+}
+
+.merchant-page .search-glass-outside {
+    width: 46px;
+    height: 46px;
+    min-width: 46px;
+    display: grid;
+    place-items: center;
+    border-radius: 50%;
+    background: #3a3a3a;
+    border: none;
+    box-shadow: none;
+    font-size: 0;
+    margin-right: 12px;
+    position: relative;
+}
+
+.merchant-page .search-glass-outside::before {
+    content: "";
+    width: 15px;
+    height: 15px;
+    border: 3px solid #cfcfcf;
+    border-radius: 50%;
+    position: absolute;
+    top: 12px;
+    left: 12px;
+}
+
+.merchant-page .search-glass-outside::after {
+    content: "";
+    width: 12px;
+    height: 3px;
+    background: #cfcfcf;
+    border-radius: 99px;
+    position: absolute;
+    top: 29px;
+    left: 28px;
+    transform: rotate(45deg);
+}
+
+.merchant-page .premium-search-wrap {
+    flex: 1;
+    height: 100%;
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+}
+
+.merchant-page .premium-search-wrap input,
+.merchant-page .simple-search-panel input,
+.merchant-page .merchant-search-panel input {
+    width: 100%;
+    height: 100%;
+    background: transparent !important;
+    border: none !important;
+    outline: none !important;
+    box-shadow: none !important;
+    padding: 0 !important;
+    color: #ffffff !important;
+    font-size: 18px;
+    font-weight: 500;
+}
+
+.merchant-page .premium-search-wrap input::placeholder,
+.merchant-page .simple-search-panel input::placeholder,
+.merchant-page .merchant-search-panel input::placeholder {
+    color: rgba(255,255,255,0.88) !important;
+}
+
+/* vaniday-26frifriii final merchant search polish */
+.merchant-page .merchant-search-panel {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+}
+
+.merchant-page .premium-search-row {
+    width: min(760px, 86vw) !important;
+    height: 58px !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+    justify-content: center !important;
+    background: linear-gradient(135deg, rgba(255,255,255,0.18), rgba(255,255,255,0.06)) !important;
+    border: 1px solid rgba(255,255,255,0.22) !important;
+    box-shadow:
+        inset 0 1px 0 rgba(255,255,255,0.32),
+        inset 0 -1px 0 rgba(255,255,255,0.08),
+        0 18px 45px rgba(0,0,0,0.28),
+        0 0 26px rgba(255,215,0,0.08) !important;
+    backdrop-filter: blur(22px) saturate(135%) !important;
+    -webkit-backdrop-filter: blur(22px) saturate(135%) !important;
+}
+
+.merchant-page .premium-search-row::before {
+    content: "";
+    position: absolute;
+    inset: 1px;
+    border-radius: 999px;
+    background: linear-gradient(180deg, rgba(255,255,255,0.20), rgba(255,255,255,0.02));
+    pointer-events: none;
+}
+
+.merchant-page .search-glass-outside {
+    background: rgba(255,255,255,0.12) !important;
+    border: 1px solid rgba(255,255,255,0.14) !important;
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.18) !important;
+    z-index: 2;
+}
+
+.merchant-page .search-glass-outside::before {
+    border-color: rgba(255,255,255,0.86) !important;
+}
+
+.merchant-page .search-glass-outside::after {
+    background: rgba(255,255,255,0.86) !important;
+}
+
+.merchant-page .premium-search-wrap {
+    z-index: 2;
+}
+
+.merchant-page .premium-search-wrap input,
+.merchant-page .simple-search-panel input,
+.merchant-page .merchant-search-panel input {
+    color: #fff !important;
+    text-shadow: 0 1px 8px rgba(0,0,0,0.3);
+}
+
+.merchant-page .premium-search-wrap input::placeholder,
+.merchant-page .simple-search-panel input::placeholder,
+.merchant-page .merchant-search-panel input::placeholder {
+    color: rgba(255,255,255,0.88) !important;
+}
+
+.merchant-page .merchant-card {
+    padding-bottom: 84px !important;
+}
+
+.merchant-page .merchant-card button {
+    position: absolute !important;
+    left: 24px;
+    right: 24px;
+    bottom: 22px;
+    z-index: 5 !important;
+    margin: 0 !important;
+    color: #111 !important;
+    background: linear-gradient(135deg, #fff8cc, #ffd700) !important;
+    border: 1px solid rgba(255,255,255,0.3) !important;
+    box-shadow: 0 12px 28px rgba(255,215,0,0.20), inset 0 1px 0 rgba(255,255,255,0.55) !important;
+}
+
+.merchant-page .merchant-card button:hover {
+    background: #ffffff !important;
+    transform: translateY(-2px);
+}
+
+.login-loyalty-note {
+    margin: 8px 0 18px;
+    padding: 12px 14px;
+    border-radius: 16px;
+    background: rgba(255, 255, 255, 0.76);
+    color: #000 !important;
+    font-weight: 600;
+    line-height: 1.5;
+}
+
+.simple-top-calendar {
+    margin-top: 22px;
+    margin-bottom: 22px;
+}
+
+.simple-top-calendar #adminCalendarPanel,
+.simple-top-calendar #ownerCalendarPanel {
+    width: 100%;
+}
+
+
+/* Final requested updates */
+.owner-calendar-top-grid #ownerCalendarPanel {
+    grid-column: 1 / -1;
+    width: 100%;
+}
+
+.owner-calendar-top-grid #ownerCalendarPanel .booking-calendar {
+    grid-template-columns: repeat(7, minmax(72px, 1fr));
+    gap: 10px;
+}
+
+.single-booking-box {
+    margin: 18px 0;
+    padding: 18px;
+    border-radius: 22px;
+    border: 1px solid rgba(255, 215, 0, 0.25);
+    background: rgba(255,255,255,0.06);
+}
+
+.merchant-page .merchant-grid {
+    grid-template-columns: repeat(auto-fill, minmax(245px, 245px)) !important;
+    justify-content: center;
+}
+
+.merchant-page .merchant-card {
+    width: 245px !important;
+}
+
+.merchant-page .simple-search-panel {
+    width: min(500px, calc(100% - 48px));
+}
+
+.merchant-page .premium-search-row {
+    min-height: 54px !important;
+}
+
+.merchant-page .premium-search-wrap input,
+.merchant-page .simple-search-panel input,
+.merchant-page .merchant-search-panel input {
+    padding: 11px 15px !important;
+    border-radius: 12px !important;
+    background: rgba(245, 245, 245, 0.68) !important;
+    color: #222 !important;
+    text-shadow: none !important;
+}
+
+.merchant-page .premium-search-wrap input::placeholder,
+.merchant-page .simple-search-panel input::placeholder,
+.merchant-page .merchant-search-panel input::placeholder {
+    color: rgba(40,40,40,0.58) !important;
+}
+
+
+/* vaniday_sollu final fixes */
+.merchant-page .simple-search-panel {
+    width: min(430px, calc(100% - 56px)) !important;
+    padding: 8px 12px !important;
+    margin-bottom: 18px !important;
+}
+
+.merchant-page .premium-search-row {
+    min-height: 42px !important;
+    height: 42px !important;
+    max-width: 430px !important;
+    margin: 0 auto !important;
+    border-radius: 24px !important;
+    background: rgba(185, 185, 185, 0.38) !important;
+}
+
+.merchant-page .premium-search-wrap input,
+.merchant-page .simple-search-panel input,
+.merchant-page .merchant-search-panel input {
+    height: 42px !important;
+    min-height: 42px !important;
+    padding: 7px 12px !important;
+    font-size: 15px !important;
+    background: rgba(210, 210, 210, 0.72) !important;
+    color: #222 !important;
+}
+
+.merchant-page .search-glass-outside {
+    width: 42px !important;
+    height: 42px !important;
+    font-size: 18px !important;
+}
+
+.my-booking-page .premium-booking-card {
+    max-width: 1180px !important;
+    display: grid !important;
+    grid-template-columns: repeat(auto-fit, minmax(330px, 1fr)) !important;
+    gap: 18px !important;
+    align-items: start !important;
+}
+
+.my-booking-page .premium-booking-card > h2 {
+    grid-column: 1 / -1 !important;
+    text-align: center !important;
+    margin-bottom: 4px !important;
+}
+
+.my-booking-page .single-booking-box {
+    margin: 0 !important;
+}
+
+.owner-calendar-top-grid #ownerCalendarPanel {
+    max-width: 860px !important;
+    margin: 0 auto !important;
+    padding: 26px 28px !important;
+}
+
+.owner-calendar-top-grid #ownerCalendarPanel .booking-calendar {
+    grid-template-columns: repeat(7, minmax(42px, 1fr)) !important;
+    gap: 7px !important;
+}
+
+.owner-calendar-top-grid #ownerCalendarPanel .calendar-day {
+    min-height: 44px !important;
+    border-radius: 12px !important;
+    font-size: 13px !important;
+}
+
+.owner-calendar-top-grid #ownerCalendarPanel .calendar-day small {
+    font-size: 8px !important;
+}
+
+.owner-calendar-top-grid #ownerCalendarPanel .calendar-empty {
+    min-height: 44px !important;
+}
+
+.owner-calendar-top-grid #ownerCalendarPanel .calendar-title {
+    font-size: 19px !important;
+}
+
+.owner-calendar-top-grid #ownerCalendarPanel h2 {
+    font-size: 24px !important;
+}
+
+.owner-calendar-top-grid #ownerCalendarPanel p,
+.owner-calendar-top-grid #ownerCalendarPanel .calendar-details {
+    font-size: 14px !important;
+}
+
+.admin-top-grid {
+    grid-template-columns: repeat(3, minmax(220px, 1fr)) !important;
+    grid-template-areas: "shops bookings actions" !important;
+    gap: 14px !important;
+}
+
+.admin-top-grid #allShops,
+.admin-top-grid #allBookings,
+.admin-top-grid #platformControl {
+    min-height: 250px !important;
+    max-height: 250px !important;
+    padding: 26px !important;
+    overflow: auto !important;
+}
+
+.admin-top-grid #allShops h2,
+.admin-top-grid #allBookings h2,
+.admin-top-grid #platformControl h2 {
+    font-size: 27px !important;
+    margin-bottom: 16px !important;
+}
+
+.admin-top-grid .shop-link-button,
+.admin-top-grid #platformControl button {
+    padding: 12px 18px !important;
+    font-size: 15px !important;
+    margin: 6px 0 !important;
+}
+
+#adminGraphPanel,
+.admin-wide-bar {
+    display: none !important;
+}
+
+@media (max-width: 900px) {
+    .admin-top-grid {
+        grid-template-columns: 1fr !important;
+        grid-template-areas: "shops" "bookings" "actions" !important;
+    }
+}
+
+
+/* vaniday_2july search and rewards update */
+.merchant-page .premium-search-row {
+    width: min(620px, 76vw) !important;
+    height: 48px !important;
+    background: #ffffff !important;
+    border: 1px solid rgba(0,0,0,0.16) !important;
+    box-shadow: 0 10px 24px rgba(0,0,0,0.20) !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+}
+
+.merchant-page .premium-search-row::before {
+    display: none !important;
+}
+
+.merchant-page .search-glass-outside {
+    width: 38px !important;
+    height: 38px !important;
+    min-width: 38px !important;
+    background: #f2f2f2 !important;
+    color: #111 !important;
+    font-size: 22px !important;
+    font-weight: 800 !important;
+    font-family: Arial, sans-serif !important;
+    margin-right: 10px !important;
+}
+
+.merchant-page .search-glass-outside::before,
+.merchant-page .search-glass-outside::after {
+    display: none !important;
+}
+
+.merchant-page .premium-search-wrap input,
+.merchant-page .simple-search-panel input,
+.merchant-page .merchant-search-panel input {
+    color: #111 !important;
+    text-shadow: none !important;
+    font-size: 16px !important;
+}
+
+.merchant-page .premium-search-wrap input::placeholder,
+.merchant-page .simple-search-panel input::placeholder,
+.merchant-page .merchant-search-panel input::placeholder {
+    color: rgba(0,0,0,0.55) !important;
+}
+
+.reward-claim-list {
+    display: grid !important;
+    grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)) !important;
+    gap: 14px !important;
+}
+
+.reward-claim-item {
+    min-height: 110px !important;
+}
+
+.reward-claim-icon {
+    font-size: 14px !important;
+    text-align: center !important;
+}
+
+
+/* vaniday_final exact requested fixes */
+.merchant-page .premium-search-row {
+    width: min(620px, 84vw) !important;
+    height: 52px !important;
+    background: rgba(255,255,255,0.92) !important;
+    border: 1px solid rgba(235,235,235,0.96) !important;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.12) !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+    padding: 0 16px 0 8px !important;
+}
+
+.merchant-page .premium-search-row::before,
+.merchant-page .search-glass-outside::before,
+.merchant-page .search-glass-outside::after {
+    display: none !important;
+}
+
+.merchant-page .search-glass-outside {
+    width: 44px !important;
+    height: 44px !important;
+    min-width: 44px !important;
+    background: rgba(245,245,245,0.98) !important;
+    border: none !important;
+    box-shadow: none !important;
+    color: #111 !important;
+    font-size: 28px !important;
+    font-weight: 900 !important;
+    margin-right: 10px !important;
+}
+
+.merchant-page .premium-search-wrap {
+    background: rgba(255,255,255,0.76) !important;
+    border-radius: 14px !important;
+}
+
+.merchant-page .premium-search-wrap input,
+.merchant-page .simple-search-panel input,
+.merchant-page .merchant-search-panel input {
+    color: #2b2b2b !important;
+    text-shadow: none !important;
+    font-size: 16px !important;
+    background: rgba(255,255,255,0.76) !important;
+}
+
+.merchant-page .premium-search-wrap input::placeholder,
+.merchant-page .simple-search-panel input::placeholder,
+.merchant-page .merchant-search-panel input::placeholder {
+    color: rgba(60,60,60,0.72) !important;
+}
+
+.claim-panel {
+    overflow: visible !important;
+}
+
+.reward-claim-list {
+    grid-template-columns: 1fr !important;
+    gap: 12px !important;
+}
+
+.reward-claim-item {
+    display: grid !important;
+    grid-template-columns: 58px 1fr auto !important;
+    gap: 16px !important;
+    min-height: 74px !important;
+    padding: 14px 16px !important;
+    overflow: visible !important;
+}
+
+.reward-claim-item strong {
+    font-size: 15px !important;
+    line-height: 1.35 !important;
+    white-space: normal !important;
+    overflow-wrap: normal !important;
+    word-break: normal !important;
+}
+
+.reward-claim-item button {
+    position: static !important;
+    width: auto !important;
+    min-width: 86px !important;
+    padding: 9px 18px !important;
+    margin: 0 !important;
+}
+
+.reward-claim-icon {
+    width: 44px !important;
+    height: 44px !important;
+    font-size: 12px !important;
+}
+
+.admin-top-grid #allShops,
+.admin-top-grid #platformControl {
+    min-height: auto !important;
+    max-height: none !important;
+    overflow: visible !important;
+    padding: 28px 26px !important;
+}
+
+.admin-top-grid #allShops p {
+    margin: 9px 0 !important;
+}
+
+.admin-top-grid #platformControl button {
+    display: block !important;
+    width: 100% !important;
+    margin: 10px 0 !important;
+    padding: 13px 16px !important;
+}
+
+.shop-card-actions,
+.admin-shop-actions,
+.owner-shop-actions {
+    position: absolute !important;
+    left: 20px !important;
+    right: 20px !important;
+    bottom: 18px !important;
+    display: flex !important;
+    gap: 8px !important;
+    z-index: 10 !important;
+}
+
+.shop-card-actions button,
+.admin-shop-actions button,
+.owner-shop-actions button,
+.merchant-page .heart-like-btn {
+    position: static !important;
+    flex: 1 !important;
+    min-width: 0 !important;
+    padding: 10px 8px !important;
+    font-size: 13px !important;
+    margin: 0 !important;
+}
+
+.merchant-page .heart-like-btn {
+    left: auto !important;
+    right: 22px !important;
+    bottom: 70px !important;
+    width: auto !important;
+    display: inline-block !important;
+}
+
+.chart-summary-box {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px 18px;
+    margin: 12px 0 14px;
+    padding: 14px 16px;
+    border-radius: 16px;
+    background: rgba(255,255,255,0.07);
+    border: 1px solid rgba(255,255,255,0.12);
+}
+
+.chart-summary-box p {
+    margin: 0;
+    font-size: 14px;
+    color: rgba(255,255,255,0.88);
+}
+
+@media (max-width: 900px) {
+    .reward-claim-item {
+        grid-template-columns: 48px 1fr !important;
+    }
+
+    .reward-claim-item button {
+        grid-column: 1 / 3 !important;
+        width: 100% !important;
+    }
+
+    .chart-summary-box {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* FINAL: exact soft white Google-style merchant search bar only */
+.merchant-page .merchant-search-panel,
+.merchant-page .simple-search-panel {
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+    padding: 0 !important;
+    margin-top: 28px !important;
+}
+
+.merchant-page .premium-search-row {
+    position: relative !important;
+    width: min(520px, 82vw) !important;
+    height: 58px !important;
+    margin: 0 auto !important;
+    padding: 0 58px 0 18px !important;
+    border-radius: 999px !important;
+    background: rgba(250, 251, 254, 0.96) !important;
+    border: 1px solid rgba(218, 222, 230, 0.9) !important;
+    box-shadow: inset 0 2px 5px rgba(120, 130, 150, 0.12), 0 8px 20px rgba(0, 0, 0, 0.16) !important;
+    display: flex !important;
+    align-items: center !important;
+    gap: 12px !important;
+    overflow: hidden !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+}
+
+.merchant-page .premium-search-row::before {
+    display: none !important;
+}
+
+.merchant-page .premium-search-row::after {
+    content: "⌕" !important;
+    position: absolute !important;
+    right: 22px !important;
+    top: 50% !important;
+    transform: translateY(-52%) !important;
+    color: #8a8fa3 !important;
+    font-size: 34px !important;
+    font-weight: 300 !important;
+    line-height: 1 !important;
+    pointer-events: none !important;
+}
+
+.merchant-page .search-glass-outside {
+    width: auto !important;
+    height: auto !important;
+    min-width: 0 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+    color: #8a8fa3 !important;
+    font-size: 22px !important;
+    font-weight: 700 !important;
+    font-family: Arial, sans-serif !important;
+    line-height: 1 !important;
+}
+
+.merchant-page .search-glass-outside::before,
+.merchant-page .search-glass-outside::after {
+    display: none !important;
+}
+
+.merchant-page .premium-search-wrap {
+    flex: 1 !important;
+    height: 100% !important;
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+    border-radius: 0 !important;
+}
+
+.merchant-page .premium-search-wrap input,
+.merchant-page .simple-search-panel input,
+.merchant-page .merchant-search-panel input {
+    width: 100% !important;
+    height: 100% !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    border: none !important;
+    outline: none !important;
+    background: transparent !important;
+    box-shadow: none !important;
+    color: #676d7d !important;
+    font-size: 18px !important;
+    font-weight: 400 !important;
+    text-shadow: none !important;
+}
+
+.merchant-page .premium-search-wrap input::placeholder,
+.merchant-page .simple-search-panel input::placeholder,
+.merchant-page .merchant-search-panel input::placeholder {
+    color: #8a8fa3 !important;
+    opacity: 1 !important;
+}
+
+
+/* LAST FIX ONLY: small no-colour Google-style search and equal merchant buttons */
+.merchant-page .merchant-search-panel,
+.merchant-page .simple-search-panel {
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+    padding: 0 !important;
+    margin-top: 18px !important;
+}
+
+.merchant-page .premium-search-row {
+    position: relative !important;
+    width: min(760px, 94vw) !important;
+    height: 38px !important;
+    margin: 0 auto !important;
+    padding: 0 14px !important;
+    border-radius: 999px !important;
+    background: rgba(255, 255, 255, 0.94) !important;
+    border: 1px solid rgba(190, 194, 202, 0.78) !important;
+    box-shadow: inset 0 1px 3px rgba(130, 135, 150, 0.16), 0 3px 8px rgba(0, 0, 0, 0.08) !important;
+    display: flex !important;
+    align-items: center !important;
+    gap: 10px !important;
+    overflow: hidden !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+}
+
+.merchant-page .premium-search-row::before,
+.merchant-page .premium-search-row::after,
+.merchant-page .search-glass-outside::before,
+.merchant-page .search-glass-outside::after {
+    display: none !important;
+}
+
+.merchant-page .search-glass-outside {
+    width: 22px !important;
+    height: 22px !important;
+    min-width: 22px !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    border-radius: 50% !important;
+    background: transparent !important;
+    border: 2px solid #a6abb6 !important;
+    box-shadow: none !important;
+    color: #a6abb6 !important;
+    font-size: 11px !important;
+    font-weight: 700 !important;
+    font-family: Arial, sans-serif !important;
+    line-height: 18px !important;
+    text-align: center !important;
+    position: relative !important;
+}
+
+.merchant-page .search-glass-outside {
+    transform: rotate(0deg) !important;
+}
+
+.merchant-page .search-glass-outside + .premium-search-wrap::before {
+    content: "" !important;
+    position: absolute !important;
+    left: -7px !important;
+    top: 22px !important;
+    width: 8px !important;
+    height: 2px !important;
+    background: #a6abb6 !important;
+    transform: rotate(45deg) !important;
+    border-radius: 2px !important;
+}
+
+.merchant-page .premium-search-wrap {
+    position: relative !important;
+    flex: 1 !important;
+    height: 100% !important;
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+    border-radius: 0 !important;
+}
+
+.merchant-page .premium-search-wrap input,
+.merchant-page .simple-search-panel input,
+.merchant-page .merchant-search-panel input {
+    width: 100% !important;
+    height: 100% !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    border: none !important;
+    outline: none !important;
+    background: transparent !important;
+    box-shadow: none !important;
+    color: #5f6572 !important;
+    font-size: 16px !important;
+    font-weight: 400 !important;
+    text-shadow: none !important;
+}
+
+.merchant-page .premium-search-wrap input::placeholder,
+.merchant-page .simple-search-panel input::placeholder,
+.merchant-page .merchant-search-panel input::placeholder {
+    color: #8a8f9c !important;
+    opacity: 1 !important;
+}
+
+.merchant-page .merchant-grid {
+    align-items: stretch !important;
+}
+
+.merchant-page .merchant-card {
+    min-height: 560px !important;
+    height: auto !important;
+    display: flex !important;
+    flex-direction: column !important;
+}
+
+.merchant-page .merchant-card p {
+    margin: 6px 0 !important;
+}
+
+.merchant-card-actions-row {
+    margin-top: auto !important;
+    display: flex !important;
+    gap: 10px !important;
+    width: 100% !important;
+    padding-top: 14px !important;
+}
+
+.merchant-card-actions-row button {
+    flex: 1 !important;
+    margin: 0 !important;
+    padding: 11px 8px !important;
+    font-size: 13px !important;
+    border-radius: 999px !important;
+    white-space: nowrap !important;
+}
+
+.merchant-card-actions-row .merchant-like-btn {
+    background: rgba(255, 255, 255, 0.14) !important;
+    color: white !important;
+    border: 1px solid rgba(255,255,255,0.22) !important;
+}
+
+
+/* ONLY FINAL FIX: small plain search bar + side-by-side Book Now and Like buttons */
+.merchant-page .merchant-search-panel,
+.merchant-page .simple-search-panel {
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+    padding: 0 !important;
+    margin-top: 14px !important;
+}
+
+.merchant-page .premium-search-row {
+    position: relative !important;
+    width: min(460px, 82vw) !important;
+    height: 32px !important;
+    min-height: 32px !important;
+    margin: 0 auto !important;
+    padding: 0 12px !important;
+    border-radius: 999px !important;
+    background: rgba(255,255,255,0.93) !important;
+    border: 1px solid rgba(190,194,202,0.72) !important;
+    box-shadow: inset 0 1px 2px rgba(130,135,150,0.12), 0 2px 6px rgba(0,0,0,0.07) !important;
+    display: flex !important;
+    align-items: center !important;
+    gap: 8px !important;
+    overflow: hidden !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+}
+
+.merchant-page .premium-search-row::before,
+.merchant-page .premium-search-row::after,
+.merchant-page .search-glass-outside::before,
+.merchant-page .search-glass-outside::after {
+    display: none !important;
+}
+
+.merchant-page .search-glass-outside {
+    width: 14px !important;
+    height: 14px !important;
+    min-width: 14px !important;
+    margin: 0 2px 0 1px !important;
+    padding: 0 !important;
+    border-radius: 50% !important;
+    background: transparent !important;
+    border: 2px solid #a9adb8 !important;
+    box-shadow: none !important;
+    color: transparent !important;
+    font-size: 0 !important;
+    line-height: 0 !important;
+    position: relative !important;
+    display: inline-block !important;
+}
+
+.merchant-page .search-glass-outside + .premium-search-wrap::before {
+    content: "" !important;
+    position: absolute !important;
+    left: -6px !important;
+    top: 18px !important;
+    width: 7px !important;
+    height: 2px !important;
+    background: #a9adb8 !important;
+    transform: rotate(45deg) !important;
+    border-radius: 2px !important;
+}
+
+.merchant-page .premium-search-wrap {
+    position: relative !important;
+    flex: 1 !important;
+    height: 100% !important;
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+}
+
+.merchant-page .premium-search-wrap input,
+.merchant-page .simple-search-panel input,
+.merchant-page .merchant-search-panel input {
+    width: 100% !important;
+    height: 100% !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    border: none !important;
+    outline: none !important;
+    background: transparent !important;
+    box-shadow: none !important;
+    color: #5f6572 !important;
+    font-size: 14px !important;
+    font-weight: 400 !important;
+    text-shadow: none !important;
+}
+
+.merchant-page .premium-search-wrap input::placeholder,
+.merchant-page .simple-search-panel input::placeholder,
+.merchant-page .merchant-search-panel input::placeholder {
+    color: #9ba0ad !important;
+    opacity: 1 !important;
+}
+
+.merchant-page .merchant-card {
+    min-height: 560px !important;
+    height: auto !important;
+    display: flex !important;
+    flex-direction: column !important;
+    padding-bottom: 28px !important;
+}
+
+.merchant-page .merchant-card-actions-row {
+    margin-top: auto !important;
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 10px !important;
+    width: 100% !important;
+    padding-top: 14px !important;
+}
+
+.merchant-page .merchant-card-actions-row button,
+.merchant-page .merchant-card-actions-row .merchant-like-btn {
+    position: static !important;
+    left: auto !important;
+    right: auto !important;
+    bottom: auto !important;
+    top: auto !important;
+    transform: none !important;
+    z-index: auto !important;
+    margin: 0 !important;
+    width: auto !important;
+    min-width: 0 !important;
+    flex: 1 1 0 !important;
+    padding: 11px 8px !important;
+    font-size: 13px !important;
+    border-radius: 999px !important;
+    white-space: nowrap !important;
+}
+
+.merchant-page .merchant-card-actions-row button:first-child {
+    background: linear-gradient(135deg, #fff8cc, #ffd700) !important;
+    color: #111 !important;
+}
+
+.merchant-page .merchant-card-actions-row .merchant-like-btn {
+    background: rgba(255,255,255,0.14) !important;
+    color: white !important;
+    border: 1px solid rgba(255,255,255,0.22) !important;
+    box-shadow: none !important;
+}
+
+
+/* FINAL PROPER FIX: use the old dark glass search bar, no pink search box */
+.merchant-page .merchant-search-panel,
+.merchant-page .simple-search-panel {
+    width: 100% !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: center !important;
+    text-align: center !important;
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+    padding: 0 !important;
+    margin-top: 14px !important;
+}
+
+.merchant-page .premium-search-row {
+    position: relative !important;
+    width: min(760px, 86vw) !important;
+    height: 58px !important;
+    min-height: 58px !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+    padding: 0 24px !important;
+    border-radius: 999px !important;
+    justify-content: center !important;
+    background: linear-gradient(135deg, rgba(255,255,255,0.18), rgba(255,255,255,0.06)) !important;
+    border: 1px solid rgba(255,255,255,0.22) !important;
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.32), inset 0 -1px 0 rgba(255,255,255,0.08), 0 18px 45px rgba(0,0,0,0.28), 0 0 26px rgba(255,215,0,0.08) !important;
+    backdrop-filter: blur(22px) saturate(135%) !important;
+    -webkit-backdrop-filter: blur(22px) saturate(135%) !important;
+    display: flex !important;
+    align-items: center !important;
+    gap: 14px !important;
+    overflow: hidden !important;
+}
+
+.merchant-page .premium-search-row::before {
+    content: "" !important;
+    position: absolute !important;
+    inset: 1px !important;
+    border-radius: 999px !important;
+    background: linear-gradient(180deg, rgba(255,255,255,0.20), rgba(255,255,255,0.02)) !important;
+    pointer-events: none !important;
+    display: block !important;
+}
+
+.merchant-page .premium-search-row::after,
+.merchant-page .search-glass-outside + .premium-search-wrap::before {
+    display: none !important;
+}
+
+.merchant-page .search-glass-outside {
+    width: 46px !important;
+    height: 46px !important;
+    min-width: 46px !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    border-radius: 50% !important;
+    background: rgba(255,255,255,0.12) !important;
+    border: 1px solid rgba(255,255,255,0.14) !important;
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.18) !important;
+    z-index: 2 !important;
+    position: relative !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    color: transparent !important;
+    font-size: 0 !important;
+}
+
+.merchant-page .search-glass-outside::before {
+    content: "" !important;
+    width: 18px !important;
+    height: 18px !important;
+    border-radius: 50% !important;
+    border: 3px solid rgba(255,255,255,0.86) !important;
+    display: block !important;
+    position: absolute !important;
+    top: 11px !important;
+    left: 11px !important;
+    background: transparent !important;
+}
+
+.merchant-page .search-glass-outside::after {
+    content: "" !important;
+    width: 12px !important;
+    height: 3px !important;
+    border-radius: 3px !important;
+    background: rgba(255,255,255,0.86) !important;
+    display: block !important;
+    position: absolute !important;
+    top: 29px !important;
+    left: 28px !important;
+    transform: rotate(45deg) !important;
+}
+
+.merchant-page .premium-search-wrap {
+    position: relative !important;
+    flex: 1 !important;
+    height: 100% !important;
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+    z-index: 2 !important;
+}
+
+.merchant-page .premium-search-wrap input,
+.merchant-page .simple-search-panel input,
+.merchant-page .merchant-search-panel input {
+    width: 100% !important;
+    height: 100% !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    border: none !important;
+    outline: none !important;
+    background: transparent !important;
+    box-shadow: none !important;
+    color: #fff !important;
+    font-size: 20px !important;
+    font-weight: 700 !important;
+    text-shadow: 0 1px 8px rgba(0,0,0,0.3) !important;
+}
+
+.merchant-page .premium-search-wrap input::placeholder,
+.merchant-page .simple-search-panel input::placeholder,
+.merchant-page .merchant-search-panel input::placeholder {
+    color: rgba(255,255,255,0.88) !important;
+    opacity: 1 !important;
+}
+
+.merchant-page #merchantSearchMessage {
+    margin-top: 10px !important;
+    color: rgba(255,255,255,0.60) !important;
+    font-size: 16px !important;
+    font-weight: 600 !important;
+}
+
+.merchant-page .merchant-card > .heart-like-btn {
+    display: none !important;
+}
+
+.merchant-page .merchant-card-actions-row .merchant-like-btn {
+    background: rgba(255,255,255,0.14) !important;
+    color: white !important;
+    border: 1px solid rgba(255,255,255,0.22) !important;
+    box-shadow: none !important;
+}
+
+
+.merchant-page .merchant-card-actions-row .merchant-like-btn.liked {
+    background: linear-gradient(135deg, #fff8cc, #ffd700) !important;
+    color: #111 !important;
+    border: 1px solid rgba(255, 215, 0, 0.75) !important;
+}
+
+
+/* FINAL LIKE + LOGIN NOTE FIX */
+.login-loyalty-note {
+    color: #000 !important;
+}
+
+.merchant-page .merchant-card-actions-row .merchant-like-btn,
+.heart-like-btn,
+.heart-like-btn.detail-heart {
+    font-size: 24px !important;
+    font-weight: 800 !important;
+    line-height: 1 !important;
+    text-align: center !important;
+}
+
+.merchant-page .merchant-card-actions-row .merchant-like-btn {
+    background: rgba(255,255,255,0.14) !important;
+    color: #ffffff !important;
+    border: 1px solid rgba(255,255,255,0.26) !important;
+    box-shadow: none !important;
+}
+
+.merchant-page .merchant-card-actions-row .merchant-like-btn.liked,
+.heart-like-btn.liked,
+.heart-like-btn.detail-heart.liked {
+    background: rgba(255,255,255,0.14) !important;
+    color: #e60023 !important;
+    border: 1px solid rgba(230,0,35,0.65) !important;
+    box-shadow: 0 0 0 2px rgba(230,0,35,0.10) !important;
+}
+
