@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shop Details</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="merchant-page shop-detail-page">
+    <nav>
+        <h1>Vaniday</h1>
+        <div>
+            <a href="index.html">Home</a>
+            <a href="merchants.html">Merchants</a>
+            <a href="booking.html">Book</a>
+            <a href="my-booking.html">My Bookings</a>
+            <a href="dashboard.html">Dashboard</a>
+            <a href="login.html">Login</a>
+            <a href="signup.html">Signup</a>
+        </div>
+    </nav>
+
+    <main class="shop-detail-shell" id="shopDetailShell">
+        <section class="shop-detail-hero">
+            <img id="detailShopImage" src="" alt="Shop image">
+            <div>
+                <h1 id="detailShopName">Shop Name</h1>
+                <p id="detailAvailable">Available</p>
+                <div id="detailContactInfo" class="shop-contact-info"></div>
+                <button id="detailLikeBtn" class="heart-like-btn detail-heart" onclick="clickDetailLike()">♡</button>
+                <button onclick="localStorage.setItem('selectedMerchant', getSelectedDetailShop()); window.location.href='booking.html'">Book Now</button>
+                <div id="detailOwnerActions"></div>
+            </div>
+        </section>
+
+        <section class="shop-detail-layout">
+            <div class="shop-left-panel">
+                <h2>Description</h2>
+                <p id="detailDescription"></p>
+                <h2>Services Provided</h2>
+                <p id="detailServices"></p>
+
+                <div class="comment-section review-section">
+                    <h2>Reviews</h2>
+                    <p class="review-small-text">Customers can share their experience, rate the shop, and the shop owner can reply.</p>
+                    <div id="commentList"></div>
+                    <input id="reviewNameInput" type="text" placeholder="Your name">
+                    <select id="reviewRatingInput">
+                        <option value="5">★★★★★ 5 stars</option>
+                        <option value="4">★★★★☆ 4 stars</option>
+                        <option value="3">★★★☆☆ 3 stars</option>
+                        <option value="2">★★☆☆☆ 2 stars</option>
+                        <option value="1">★☆☆☆☆ 1 star</option>
+                    </select>
+                    <input id="commentInput" type="text" placeholder="Write your review">
+                    <button onclick="addDetailComment()">Post Review</button>
+                </div>
+            </div>
+
+            <aside class="shop-right-panel">
+                <h2>Calendar</h2>
+                <p>Customers can see which dates are free or full.</p>
+                <div id="detailCalendar" class="detail-calendar booking-calendar shop-calendar-view"></div>
+                <div id="detailCalendarDetails" class="calendar-details shop-calendar-details">Click a date to check availability.</div>
+
+                <div class="tele-chat-box telegram-style-chat">
+                    <h2><span>✈</span> Tele Chat</h2>
+                    <div id="chatMessages" class="chat-messages"></div>
+                    <input id="chatInput" type="text" placeholder="Ask a question">
+                    <button onclick="sendShopChat()">Send</button>
+                </div>
+            </aside>
+        </section>
+    </main>
+
+    <script src="app.js"></script>
+    <script>
+        renderShopDetailPage();
+    </script>
+</body>
+</html>
