@@ -21,6 +21,11 @@ const userSchema = new mongoose.Schema({
         type: String,
         enum: ["Customer", "Shop Owner"],
         default: "Customer"
+    },
+
+    loyaltyPoints: {
+        type: Number,
+        default: 0
     }
 });
 

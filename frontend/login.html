@@ -83,41 +83,65 @@
     <script>
 
         function loginUser() {
-
             var input = document.getElementById('loginName');
             var value = input.value;
             var role = document.getElementById('loginRole').value;
+            var password = document.querySelector('input[type="password"]').value;
 
             if (value == '') {
                 alert('Please enter your name or email.');
+                return;
             }
-            else {
-                var name = value;
 
-                if (value.indexOf('@') != -1) {
-                    name = value.substring(0, value.indexOf('@'));
-                }
-
-                if (name.toLowerCase() == 'merchant') {
-                    role = 'Merchant Admin';
-                }
-
-                localStorage.setItem('vanidayName', name);
-                localStorage.setItem('vanidayRole', role);
-                if (role == 'Shop Owner') {
-                    localStorage.removeItem('ownerAssignedShop');
-                }
-
-                if (role == 'Customer') {
-                    window.location.href = 'dashboard.html';
-                }
-                else if (role == 'Shop Owner') {
-                    window.location.href = 'shop-owner-dashboard.html';
-                }
-                else if (role == 'Merchant Admin') {
-                    window.location.href = 'merchant-admin.html';
-                }
+            if (password == '') {
+                alert('Please enter your password.');
+                return;
             }
+
+            var name = value;
+            if (value.indexOf('@') != -1) {
+                name = value.substring(0, value.indexOf('@'));
+            }
+
+            if (name.toLowerCase() == 'merchant') {
+                role = 'Merchant Admin';
+            }
+
+            fetch("/api/users/login", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ email: value, password: password })
+            })
+                .then(function (response) {
+                    if (!response.ok) {
+                        throw new Error("Login failed.");
+                    }
+                    return response.json();
+                })
+                .then(function (data) {
+                    localStorage.setItem('vanidayName', data.fullName);
+                    localStorage.setItem('vanidayRole', data.role);
+                    localStorage.setItem('vanidayUserId', data.userId);
+                    localStorage.setItem('vanidayPoints', data.loyaltyPoints);
+
+                    if (data.role == 'Shop Owner') {
+                        localStorage.removeItem('ownerAssignedShop');
+                    }
+
+                    if (data.role == 'Customer') {
+                        window.location.href = 'dashboard.html';
+                    }
+                    else if (data.role == 'Shop Owner') {
+                        window.location.href = 'shop-owner-dashboard.html';
+                    }
+                    else if (data.role == 'Merchant Admin') {
+                        window.location.href = 'merchant-admin.html';
+                    }
+                })
+                .catch(function (error) {
+                    console.log(error);
+                    alert("Login failed. Check your email and password.");
+                });
         }
 
     </script>
