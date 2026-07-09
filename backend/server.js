@@ -17,10 +17,21 @@ app.use(express.urlencoded({ extended: true }));
 const frontendPath = path.join(__dirname, "..", "frontend");
 app.use(express.static(frontendPath));
 
+app.get("/api/health", function (req, res) {
+  res.json({
+    status: "ok",
+    mongodb: mongoose.connection.readyState === 1 ? "connected" : "disconnected",
+    envMongoUri: process.env.MONGO_URI ? "set" : "not set"
+  });
+});
+
 app.use("/api/users", userRoutes);
 app.use("/api/bookings", bookingRoutes);
 
-app.use(function (req, res) {
+app.use(function (req, res, next) {
+  if (req.path.startsWith("/api")) {
+    return next();
+  }
   res.sendFile(path.join(frontendPath, "index.html"));
 });
 

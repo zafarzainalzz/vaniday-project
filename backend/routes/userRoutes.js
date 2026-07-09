@@ -36,8 +36,9 @@ router.post("/signup", async function (req, res) {
         });
 
     } catch (error) {
-        console.log(error);
-        res.status(500).send("Signup failed.");
+        console.log("Signup error:", error.message);
+        console.log(error.stack);
+        res.status(500).send("Signup failed: " + error.message);
     }
 });
 
@@ -70,8 +71,9 @@ router.post("/login", async function (req, res) {
         });
 
     } catch (error) {
-        console.log(error);
-        res.status(500).send("Login failed.");
+        console.log("Login error:", error.message);
+        console.log(error.stack);
+        res.status(500).send("Login failed: " + error.message);
     }
 });
 

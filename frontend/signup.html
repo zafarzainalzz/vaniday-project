@@ -107,7 +107,9 @@
             })
                 .then(function (response) {
                     if (!response.ok) {
-                        throw new Error("Signup failed.");
+                        return response.text().then(function (text) {
+                            throw new Error(text || "Signup failed.");
+                        });
                     }
                     return response.json();
                 })
@@ -117,7 +119,7 @@
                 })
                 .catch(function (error) {
                     console.log(error);
-                    alert("Signup failed. Please check your details or try a different email.");
+                    alert("Signup failed: " + error.message);
                 });
         }
     </script>
