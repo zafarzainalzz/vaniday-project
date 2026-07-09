@@ -54,9 +54,9 @@
 
         <input id="signupName" type="text" placeholder="Full Name" required>
 
-        <input type="email" placeholder="Enter Email" required>
+        <input id="signupEmail" type="email" placeholder="Enter Email" required>
 
-        <input type="password" placeholder="Enter Password" required>
+        <input id="signupPassword" type="password" placeholder="Enter Password" required>
 
 
         <select id="signupRole">
@@ -85,24 +85,40 @@
 
     <script>
         function signupUser() {
-            var input = document.getElementById('signupName');
-            var name = input.value;
+            var name = document.getElementById('signupName').value;
+            var email = document.getElementById('signupEmail').value;
+            var password = document.getElementById('signupPassword').value;
             var role = document.getElementById('signupRole').value;
 
-            if (name == '') {
-                alert('Please enter your full name.');
+            if (name == '' || email == '' || password == '') {
+                alert('Please fill in all signup details.');
+                return;
             }
-            else {
-                localStorage.setItem('vanidayName', name);
-                localStorage.setItem('vanidayRole', role);
 
-                if (role == 'Customer') {
-                    window.location.href = 'dashboard.html';
-                }
-                else if (role == 'Shop Owner') {
-                    window.location.href = 'shop-owner-dashboard.html';
-                }
-            }
+            fetch("/api/users/signup", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    fullName: name,
+                    email: email,
+                    password: password,
+                    role: role
+                })
+            })
+                .then(function (response) {
+                    if (!response.ok) {
+                        throw new Error("Signup failed.");
+                    }
+                    return response.json();
+                })
+                .then(function (data) {
+                    alert("Signup successful. Please login.");
+                    window.location.href = "login.html";
+                })
+                .catch(function (error) {
+                    console.log(error);
+                    alert("Signup failed. Please check your details or try a different email.");
+                });
         }
     </script>
 

@@ -55,9 +55,9 @@
 
         <h1>Login</h1>
 
-        <input id="loginName" type="text" placeholder="Enter Name or Email" required>
+        <input id="loginEmail" type="email" placeholder="Enter Email" required>
 
-        <input type="password" placeholder="Enter Password" required>
+        <input id="loginPassword" type="password" placeholder="Enter Password" required>
 
         <select id="loginRole">
 
@@ -83,13 +83,12 @@
     <script>
 
         function loginUser() {
-            var input = document.getElementById('loginName');
-            var value = input.value;
+            var email = document.getElementById('loginEmail').value;
+            var password = document.getElementById('loginPassword').value;
             var role = document.getElementById('loginRole').value;
-            var password = document.querySelector('input[type="password"]').value;
 
-            if (value == '') {
-                alert('Please enter your name or email.');
+            if (email == '') {
+                alert('Please enter your email.');
                 return;
             }
 
@@ -98,23 +97,22 @@
                 return;
             }
 
-            var name = value;
-            if (value.indexOf('@') != -1) {
-                name = value.substring(0, value.indexOf('@'));
-            }
-
-            if (name.toLowerCase() == 'merchant') {
-                role = 'Merchant Admin';
-            }
-
             fetch("/api/users/login", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ email: value, password: password })
+                body: JSON.stringify({ email: email, password: password })
             })
                 .then(function (response) {
                     if (!response.ok) {
-                        throw new Error("Login failed.");
+                        if (response.status == 404) {
+                            throw new Error("User not found. Please sign up first.");
+                        }
+                        else if (response.status == 401) {
+                            throw new Error("Incorrect password.");
+                        }
+                        else {
+                            throw new Error("Login failed. Please try again.");
+                        }
                     }
                     return response.json();
                 })
