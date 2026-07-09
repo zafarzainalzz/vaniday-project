@@ -39,16 +39,13 @@
 
     </nav>
 
+
     <div class="auth-flower-scene">
         <span class="auth-flower f1">✿</span>
         <span class="auth-flower f2">✦</span>
         <span class="auth-flower f3">✽</span>
-
         <h2>Start your Vaniday glow</h2>
-
-        <p>
-            Create your space for bookings, rewards, beauty merchants, and calm self-care planning.
-        </p>
+        <p>Create your space for bookings, rewards, beauty merchants, and calm self-care planning.</p>
     </div>
 
     <div class="form-container auth-side-card">
@@ -57,9 +54,10 @@
 
         <input id="signupName" type="text" placeholder="Full Name" required>
 
-        <input id="signupEmail" type="email" placeholder="Enter Email" required>
+        <input type="email" placeholder="Enter Email" required>
 
-        <input id="signupPassword" type="password" placeholder="Enter Password" required>
+        <input type="password" placeholder="Enter Password" required>
+
 
         <select id="signupRole">
 
@@ -67,11 +65,16 @@
 
             <option>Shop Owner</option>
 
+
         </select>
 
+
         <button onclick="signupUser()">
+
             Signup
+
         </button>
+
 
         <p>
             Already have an account?
@@ -80,50 +83,30 @@
 
     </div>
 
-    <script src="app.js"></script>
-
     <script>
         function signupUser() {
-            var fullName = document.getElementById("signupName").value;
-            var email = document.getElementById("signupEmail").value;
-            var password = document.getElementById("signupPassword").value;
-            var role = document.getElementById("signupRole").value;
+            var input = document.getElementById('signupName');
+            var name = input.value;
+            var role = document.getElementById('signupRole').value;
 
-            if (fullName == "" || email == "" || password == "" || role == "") {
-                alert("Please fill in all signup details.");
-                return;
+            if (name == '') {
+                alert('Please enter your full name.');
             }
+            else {
+                localStorage.setItem('vanidayName', name);
+                localStorage.setItem('vanidayRole', role);
 
-            fetch("http://localhost:5000/api/users/signup", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify({
-                    fullName: fullName,
-                    email: email,
-                    password: password,
-                    role: role
-                })
-            })
-                .then(function (response) {
-                    if (response.ok == false) {
-                        throw new Error("Signup failed.");
-                    }
-
-                    return response.json();
-                })
-                .then(function (data) {
-                    alert("Signup successful. Please login.");
-                    window.location.href = "login.html";
-                })
-                .catch(function (error) {
-                    console.log(error);
-                    alert("Signup failed. Please check the backend terminal.");
-                });
+                if (role == 'Customer') {
+                    window.location.href = 'dashboard.html';
+                }
+                else if (role == 'Shop Owner') {
+                    window.location.href = 'shop-owner-dashboard.html';
+                }
+            }
         }
     </script>
 
+    <script src="app.js"></script>
 </body>
 
 </html>
