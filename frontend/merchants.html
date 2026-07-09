@@ -22,8 +22,18 @@
 
     <h1 class="page-title">Available Merchants</h1>
 
+    <div class="merchant-search-panel simple-search-panel">
+        <div class="premium-search-row">
+            <span class="search-glass-outside">🔍</span>
+            <div class="premium-search-wrap">
+                <input id="merchantSearch" type="text" placeholder="Search service e.g. haircut, hydrafacial, makeup" onkeyup="filterMerchants()">
+            </div>
+        </div>
+        <p id="merchantSearchMessage">Search by service name to find matching shops.</p>
+    </div>
+
     <div class="merchant-grid">
-        <div class="merchant-card">
+        <div class="merchant-card" data-services="haircut hair cut salon hair facial hydrafacial hydra facial beauty">
             <img class="merchant-image" src="assets/images/Glow beauty salon.jpeg" alt="Glow Beauty Salon">
             <h2>Glow Beauty Salon</h2>
             <p>Haircut - $20</p>
@@ -33,10 +43,10 @@
             <p>Anti-Aging Facial - $200</p>
             <p>Chemical Peel Facial - $150</p>
             <p>Available: Mon - Fri</p>
-            <button onclick="bookMerchant('Glow Beauty Salon')">Book Now</button>
+            <div class="merchant-card-actions-row"><button onclick="bookMerchant('Glow Beauty Salon')">Book Now</button><button class="merchant-like-btn" onclick="likeMerchant('Glow Beauty Salon')">♡</button></div>
         </div>
 
-        <div class="merchant-card">
+        <div class="merchant-card" data-services="waxing hair treatment steam bath scrub therapy fish pedicure spa">
             <img class="merchant-image" src="assets/images/Women-Free.jpeg" alt="Women-Free">
             <h2>Women-Free</h2>
             <p>Waxing - $90</p>
@@ -45,10 +55,10 @@
             <p>Scrub Therapy - $69</p>
             <p>Fish Pedicure - $78</p>
             <p>Available: Daily</p>
-            <button onclick="bookMerchant('Women-Free')">Book Now</button>
+            <div class="merchant-card-actions-row"><button onclick="bookMerchant('Women-Free')">Book Now</button><button class="merchant-like-btn" onclick="likeMerchant('Women-Free')">♡</button></div>
         </div>
 
-        <div class="merchant-card">
+        <div class="merchant-card" data-services="spa massage thai massage oil massage swedish aromatherapy foot massage">
             <img class="merchant-image" src="assets/images/luxery spa.jpeg" alt="Luxury Spa">
             <h2>Luxury Spa</h2>
             <p>Thai Massage - $90</p>
@@ -57,10 +67,10 @@
             <p>Aromatherapy Massage - $69</p>
             <p>Foot Massage - $55</p>
             <p>Available: Daily</p>
-            <button onclick="bookMerchant('Luxury Spa')">Book Now</button>
+            <div class="merchant-card-actions-row"><button onclick="bookMerchant('Luxury Spa')">Book Now</button><button class="merchant-like-btn" onclick="likeMerchant('Luxury Spa')">♡</button></div>
         </div>
 
-        <div class="merchant-card">
+        <div class="merchant-card" data-services="wellness yoga meditation zumba chiropractic fitness">
             <img class="merchant-image" src="assets/images/wellness center.jpeg" alt="Wellness Center">
             <h2>Wellness Center</h2>
             <p>Yoga Session - $25</p>
@@ -68,10 +78,10 @@
             <p>Zumba - $35</p>
             <p>Chiropractic - $30</p>
             <p>Available: Tue - Sun</p>
-            <button onclick="bookMerchant('Wellness Center')">Book Now</button>
+            <div class="merchant-card-actions-row"><button onclick="bookMerchant('Wellness Center')">Book Now</button><button class="merchant-like-btn" onclick="likeMerchant('Wellness Center')">♡</button></div>
         </div>
 
-        <div class="merchant-card">
+        <div class="merchant-card" data-services="makeup make up bridal party photoshoot hair styling hair">
             <img class="merchant-image" src="assets/images/make up studio.jpeg" alt="Make Up Studio">
             <h2>Make Up Studio</h2>
             <p>Bridal Makeup - $190</p>
@@ -80,10 +90,10 @@
             <p>Hair Styling - $90</p>
             <p>Customized Makeup - $135</p>
             <p>Available: Mon - Fri</p>
-            <button onclick="bookMerchant('Make Up Studio')">Book Now</button>
+            <div class="merchant-card-actions-row"><button onclick="bookMerchant('Make Up Studio')">Book Now</button><button class="merchant-like-btn" onclick="likeMerchant('Make Up Studio')">♡</button></div>
         </div>
 
-        <div class="merchant-card">
+        <div class="merchant-card" data-services="barber haircut hair cut hair styling beard trim keratin eyebrow trim">
             <img class="merchant-image" src="assets/images/elite barber.jpeg" alt="Elite Barber">
             <h2>Elite Barber</h2>
             <p>Hair Styling - $25</p>
@@ -91,10 +101,10 @@
             <p>Keratin Treatment - $50</p>
             <p>Eyebrow Trim - $15</p>
             <p>Available: Tue - Sun</p>
-            <button onclick="bookMerchant('Elite Barber')">Book Now</button>
+            <div class="merchant-card-actions-row"><button onclick="bookMerchant('Elite Barber')">Book Now</button><button class="merchant-like-btn" onclick="likeMerchant('Elite Barber')">♡</button></div>
         </div>
 
-        <div class="merchant-card">
+        <div class="merchant-card" data-services="salon haircut hair cut hair styling hair wash beard trim hair dye">
             <img class="merchant-image" src="assets/images/Manly Mane Salon.jpeg" alt="Manly Mane Salon">
             <h2>Manly Mane Salon</h2>
             <p>Hair Styling - $25</p>
@@ -102,10 +112,10 @@
             <p>Beard Trim - $15</p>
             <p>Hair Dye - $125</p>
             <p>Available: Mon - Fri</p>
-            <button onclick="bookMerchant('Manly Mane Salon')">Book Now</button>
+            <div class="merchant-card-actions-row"><button onclick="bookMerchant('Manly Mane Salon')">Book Now</button><button class="merchant-like-btn" onclick="likeMerchant('Manly Mane Salon')">♡</button></div>
         </div>
 
-        <div class="merchant-card">
+        <div class="merchant-card" data-services="eyelash lashes eye treatment eye spa tint glam">
             <img class="merchant-image" src="assets/images/Blink Glam.jpeg" alt="Blink Glam">
             <h2>Blink Glam</h2>
             <p>Eyelash Extensions - $90</p>
@@ -114,10 +124,10 @@
             <p>Eye Spa - $58</p>
             <p>Eyelash Tint - $45</p>
             <p>Available: Daily</p>
-            <button onclick="bookMerchant('Blink Glam')">Book Now</button>
+            <div class="merchant-card-actions-row"><button onclick="bookMerchant('Blink Glam')">Book Now</button><button class="merchant-like-btn" onclick="likeMerchant('Blink Glam')">♡</button></div>
         </div>
 
-        <div class="merchant-card">
+        <div class="merchant-card" data-services="tattoo colour tattoo hand tattoo chest tattoo leg tattoo sleeve tattoo tattoo removal tattoo touch up">
             <img class="merchant-image" src="assets/images/Cosmos Tattoo Art.jpeg" alt="Cosmos Tattoo Art">
             <h2>Cosmos Tattoo Art</h2>
             <p>Colour Tattoo - $99</p>
@@ -128,10 +138,10 @@
             <p>Tattoo Removal - $190</p>
             <p>Tattoo Touch-Up - $67</p>
             <p>Available: Daily</p>
-            <button onclick="bookMerchant('Cosmos Tattoo Art')">Book Now</button>
+            <div class="merchant-card-actions-row"><button onclick="bookMerchant('Cosmos Tattoo Art')">Book Now</button><button class="merchant-like-btn" onclick="likeMerchant('Cosmos Tattoo Art')">♡</button></div>
         </div>
 
-        <div class="merchant-card">
+        <div class="merchant-card" data-services="nail nails nail art manicure pedicure gel manicure gel extensions nail extensions">
             <img class="merchant-image" src="assets/images/The Nail Hub.jpeg" alt="The Nail Hub">
             <h2>The Nail Hub</h2>
             <p>Nail Art - $20</p>
@@ -141,7 +151,7 @@
             <p>Gel Extensions - $35</p>
             <p>Nail Extensions - $35</p>
             <p>Available: Tue - Sun</p>
-            <button onclick="bookMerchant('The Nail Hub')">Book Now</button>
+            <div class="merchant-card-actions-row"><button onclick="bookMerchant('The Nail Hub')">Book Now</button><button class="merchant-like-btn" onclick="likeMerchant('The Nail Hub')">♡</button></div>
         </div>
 
     </div>
@@ -150,6 +160,67 @@
         function bookMerchant(merchantName) {
             localStorage.setItem("selectedMerchant", merchantName);
             window.location.href = "booking.html";
+        }
+
+        function likeMerchant(merchantName) {
+            toggleShopLike(merchantName);
+            applyMerchantPageRules();
+            refreshMerchantLikeButtons();
+            moveLikedShopsToTop();
+            filterMerchants();
+        }
+
+        function filterMerchants() {
+            var searchText = document.getElementById("merchantSearch").value.toLowerCase().trim();
+            var cards = document.querySelectorAll('.merchant-card');
+            var visibleCount = 0;
+
+            for (var i = 0; i < cards.length; i = i + 1) {
+                var cardText = cards[i].innerText.toLowerCase();
+                var serviceWords = cards[i].getAttribute("data-services");
+                var fullSearchText = cardText;
+
+                if (serviceWords != null) {
+                    fullSearchText = fullSearchText + " " + serviceWords.toLowerCase();
+                }
+
+                var role = localStorage.getItem('vanidayRole');
+                var ownerShop = getOwnerShopName();
+                var title = cards[i].querySelector('h2');
+                var shopName = '';
+
+                if (title != null) {
+                    shopName = title.innerText;
+                }
+
+                if (role == 'Shop Owner' && (ownerShop == '' || !sameMerchantName(shopName, ownerShop))) {
+                    cards[i].style.display = "none";
+                }
+                else if (searchText == "") {
+                    cards[i].style.display = "";
+                    visibleCount = visibleCount + 1;
+                }
+                else if (fullSearchText.indexOf(searchText) != -1) {
+                    cards[i].style.display = "";
+                    visibleCount = visibleCount + 1;
+                }
+                else {
+                    cards[i].style.display = "none";
+                }
+            }
+
+            if (searchText == "") {
+                document.getElementById("merchantSearchMessage").innerHTML = "Search by service name to find matching shops.";
+            }
+            else if (visibleCount == 0) {
+                document.getElementById("merchantSearchMessage").innerHTML = "No shops found for " + searchText + ".";
+            }
+            else if (visibleCount == 1) {
+                document.getElementById("merchantSearchMessage").innerHTML = "1 shop found for " + searchText + ".";
+            }
+            else {
+                document.getElementById("merchantSearchMessage").innerHTML = visibleCount + " shops found for " + searchText + ".";
+            }
         }
 
         var cards = document.querySelectorAll('.merchant-card');
@@ -164,7 +235,15 @@
                 this.style.setProperty('--mouse-y', y + 'px');
             });
         }
-    </script>
+
+        </script>
     <script src="app.js"></script>
+    <script>
+        applyMerchantPageRules();
+        refreshMerchantLikeButtons();
+        moveLikedShopsToTop();
+        filterMerchants();
+    </script>
 </body>
 </html>
+
