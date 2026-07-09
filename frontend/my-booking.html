@@ -28,78 +28,93 @@
         My Bookings
     </h1>
 
-    <div id="bookingDetails">
-        <div class="card">
-            <h2>No Booking Found</h2>
-            <p>Please book an appointment first.</p>
-        </div>
+    <div id="bookingDetails" class="premium-booking-card">
+        <h2>No Booking Found</h2>
+        <p>Please book an appointment first.</p>
     </div>
 
-    <script src="app.js"></script>
-
     <script>
-        var bookingDetails = document.getElementById("bookingDetails");
+        function loadBookingDetails() {
+            var allBookingsText = localStorage.getItem("allBookings");
+            var output = "";
 
-        fetch("http://localhost:5000/api/bookings")
-            .then(function (response) {
-                return response.json();
-            })
-            .then(function (bookings) {
-                bookingDetails.innerHTML = "";
+            if (allBookingsText != null && allBookingsText != "") {
+                var allBookings = JSON.parse(allBookingsText);
 
-                if (bookings.length == 0) {
-                    bookingDetails.innerHTML =
-                        "<div class='card'>" +
-                        "<h2>No Booking Found</h2>" +
-                        "<p>Please book an appointment first.</p>" +
-                        "</div>";
+                if (allBookings.length > 0) {
+                    output = "<h2>All Upcoming Bookings</h2>";
 
-                    return;
+                    for (var i = 0; i < allBookings.length; i = i + 1) {
+                        output = output + "<div class='single-booking-box'>";
+                        output = output + "<div class='gold-success-tick'><span>✓</span></div>";
+                        output = output + "<div class='booking-status-pill'>Status: Confirmed</div>";
+                        output = output + "<div class='premium-booking-lines'>";
+                        output = output + "<p><b>Booking:</b> " + (i + 1) + "</p>";
+                        output = output + "<p><b>Customer:</b> " + allBookings[i].customer + "</p>";
+                        output = output + "<p><b>Merchant:</b> " + allBookings[i].merchant + "</p>";
+                        output = output + "<p><b>Service:</b> " + allBookings[i].service + "</p>";
+                        output = output + "<p><b>Date:</b> " + allBookings[i].date + "</p>";
+                        output = output + "<p><b>Time:</b> " + allBookings[i].time + "</p>";
+                        output = output + "</div>";
+                        output = output + "<div class='premium-booking-actions'>";
+                        output = output + "<button onclick='cancelBooking(" + i + ")'>Cancel</button>";
+                        output = output + "<button onclick='rescheduleBooking()'>Reschedule</button>";
+                        output = output + "</div>";
+                        output = output + "</div>";
+                    }
+
+                    document.getElementById("bookingDetails").innerHTML = output;
                 }
+            }
+        }
 
-                bookings.forEach(function (booking) {
-                    bookingDetails.innerHTML =
-                        bookingDetails.innerHTML +
-                        "<div class='card'>" +
-                        "<h2>Upcoming Booking</h2>" +
-                        "<p><b>Customer:</b> " + booking.customerName + "</p>" +
-                        "<p><b>Merchant:</b> " + booking.merchant + "</p>" +
-                        "<p><b>Service:</b> " + booking.service + "</p>" +
-                        "<p><b>Date:</b> " + booking.bookingDate + "</p>" +
-                        "<p><b>Time:</b> " + booking.bookingTime + "</p>" +
-                        "<p><b>Status:</b> " + booking.status + "</p>" +
-                        "<button onclick='rescheduleBooking()'>Reschedule</button>" +
-                        "</div>";
-                });
-            })
-            .catch(function (error) {
-                console.log(error);
+        function cancelBooking(bookingNumber) {
+            var allBookingsText = localStorage.getItem("allBookings");
 
-                bookingDetails.innerHTML =
-                    "<div class='card'>" +
-                    "<h2>Failed to load bookings</h2>" +
-                    "<p>Please check if the backend server is running.</p>" +
-                    "</div>";
-            });
+            if (allBookingsText != null && allBookingsText != "") {
+                var allBookings = JSON.parse(allBookingsText);
+                allBookings.splice(bookingNumber, 1);
+                localStorage.setItem("allBookings", JSON.stringify(allBookings));
+
+                if (allBookings.length == 0) {
+                    localStorage.removeItem("customerName");
+                    localStorage.removeItem("merchant");
+                    localStorage.removeItem("service");
+                    localStorage.removeItem("bookingDate");
+                    localStorage.removeItem("bookingTime");
+                }
+                else {
+                    var lastBooking = allBookings[allBookings.length - 1];
+                    localStorage.setItem("customerName", lastBooking.customer);
+                    localStorage.setItem("merchant", lastBooking.merchant);
+                    localStorage.setItem("service", lastBooking.service);
+                    localStorage.setItem("bookingDate", lastBooking.date);
+                    localStorage.setItem("bookingTime", lastBooking.time);
+                }
+            }
+
+            alert("Booking cancelled");
+            window.location.href = "my-booking.html";
+        }
 
         function rescheduleBooking() {
             window.location.href = "booking.html";
         }
-
+    
         function protectCustomerPage() {
-            var savedRole = localStorage.getItem("vanidayRole");
+            var savedRole = localStorage.getItem('vanidayRole');
 
-            if (savedRole == "Shop Owner") {
-                window.location.href = "shop-owner-dashboard.html";
+            if (savedRole == 'Shop Owner') {
+                window.location.href = 'shop-owner-dashboard.html';
             }
-            else if (savedRole == "Merchant Admin") {
-                window.location.href = "merchant-admin.html";
+            else if (savedRole == 'Merchant Admin') {
+                window.location.href = 'merchant-admin.html';
             }
         }
 
         protectCustomerPage();
-    </script>
-
+        loadBookingDetails();
+</script>
 </body>
 
 </html>
