@@ -20,7 +20,7 @@ app.use(express.static(frontendPath));
 app.use("/api/users", userRoutes);
 app.use("/api/bookings", bookingRoutes);
 
-app.get("*", function (req, res) {
+app.use(function (req, res) {
   res.sendFile(path.join(frontendPath, "index.html"));
 });
 
