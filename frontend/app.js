@@ -1,6 +1,26 @@
 
 function getCurrentRole() {
-    return localStorage.getItem('vanidayRole');
+    var savedRole = localStorage.getItem('vanidayRole');
+    var cleanRole = savedRole;
+
+    if (savedRole != null) {
+        cleanRole = savedRole.toLowerCase();
+        cleanRole = cleanRole.replace(/ /g, '');
+        cleanRole = cleanRole.replace(/-/g, '');
+        cleanRole = cleanRole.replace(/_/g, '');
+
+        if (cleanRole == 'shopowner' || cleanRole == 'owner') {
+            return 'Shop Owner';
+        }
+        else if (cleanRole == 'merchantadmin' || cleanRole == 'admin') {
+            return 'Merchant Admin';
+        }
+        else if (cleanRole == 'customer') {
+            return 'Customer';
+        }
+    }
+
+    return savedRole;
 }
 
 function getCurrentName() {
@@ -27,11 +47,6 @@ function getOwnerRealName() {
 
 function getOwnerShopName() {
     var savedName = getCurrentName();
-    var shopName = localStorage.getItem('ownerAssignedShop');
-
-    if (shopName != null && shopName != '') {
-        return shopName;
-    }
 
     if (savedName == null) {
         return '';
@@ -39,40 +54,44 @@ function getOwnerShopName() {
 
     var ownerCode = savedName;
 
-    if (savedName.indexOf('_') != -1) {
-        ownerCode = savedName.substring(savedName.indexOf('_') + 1);
+    if (savedName.indexOf('@') != -1) {
+        ownerCode = savedName.substring(0, savedName.indexOf('@'));
+    }
+
+    if (ownerCode.indexOf('_') != -1) {
+        ownerCode = ownerCode.substring(ownerCode.indexOf('_') + 1);
     }
 
     var lowerName = cleanMerchantName(ownerCode);
 
-    if (lowerName == 'glowbeautysalon' || lowerName == 'glowbautysalon') {
+    if (lowerName.indexOf('glowbeauty') != -1 || lowerName == 'glow' || lowerName == 'salon') {
         return 'Glow Beauty Salon';
     }
-    else if (lowerName == 'womenfree') {
+    else if (lowerName.indexOf('womenfree') != -1 || lowerName.indexOf('women') != -1) {
         return 'Women-Free';
     }
-    else if (lowerName == 'luxuryspa' || lowerName == 'luxeryspa') {
+    else if (lowerName.indexOf('luxuryspa') != -1 || lowerName.indexOf('luxeryspa') != -1 || lowerName == 'spa') {
         return 'Luxury Spa';
     }
-    else if (lowerName == 'wellnesscenter') {
+    else if (lowerName.indexOf('wellness') != -1) {
         return 'Wellness Center';
     }
-    else if (lowerName == 'makeupstudio') {
+    else if (lowerName.indexOf('makeup') != -1) {
         return 'Make Up Studio';
     }
-    else if (lowerName == 'elitebarber') {
+    else if (lowerName.indexOf('elitebarber') != -1 || lowerName.indexOf('barber') != -1) {
         return 'Elite Barber';
     }
-    else if (lowerName == 'manlymanesalon') {
+    else if (lowerName.indexOf('manlymane') != -1) {
         return 'Manly Mane Salon';
     }
-    else if (lowerName == 'blinkglam') {
+    else if (lowerName.indexOf('blinkglam') != -1 || lowerName.indexOf('blink') != -1) {
         return 'Blink Glam';
     }
-    else if (lowerName == 'cosmostattooart') {
+    else if (lowerName.indexOf('cosmostattoo') != -1 || lowerName.indexOf('cosmos') != -1 || lowerName.indexOf('tattoo') != -1) {
         return 'Cosmos Tattoo Art';
     }
-    else if (lowerName == 'thenailhub' || lowerName == 'nailhub') {
+    else if (lowerName.indexOf('nailhub') != -1 || lowerName.indexOf('nail') != -1) {
         return 'The Nail Hub';
     }
 
@@ -132,9 +151,21 @@ function protectMerchantAdminOnlyPage() {
 }
 
 function applyMerchantPageRules() {
+    if (document.getElementById('ownerShopGrid') != null) {
+        return;
+    }
+
     var role = getCurrentRole();
     var ownerShop = getOwnerShopName();
     var cards = document.querySelectorAll('.merchant-card');
+    var grid = document.querySelector('.merchant-grid');
+
+    if (grid != null && role == 'Shop Owner') {
+        grid.classList.add('owner-only-grid');
+    }
+    else if (grid != null) {
+        grid.classList.remove('owner-only-grid');
+    }
 
     for (var i = 0; i < cards.length; i = i + 1) {
         var card = cards[i];
@@ -156,6 +187,7 @@ function applyMerchantPageRules() {
             }
             else {
                 card.style.display = 'block';
+                card.classList.add('owner-single-shop-card');
             }
         }
 
@@ -169,26 +201,16 @@ function applyMerchantPageRules() {
             likeButton = card.querySelector('.heart-like-btn');
         }
 
-        if (likeButton != null && shopName != '') {
-            likeButton.innerHTML = getHeartText(shopName);
-            likeButton.onclick = function() {
-                var cardTitle = this.closest('.merchant-card').querySelector('h2');
-                var cardShop = cardTitle.innerText;
-                toggleShopLike(cardShop);
-                refreshMerchantLikeButtons();
-                moveLikedShopsToTop();
-            };
-        }
-        else if (likeButton == null && shopName != '') {
+        if (likeButton == null && shopName != '' && role != 'Shop Owner' && role != 'Merchant Admin') {
             likeButton = document.createElement('button');
-            likeButton.className = 'merchant-like-btn';
+            likeButton.className = 'merchant-like-btn heart-like-btn';
             likeButton.innerHTML = getHeartText(shopName);
             likeButton.onclick = function() {
-                var cardTitle = this.closest('.merchant-card').querySelector('h2');
+                var cardBox = this.closest('.merchant-card');
+                var cardTitle = cardBox.querySelector('h2');
                 var cardShop = cardTitle.innerText;
                 toggleShopLike(cardShop);
-                refreshMerchantLikeButtons();
-                moveLikedShopsToTop();
+                applyMerchantPageRules();
             };
             card.appendChild(likeButton);
         }
@@ -199,16 +221,70 @@ function applyMerchantPageRules() {
             }
         }
 
+        var oldOwnerActions = card.querySelector('.owner-shop-actions');
+        if (oldOwnerActions != null) {
+            oldOwnerActions.remove();
+        }
+
+        if (likeButton != null) {
+            if (role == 'Shop Owner' || role == 'Merchant Admin') {
+                likeButton.remove();
+                likeButton = null;
+            }
+            else {
+                likeButton.className = 'merchant-like-btn heart-like-btn';
+                if (isShopLiked(shopName)) {
+                    likeButton.className = 'merchant-like-btn heart-like-btn liked-heart';
+                }
+                likeButton.innerHTML = getHeartText(shopName);
+            }
+        }
+
         if (role == 'Shop Owner' && sameMerchantName(shopName, ownerShop)) {
-            card.style.boxShadow = '0 0 30px rgba(255, 255, 255, 0.85), 0 0 65px rgba(245, 220, 170, 0.55)';
-            card.style.border = '1px solid rgba(255, 255, 255, 0.75)';
+            card.classList.add('owner-landscape-card');
+
+            var ownerImage = card.querySelector('.merchant-image');
+            var ownerImageLink = card.querySelector('.owner-image-link');
+
+            if (ownerImage != null && ownerImageLink == null) {
+                ownerImageLink = document.createElement('a');
+                ownerImageLink.className = 'owner-image-link';
+                ownerImageLink.href = 'shop-detail.html?shop=' + encodeURIComponent(shopName);
+                card.insertBefore(ownerImageLink, card.firstChild);
+                ownerImageLink.appendChild(ownerImage);
+                ownerImage.classList.add('owner-landscape-image');
+            }
+
+            var ownerInfo = card.querySelector('.owner-landscape-info');
+
+            if (ownerInfo == null) {
+                ownerInfo = document.createElement('div');
+                ownerInfo.className = 'owner-landscape-info';
+
+                var ownerTitle = card.querySelector('h2');
+                if (ownerTitle != null) {
+                    ownerInfo.appendChild(ownerTitle);
+                }
+
+                var ownerServices = document.createElement('div');
+                ownerServices.className = 'owner-simple-services';
+                var ownerParagraphs = card.querySelectorAll(':scope > p');
+
+                while (ownerParagraphs.length > 0) {
+                    ownerServices.appendChild(ownerParagraphs[0]);
+                    ownerParagraphs = card.querySelectorAll(':scope > p');
+                }
+
+                ownerInfo.appendChild(ownerServices);
+                card.appendChild(ownerInfo);
+            }
 
             var ownerActions = card.querySelector('.owner-shop-actions');
 
             if (ownerActions == null) {
                 ownerActions = document.createElement('div');
-                ownerActions.className = 'owner-shop-actions shop-card-actions';
-                ownerActions.innerHTML = '<button onclick="window.location.href=\'shop-owner-dashboard.html#shopDetails\'">Update</button>';
+                ownerActions.className = 'owner-shop-actions shop-card-actions owner-two-button-row';
+                ownerActions.innerHTML = '<button onclick="deleteShopFromMerchantPage(\'' + shopName.replace(/'/g, '') + '\')">Delete</button><button onclick="updateOwnerShopFromCard(\'' + shopName.replace(/'/g, '') + '\')">Update</button>';
                 card.appendChild(ownerActions);
             }
         }
@@ -219,8 +295,28 @@ function applyMerchantPageRules() {
             if (adminActions == null) {
                 adminActions = document.createElement('div');
                 adminActions.className = 'admin-shop-actions shop-card-actions';
-                adminActions.innerHTML = '<button onclick="window.location.href=\'shop-detail.html?shop=' + encodeURIComponent(shopName) + '\'">Update</button><button onclick="toggleShopLike(\'' + shopName.replace(/'/g, '') + '\'); applyMerchantPageRules();">Like</button><button onclick="deleteShopFromMerchantPage(\'' + shopName.replace(/'/g, '') + '\')">Delete</button>';
+                adminActions.innerHTML = '<button onclick="window.location.href=\'shop-detail.html?shop=' + encodeURIComponent(shopName) + '\'">Update</button><button onclick="deleteShopFromMerchantPage(\'' + shopName.replace(/'/g, '') + '\')">Delete</button>';
                 card.appendChild(adminActions);
+            }
+        }
+    }
+
+    if (grid != null) {
+        for (var likedPass = 0; likedPass < 2; likedPass = likedPass + 1) {
+            for (var c = 0; c < cards.length; c = c + 1) {
+                var cardTitle = cards[c].querySelector('h2');
+                var currentShop = '';
+
+                if (cardTitle != null) {
+                    currentShop = cardTitle.innerText;
+                }
+
+                if (likedPass == 0 && isShopLiked(currentShop)) {
+                    grid.appendChild(cards[c]);
+                }
+                else if (likedPass == 1 && !isShopLiked(currentShop)) {
+                    grid.appendChild(cards[c]);
+                }
             }
         }
     }
@@ -229,8 +325,10 @@ function applyMerchantPageRules() {
 document.addEventListener('DOMContentLoaded', function() {
     renderVanidayNav();
     applyMerchantPageRules();
-    refreshMerchantLikeButtons();
-    moveLikedShopsToTop();
+
+    if (typeof filterMerchants == 'function') {
+        filterMerchants();
+    }
 });
 
 
@@ -252,6 +350,8 @@ function cleanMerchantName(nameValue) {
         cleanName = nameValue.toLowerCase();
         cleanName = cleanName.replace(/ /g, '');
         cleanName = cleanName.replace(/-/g, '');
+        cleanName = cleanName.replace(/_/g, '');
+        cleanName = cleanName.replace(/\./g, '');
         cleanName = cleanName.replace(/'/g, '');
     }
 
@@ -394,7 +494,12 @@ function renderBookingCalendar(calendarId, detailsId, roleShopName) {
     var safeRoleShopName = roleShopName;
 
     if (safeRoleShopName == null || safeRoleShopName == '') {
-        safeRoleShopName = 'ALL';
+        if (calendarId == 'adminCalendar') {
+            safeRoleShopName = 'ALL';
+        }
+        else {
+            safeRoleShopName = 'NO_SHOP_ASSIGNED';
+        }
     }
 
     safeRoleShopName = safeRoleShopName.replace(/'/g, '');
@@ -612,47 +717,6 @@ function toggleShopLike(shopName) {
     localStorage.setItem('likedShops', liked);
 }
 
-function refreshMerchantLikeButtons() {
-    var buttons = document.querySelectorAll('.merchant-like-btn, .heart-like-btn');
-
-    for (var i = 0; i < buttons.length; i = i + 1) {
-        var card = buttons[i].closest('.merchant-card');
-
-        if (card != null) {
-            var title = card.querySelector('h2');
-
-            if (title != null) {
-                buttons[i].innerHTML = getHeartText(title.innerText);
-
-                if (isShopLiked(title.innerText)) {
-                    buttons[i].classList.add('liked');
-                }
-                else {
-                    buttons[i].classList.remove('liked');
-                }
-            }
-        }
-    }
-}
-
-function moveLikedShopsToTop() {
-    var grid = document.querySelector('.merchant-grid');
-
-    if (grid == null) {
-        return;
-    }
-
-    var cards = grid.querySelectorAll('.merchant-card');
-
-    for (var i = cards.length - 1; i >= 0; i = i - 1) {
-        var title = cards[i].querySelector('h2');
-
-        if (title != null && isShopLiked(title.innerText)) {
-            grid.insertBefore(cards[i], grid.firstElementChild);
-        }
-    }
-}
-
 function isShopDeleted(shopName) {
     var deleted = localStorage.getItem('deletedShops');
     var answer = false;
@@ -664,8 +728,25 @@ function isShopDeleted(shopName) {
     return answer;
 }
 
+function updateOwnerShopFromCard(shopName) {
+    var shop = getShopData(shopName);
+    var oldDays = localStorage.getItem('ownerShopDays_' + getShopKey(shop.name));
+
+    if (oldDays == null || oldDays == '') {
+        oldDays = shop.available;
+    }
+
+    var newDays = prompt('Update available days for ' + shop.name + ':', oldDays);
+
+    if (newDays != null && newDays != '') {
+        localStorage.setItem('ownerShopDays_' + getShopKey(shop.name), newDays);
+        alert('Shop updated.');
+        location.reload();
+    }
+}
+
 function deleteShopFromMerchantPage(shopName) {
-    var confirmDelete = confirm('Do you want to delete the shop ' + shopName + '?');
+    var confirmDelete = confirm('Are you sure you want to delete ' + shopName + '?');
 
     if (confirmDelete == false) {
         return;
@@ -751,12 +832,9 @@ function renderShopDetailPage() {
     document.getElementById('detailAvailable').innerHTML = 'Available: ' + shop.available;
     document.getElementById('detailContactInfo').innerHTML = getShopContactInfo(shop.name);
     document.getElementById('detailLikeBtn').innerHTML = getHeartText(shop.name);
-
+    document.getElementById('detailLikeBtn').className = 'heart-like-btn detail-heart';
     if (isShopLiked(shop.name)) {
-        document.getElementById('detailLikeBtn').classList.add('liked');
-    }
-    else {
-        document.getElementById('detailLikeBtn').classList.remove('liked');
+        document.getElementById('detailLikeBtn').className = 'heart-like-btn detail-heart liked-heart';
     }
 
     if (role == 'Shop Owner' && sameMerchantName(shop.name, ownerShop)) {
@@ -779,12 +857,9 @@ function clickDetailLike() {
     var shopName = getSelectedDetailShop();
     toggleShopLike(shopName);
     document.getElementById('detailLikeBtn').innerHTML = getHeartText(shopName);
-
+    document.getElementById('detailLikeBtn').className = 'heart-like-btn detail-heart';
     if (isShopLiked(shopName)) {
-        document.getElementById('detailLikeBtn').classList.add('liked');
-    }
-    else {
-        document.getElementById('detailLikeBtn').classList.remove('liked');
+        document.getElementById('detailLikeBtn').className = 'heart-like-btn detail-heart liked-heart';
     }
 }
 
