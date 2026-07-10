@@ -464,107 +464,57 @@
 
             if (customerName == "" || merchant == "" || service == "" || bookingDate == "" || bookingTime == "") {
                 alert("Please fill in all booking details.");
-                return;
             }
-
-            if (isBookingTimeTaken(merchant, bookingDate, bookingTime)) {
+            else if (isBookingTimeTaken(merchant, bookingDate, bookingTime)) {
                 alert("That timing is taken. Please choose a time at least 1 hour later.");
                 document.getElementById("bookingTime").className = "taken-time";
                 document.getElementById("bookingTimeMessage").innerHTML = "That timing is taken.";
-                return;
-            }
-
-            localStorage.setItem("customerName", customerName);
-            localStorage.setItem("merchant", merchant);
-            localStorage.setItem("service", service);
-            localStorage.setItem("bookingDate", bookingDate);
-            localStorage.setItem("bookingTime", bookingTime);
-
-            var allBookingsText = localStorage.getItem("allBookings");
-            var allBookings = [];
-
-            if (allBookingsText != null && allBookingsText != "") {
-                allBookings = JSON.parse(allBookingsText);
-            }
-
-            var appointmentAmount = 100;
-            var claimedReward = localStorage.getItem('vanidayRewardClaim');
-
-            allBookings.push({
-                customer: customerName,
-                merchant: merchant,
-                service: service,
-                date: bookingDate,
-                time: bookingTime,
-                amount: appointmentAmount,
-                reward: claimedReward
-            });
-
-            localStorage.setItem("allBookings", JSON.stringify(allBookings));
-            localStorage.setItem("totalBookingsCount", allBookings.length);
-            localStorage.removeItem("selectedMerchant");
-
-            fetch("/api/bookings", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({
-                    customerName: customerName,
-                    merchant: merchant,
-                    service: service,
-                    bookingDate: bookingDate,
-                    bookingTime: bookingTime
-                })
-            }).catch(function (error) {
-                console.log("Failed to save booking to server:", error);
-            });
-
-            var savedUserId = localStorage.getItem('vanidayUserId');
-            var savedRole = localStorage.getItem('vanidayRole');
-
-            if (savedRole == 'Customer' && savedUserId != null && savedUserId != '') {
-                var pointsToAdd = 100;
-
-                if (claimedReward == '25% next appointment discount') {
-                    localStorage.removeItem('vanidayRewardClaim');
-                    pointsToAdd = 100;
-                }
-
-                fetch("/api/users/points/add", {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({
-                        userId: savedUserId,
-                        points: pointsToAdd
-                    })
-                })
-                    .then(function (response) {
-                        return response.json();
-                    })
-                    .then(function (data) {
-                        localStorage.setItem('vanidayPoints', data.loyaltyPoints);
-                        if (claimedReward == '25% next appointment discount') {
-                            alert('25% reward applied to this appointment. 100 loyalty points added.');
-                        }
-                        else {
-                            alert('Booking confirmed. 100 loyalty points added.');
-                        }
-                        window.location.href = "my-booking.html";
-                    })
-                    .catch(function (error) {
-                        console.log(error);
-                        var currentPoints = Number(localStorage.getItem('vanidayPoints')) || 0;
-                        localStorage.setItem('vanidayPoints', currentPoints + pointsToAdd);
-                        if (claimedReward == '25% next appointment discount') {
-                            alert('25% reward applied to this appointment. 100 loyalty points added.');
-                        }
-                        else {
-                            alert('Booking confirmed. 100 loyalty points added.');
-                        }
-                        window.location.href = "my-booking.html";
-                    });
             }
             else {
-                alert('Booking confirmed. Log in or create an account next time to earn loyalty points and rewards.');
+                localStorage.setItem("customerName", customerName);
+                localStorage.setItem("merchant", merchant);
+                localStorage.setItem("service", service);
+                localStorage.setItem("bookingDate", bookingDate);
+                localStorage.setItem("bookingTime", bookingTime);
+
+                var allBookingsText = localStorage.getItem("allBookings");
+                var allBookings = [];
+
+                if (allBookingsText != null && allBookingsText != "") {
+                    allBookings = JSON.parse(allBookingsText);
+                }
+
+                var appointmentAmount = 100;
+                var claimedReward = localStorage.getItem('vanidayRewardClaim');
+
+                allBookings.push({
+                    customer: customerName,
+                    merchant: merchant,
+                    service: service,
+                    date: bookingDate,
+                    time: bookingTime,
+                    amount: appointmentAmount,
+                    reward: claimedReward
+                });
+
+                var savedRole = localStorage.getItem('vanidayRole');
+
+                if (savedRole == 'Customer') {
+                    if (claimedReward == '25% next appointment discount') {
+                        localStorage.removeItem('vanidayRewardClaim');
+                        alert('25% reward applied to this appointment. 100 loyalty points added.');
+                    }
+                    else {
+                        alert('Booking confirmed. 100 loyalty points added.');
+                    }
+                }
+                else {
+                    alert('Booking confirmed. Log in or create an account next time to earn loyalty points and rewards.');
+                }
+
+                localStorage.setItem("allBookings", JSON.stringify(allBookings));
+                localStorage.removeItem("selectedMerchant");
+
                 window.location.href = "my-booking.html";
             }
         }
@@ -589,3 +539,4 @@
 </script>
 </body>
 </html>
+
