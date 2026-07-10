@@ -185,7 +185,6 @@
     <script>
         var savedName = localStorage.getItem('vanidayName');
         var savedRole = localStorage.getItem('vanidayRole');
-        var savedUserId = localStorage.getItem('vanidayUserId');
         var greeting = document.getElementById('dashboardGreeting');
 
         if (savedRole == 'Shop Owner') {
@@ -200,89 +199,55 @@
             }
         }
 
-        var walletBalance = 0;
-        var loyaltyPoints = 0;
+        var rewardCustomerName = localStorage.getItem('customerName');
 
-        function loadPointsFromBackend() {
-            if (savedUserId != null && savedUserId != '') {
-                fetch("/api/users/" + savedUserId + "/points")
-                    .then(function (response) {
-                        if (!response.ok) {
-                            throw new Error("Failed to fetch points.");
-                        }
-                        return response.json();
-                    })
-                    .then(function (data) {
-                        loyaltyPoints = data.loyaltyPoints;
-                        localStorage.setItem('vanidayPoints', loyaltyPoints);
-                        updateDashboardDisplay();
-                    })
-                    .catch(function (error) {
-                        console.log(error);
-                        loadPointsFromLocal();
-                    });
-            }
-            else {
-                loadPointsFromLocal();
-            }
+        if (rewardCustomerName == null || rewardCustomerName == '') {
+            rewardCustomerName = savedName;
         }
 
-        function loadPointsFromLocal() {
-            var rewardCustomerName = localStorage.getItem('customerName');
+        var allBookingsText = localStorage.getItem('allBookings');
+        var allBookings = [];
 
-            if (rewardCustomerName == null || rewardCustomerName == '') {
-                rewardCustomerName = savedName;
-            }
+        if (allBookingsText != null && allBookingsText != '') {
+            allBookings = JSON.parse(allBookingsText);
+        }
 
-            var allBookingsText = localStorage.getItem('allBookings');
-            var allBookings = [];
+        var totalBookings = 0;
+        var totalSpent = 0;
 
-            if (allBookingsText != null && allBookingsText != '') {
-                allBookings = JSON.parse(allBookingsText);
-            }
+        for (var i = 0; i < allBookings.length; i = i + 1) {
+            if (rewardCustomerName == null || rewardCustomerName == '' || allBookings[i].customer == rewardCustomerName) {
+                totalBookings = totalBookings + 1;
 
-            var totalBookings = 0;
-            var totalSpent = 0;
-
-            for (var i = 0; i < allBookings.length; i = i + 1) {
-                if (rewardCustomerName == null || rewardCustomerName == '' || allBookings[i].customer == rewardCustomerName) {
-                    totalBookings = totalBookings + 1;
-
-                    if (allBookings[i].amount != null) {
-                        totalSpent = totalSpent + Number(allBookings[i].amount);
-                    }
-                    else {
-                        totalSpent = totalSpent + 100;
-                    }
+                if (allBookings[i].amount != null) {
+                    totalSpent = totalSpent + Number(allBookings[i].amount);
+                }
+                else {
+                    totalSpent = totalSpent + 100;
                 }
             }
-
-            loyaltyPoints = Number(localStorage.getItem('vanidayPoints')) || 100 + (totalBookings * 100);
-
-            if (totalSpent > 200) {
-                walletBalance = 50;
-            }
-
-            updateDashboardDisplay();
         }
 
-        function updateDashboardDisplay() {
-            document.getElementById('loyaltyPointsValue').innerHTML = loyaltyPoints + ' pts';
-            document.getElementById('walletBalanceValue').innerHTML = '$' + walletBalance;
-            document.getElementById('totalBookingsValue').innerHTML = localStorage.getItem('totalBookingsCount') || '0';
+        var loyaltyPoints = 100 + (totalBookings * 100);
+        var walletBalance = 0;
 
-            if (loyaltyPoints >= 1000) {
-                document.getElementById('loyaltyPointsNote').innerHTML = 'You reached 1000 points. 25% off is ready for your next appointment.';
-                document.getElementById('discountPromotionText').innerHTML = '<b>Unlocked:</b> 25% off your next appointment is available now.';
-            }
-
-            if (walletBalance == 50) {
-                document.getElementById('walletBalanceNote').innerHTML = '$50 cashback unlocked for other services.';
-                document.getElementById('cashbackPromotionText').innerHTML = '<b>Unlocked:</b> $50 cashback can be claimed for other services.';
-            }
+        if (totalSpent > 200) {
+            walletBalance = 50;
         }
 
-        loadPointsFromBackend();
+        document.getElementById('loyaltyPointsValue').innerHTML = loyaltyPoints + ' pts';
+        document.getElementById('walletBalanceValue').innerHTML = '$' + walletBalance;
+        document.getElementById('totalBookingsValue').innerHTML = totalBookings;
+
+        if (loyaltyPoints >= 1000) {
+            document.getElementById('loyaltyPointsNote').innerHTML = 'You reached 1000 points. 25% off is ready for your next appointment.';
+            document.getElementById('discountPromotionText').innerHTML = '<b>Unlocked:</b> 25% off your next appointment is available now.';
+        }
+
+        if (walletBalance == 50) {
+            document.getElementById('walletBalanceNote').innerHTML = '$50 cashback unlocked for other services.';
+            document.getElementById('cashbackPromotionText').innerHTML = '<b>Unlocked:</b> $50 cashback can be claimed for other services.';
+        }
 
 
         document.getElementById('promotionClaimFirst').onclick = function() {
@@ -416,4 +381,5 @@
 </body>
 
 </html>
+
 
