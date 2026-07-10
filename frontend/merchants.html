@@ -24,9 +24,9 @@
 
     <div class="merchant-search-panel simple-search-panel">
         <div class="premium-search-row">
-            <span class="search-glass-outside">🔍</span>
+            <span class="search-glass-outside"></span>
             <div class="premium-search-wrap">
-                <input id="merchantSearch" type="text" placeholder="Search service e.g. haircut, hydrafacial, makeup" onkeyup="filterMerchants()">
+                <input id="merchantSearch" type="text" placeholder="Search service e.g. haircut, hydrafacial" onkeyup="filterMerchants()" oninput="filterMerchants()">
             </div>
         </div>
         <p id="merchantSearchMessage">Search by service name to find matching shops.</p>
@@ -165,27 +165,24 @@
         function likeMerchant(merchantName) {
             toggleShopLike(merchantName);
             applyMerchantPageRules();
-            refreshMerchantLikeButtons();
-            moveLikedShopsToTop();
             filterMerchants();
         }
 
         function filterMerchants() {
-            var searchText = document.getElementById("merchantSearch").value.toLowerCase().trim();
+            var input = document.getElementById("merchantSearch");
+            var searchText = "";
+
+            if (input != null) {
+                searchText = input.value;
+            }
+
+            searchText = searchText.toLowerCase();
+            searchText = searchText.trim();
+
             var cards = document.querySelectorAll('.merchant-card');
             var visibleCount = 0;
 
             for (var i = 0; i < cards.length; i = i + 1) {
-                var cardText = cards[i].innerText.toLowerCase();
-                var serviceWords = cards[i].getAttribute("data-services");
-                var fullSearchText = cardText;
-
-                if (serviceWords != null) {
-                    fullSearchText = fullSearchText + " " + serviceWords.toLowerCase();
-                }
-
-                var role = localStorage.getItem('vanidayRole');
-                var ownerShop = getOwnerShopName();
                 var title = cards[i].querySelector('h2');
                 var shopName = '';
 
@@ -193,33 +190,59 @@
                     shopName = title.innerText;
                 }
 
-                if (role == 'Shop Owner' && (ownerShop == '' || !sameMerchantName(shopName, ownerShop))) {
-                    cards[i].style.display = "none";
+                var searchArea = cards[i].getAttribute('data-services');
+
+                if (searchArea == null) {
+                    searchArea = '';
                 }
-                else if (searchText == "") {
-                    cards[i].style.display = "";
+
+                searchArea = shopName + ' ' + searchArea;
+
+                var paragraphs = cards[i].querySelectorAll('p');
+
+                for (var p = 0; p < paragraphs.length; p = p + 1) {
+                    searchArea = searchArea + ' ' + paragraphs[p].innerText;
+                }
+
+                searchArea = searchArea.toLowerCase();
+
+                var currentRole = getCurrentRole();
+                var ownerShop = getOwnerShopName();
+
+                if (isShopDeleted(shopName)) {
+                    cards[i].classList.add('search-hidden');
+                }
+                else if (currentRole == 'Shop Owner' && !sameMerchantName(shopName, ownerShop)) {
+                    cards[i].classList.add('search-hidden');
+                }
+                else if (searchText == '') {
+                    cards[i].classList.remove('search-hidden');
                     visibleCount = visibleCount + 1;
                 }
-                else if (fullSearchText.indexOf(searchText) != -1) {
-                    cards[i].style.display = "";
+                else if (searchArea.indexOf(searchText) != -1) {
+                    cards[i].classList.remove('search-hidden');
                     visibleCount = visibleCount + 1;
                 }
                 else {
-                    cards[i].style.display = "none";
+                    cards[i].classList.add('search-hidden');
                 }
             }
 
-            if (searchText == "") {
-                document.getElementById("merchantSearchMessage").innerHTML = "Search by service name to find matching shops.";
-            }
-            else if (visibleCount == 0) {
-                document.getElementById("merchantSearchMessage").innerHTML = "No shops found for " + searchText + ".";
-            }
-            else if (visibleCount == 1) {
-                document.getElementById("merchantSearchMessage").innerHTML = "1 shop found for " + searchText + ".";
-            }
-            else {
-                document.getElementById("merchantSearchMessage").innerHTML = visibleCount + " shops found for " + searchText + ".";
+            var message = document.getElementById("merchantSearchMessage");
+
+            if (message != null) {
+                if (searchText == '') {
+                    message.innerHTML = "Search by service name to find matching shops.";
+                }
+                else if (visibleCount == 0) {
+                    message.innerHTML = "No shops found for " + searchText + ".";
+                }
+                else if (visibleCount == 1) {
+                    message.innerHTML = "1 shop found for " + searchText + ".";
+                }
+                else {
+                    message.innerHTML = visibleCount + " shops found for " + searchText + ".";
+                }
             }
         }
 
@@ -239,11 +262,9 @@
         </script>
     <script src="app.js"></script>
     <script>
-        applyMerchantPageRules();
-        refreshMerchantLikeButtons();
-        moveLikedShopsToTop();
         filterMerchants();
     </script>
 </body>
 </html>
+
 
