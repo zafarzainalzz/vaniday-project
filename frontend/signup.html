@@ -54,9 +54,9 @@
 
         <input id="signupName" type="text" placeholder="Full Name" required>
 
-        <input id="signupEmail" type="email" placeholder="Enter Email" required>
+        <input type="email" placeholder="Enter Email" required>
 
-        <input id="signupPassword" type="password" placeholder="Enter Password" required>
+        <input type="password" placeholder="Enter Password" required>
 
 
         <select id="signupRole">
@@ -83,48 +83,38 @@
 
     </div>
 
+    <script src="app.js"></script>
+
     <script>
         function signupUser() {
-            var name = document.getElementById('signupName').value;
-            var email = document.getElementById('signupEmail').value;
-            var password = document.getElementById('signupPassword').value;
+            var input = document.getElementById('signupName');
+            var name = input.value;
             var role = document.getElementById('signupRole').value;
 
-            if (name == '' || email == '' || password == '') {
-                alert('Please fill in all signup details.');
-                return;
+            if (name == '') {
+                alert('Please enter your full name.');
             }
-
-            fetch("/api/users/signup", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({
-                    fullName: name,
-                    email: email,
-                    password: password,
-                    role: role
-                })
-            })
-                .then(function (response) {
-                    if (!response.ok) {
-                        return response.text().then(function (text) {
-                            throw new Error(text || "Signup failed.");
-                        });
+            else {
+                localStorage.setItem('vanidayName', name);
+                localStorage.setItem('vanidayRole', role);
+                if (role == 'Shop Owner') {
+                    localStorage.removeItem('ownerAssignedShop');
+                    var mappedShop = getOwnerShopName();
+                    if (mappedShop != '') {
+                        localStorage.setItem('ownerAssignedShop', mappedShop);
                     }
-                    return response.json();
-                })
-                .then(function (data) {
-                    alert("Signup successful. Please login.");
-                    window.location.href = "login.html";
-                })
-                .catch(function (error) {
-                    console.log(error);
-                    alert("Signup failed: " + error.message);
-                });
+                }
+
+                if (role == 'Customer') {
+                    window.location.href = 'dashboard.html';
+                }
+                else if (role == 'Shop Owner') {
+                    window.location.href = 'shop-owner-dashboard.html';
+                }
+            }
         }
     </script>
 
-    <script src="app.js"></script>
 </body>
 
 </html>
