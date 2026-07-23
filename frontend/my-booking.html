@@ -6,6 +6,32 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>My Bookings</title>
     <link rel="stylesheet" href="style.css">
+    <style>
+        .toast-notification {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(0.95);
+            background: #1a1a2e;
+            color: #ffffff;
+            padding: 14px 24px;
+            border-radius: 10px;
+            box-shadow: 0 4px 14px rgba(0, 0, 0, 0.3);
+            z-index: 9999;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease, transform 0.3s ease;
+            max-width: 400px;
+            font-size: 14px;
+            text-align: center;
+        }
+
+        .toast-notification.show {
+            opacity: 1;
+            transform: translate(-50%, -50%) scale(1);
+            pointer-events: auto;
+        }
+    </style>
 </head>
 
 <body class="my-booking-page">
@@ -34,6 +60,18 @@
     </div>
 
     <script>
+        function showToast(message) {
+            var toast = document.getElementById('toastNotification');
+            if (toast == null) {
+                return;
+            }
+            toast.innerHTML = message;
+            toast.classList.add('show');
+            setTimeout(function () {
+                toast.classList.remove('show');
+            }, 3000);
+        }
+
         function loadBookingDetails() {
             var allBookingsText = localStorage.getItem("allBookings");
             var output = "";
@@ -68,11 +106,25 @@
             }
         }
 
+        function deductBookingLoyaltyPoints() {
+            var pts = parseInt(localStorage.getItem('vanidayLoyaltyPoints')) || 100;
+            if (pts >= 200) { pts = pts - 100; }
+            localStorage.setItem('vanidayLoyaltyPoints', pts);
+        }
+
         function cancelBooking(bookingNumber) {
             var allBookingsText = localStorage.getItem("allBookings");
 
             if (allBookingsText != null && allBookingsText != "") {
                 var allBookings = JSON.parse(allBookingsText);
+                var cancelledBooking = allBookings[bookingNumber];
+                var hadLoyaltyAwarded = false;
+
+                if (cancelledBooking != null && cancelledBooking.loyaltyAwarded === true) {
+                    hadLoyaltyAwarded = true;
+                    deductBookingLoyaltyPoints();
+                }
+
                 allBookings.splice(bookingNumber, 1);
                 localStorage.setItem("allBookings", JSON.stringify(allBookings));
 
@@ -91,10 +143,18 @@
                     localStorage.setItem("bookingDate", lastBooking.date);
                     localStorage.setItem("bookingTime", lastBooking.time);
                 }
+
+                if (hadLoyaltyAwarded) {
+                    showToast("Booking cancelled. 100 loyalty points deducted.");
+                }
+                else {
+                    showToast("Booking cancelled.");
+                }
             }
 
-            alert("Booking cancelled");
-            window.location.href = "my-booking.html";
+            setTimeout(function () {
+                window.location.href = "my-booking.html";
+            }, 1500);
         }
 
         function rescheduleBooking() {
@@ -107,7 +167,7 @@
             if (savedRole == 'Shop Owner') {
                 window.location.href = 'shop-owner-dashboard.html';
             }
-            else if (savedRole == 'Merchant Admin') {
+            else if (savedRole == 'Merchant Admin' || savedRole == 'Admin') {
                 window.location.href = 'merchant-admin.html';
             }
         }
@@ -115,6 +175,7 @@
         protectCustomerPage();
         loadBookingDetails();
 </script>
+    <div id="toastNotification" class="toast-notification"></div>
 </body>
 
 </html>

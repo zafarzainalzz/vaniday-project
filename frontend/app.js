@@ -1141,3 +1141,17 @@ function sendShopChat() {
     document.getElementById('chatInput').value = '';
     renderShopChat(shopName);
 }
+
+function addBookingLoyaltyPoints() {
+    var loyaltyPoints = parseInt(localStorage.getItem('vanidayLoyaltyPoints')) || 100;
+    loyaltyPoints = loyaltyPoints + 100;
+    localStorage.setItem('vanidayLoyaltyPoints', loyaltyPoints);
+}
+
+function deductBookingLoyaltyPoints() {
+    var loyaltyPoints = parseInt(localStorage.getItem('vanidayLoyaltyPoints')) || 100;
+    if (loyaltyPoints >= 200) {
+        loyaltyPoints = loyaltyPoints - 100;
+    }
+    localStorage.setItem('vanidayLoyaltyPoints', loyaltyPoints);
+}

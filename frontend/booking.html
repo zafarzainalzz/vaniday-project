@@ -462,6 +462,12 @@
             var bookingDate = document.getElementById("bookingDate").value;
             var bookingTime = document.getElementById("bookingTime").value;
 
+            var loggedInName = localStorage.getItem('vanidayName');
+
+            if (loggedInName != null && loggedInName != '') {
+                customerName = loggedInName;
+            }
+
             if (customerName == "" || merchant == "" || service == "" || bookingDate == "" || bookingTime == "") {
                 alert("Please fill in all booking details.");
             }
@@ -487,6 +493,14 @@
                 var appointmentAmount = 100;
                 var claimedReward = localStorage.getItem('vanidayRewardClaim');
 
+                var savedRole = localStorage.getItem('vanidayRole');
+                var loyaltyAwarded = false;
+
+                if (savedRole == 'Customer') {
+                    addBookingLoyaltyPoints();
+                    loyaltyAwarded = true;
+                }
+
                 allBookings.push({
                     customer: customerName,
                     merchant: merchant,
@@ -494,10 +508,9 @@
                     date: bookingDate,
                     time: bookingTime,
                     amount: appointmentAmount,
-                    reward: claimedReward
+                    reward: claimedReward,
+                    loyaltyAwarded: loyaltyAwarded
                 });
-
-                var savedRole = localStorage.getItem('vanidayRole');
 
                 if (savedRole == 'Customer') {
                     if (claimedReward == '25% next appointment discount') {
@@ -519,8 +532,19 @@
             }
         }
 
+        function prefillCustomerName() {
+            var loggedInName = localStorage.getItem('vanidayName');
+            var nameField = document.getElementById('customerName');
+
+            if (loggedInName != null && loggedInName != '' && nameField.value == '') {
+                nameField.value = loggedInName;
+                updateBookingSummary();
+            }
+        }
+
         loadMerchantServices();
         loadSelectedMerchant();
+        prefillCustomerName();
         updateAvailableSlots();
         updateBookingSummary();
     
@@ -530,7 +554,7 @@
             if (savedRole == 'Shop Owner') {
                 window.location.href = 'shop-owner-dashboard.html';
             }
-            else if (savedRole == 'Merchant Admin') {
+            else if (savedRole == 'Merchant Admin' || savedRole == 'Admin') {
                 window.location.href = 'merchant-admin.html';
             }
         }
