@@ -30,8 +30,21 @@ function getCurrentName() {
 function logoutUser() {
     localStorage.removeItem('vanidayRole');
     localStorage.removeItem('vanidayName');
+    localStorage.removeItem('vanidayUserId');
+    localStorage.removeItem('vanidayToken');
     localStorage.removeItem('ownerAssignedShop');
     window.location.href = 'index.html';
+}
+
+function getAuthHeaders() {
+    var token = localStorage.getItem('vanidayToken');
+    var headers = { 'Content-Type': 'application/json' };
+
+    if (token != null && token != '') {
+        headers['Authorization'] = 'Bearer ' + token;
+    }
+
+    return headers;
 }
 
 function getOwnerRealName() {

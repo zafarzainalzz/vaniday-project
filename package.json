@@ -1,0 +1,13 @@
+{
+  "name": "vaniday-cloud-app",
+  "version": "1.0.0",
+  "private": true,
+  "engines": {
+    "node": ">=20 <23"
+  },
+  "scripts": {
+    "install:backend": "npm --prefix backend ci",
+    "start": "node backend/server.js",
+    "check": "node --check backend/server.js && node --check backend/middleware/auth.js && node --check frontend/integration.js && node --check frontend/app.js"
+  }
+}

@@ -59,14 +59,6 @@
 
         <input type="password" placeholder="Enter Password" required>
 
-        <select id="loginRole">
-
-            <option>Customer</option>
-
-            <option>Shop Owner</option>
-
-        </select>
-
         <button onclick="loginUser()">
             Login
         </button>
@@ -78,13 +70,13 @@
 
     </div>
 
+    <script src="integration.js"></script>
     <script src="app.js"></script>
 
     <script>
         function loginUser() {
             var input = document.getElementById('loginName');
             var value = input.value;
-            var role = document.getElementById('loginRole').value;
             var passwordInput = document.querySelector('input[type="password"]');
             var password = passwordInput.value;
 
@@ -105,6 +97,7 @@
                     localStorage.setItem('vanidayName', result.data.fullName);
                     localStorage.setItem('vanidayRole', dbRole);
                     localStorage.setItem('vanidayUserId', result.data.userId);
+                    localStorage.setItem('vanidayToken', result.data.token);
 
                     if (dbRole == 'Customer') {
                         window.location.href = 'dashboard.html';
@@ -121,7 +114,7 @@
                         window.location.href = 'merchant-admin.html';
                     }
                 } else {
-                    alert('Login failed: ' + result.data);
+                    alert('Login failed: ' + result.data.message);
                 }
             })
             .catch(function(err) {

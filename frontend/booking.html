@@ -23,22 +23,12 @@
 
     <div class="form-container booking-form">
         <h1>Book Appointment</h1>
-        <p class="login-loyalty-note">You can book without logging in. Log in or create an account to earn loyalty points and rewards.</p>
+        <p class="login-loyalty-note">You must be logged in to book. Log in or create an account to earn loyalty points and rewards.</p>
 
         <input id="customerName" type="text" placeholder="Customer Name" onkeyup="updateBookingSummary()" required>
 
-        <select id="merchant" onchange="changeBookingBackground(); loadMerchantServices(); checkTakenTimeBeforeBooking(); updateAvailableSlots(); updateBookingSummary()">
+        <select id="merchant" onchange="onMerchantChange()">
             <option value="">Select Merchant</option>
-            <option value="Glow Beauty Salon">Glow Beauty Salon</option>
-            <option value="Women-Free">Women-Free</option>
-            <option value="Luxury Spa">Luxury Spa</option>
-            <option value="Wellness Center">Wellness Center</option>
-            <option value="Make Up Studio">Make Up Studio</option>
-            <option value="Elite Barber">Elite Barber</option>
-            <option value="Manly Mane Salon">Manly Mane Salon</option>
-            <option value="Blink Glam">Blink Glam</option>
-            <option value="Cosmos Tattoo Art">Cosmos Tattoo Art</option>
-            <option value="The Nail Hub">The Nail Hub</option>
         </select>
 
         <select id="service" onchange="updateBookingSummary()">
@@ -79,157 +69,118 @@
         <button onclick="saveBooking()">Confirm Booking</button>
     </div>
 
+    <script src="integration.js"></script>
     <script src="app.js"></script>
     <script>
-        var glowBeautySalonImage = "assets/images/Glow beauty salon.jpeg";
-        var womenFreeImage = "assets/images/Women-Free.jpeg";
-        var luxurySpaImage = "assets/images/luxery spa.jpeg";
-        var wellnessCenterImage = "assets/images/wellness center.jpeg";
-        var makeUpStudioImage = "assets/images/make up studio.jpeg";
-        var eliteBarberImage = "assets/images/elite barber.jpeg";
-        var manlyManeSalonImage = "assets/images/Manly Mane Salon.jpeg";
-        var blinkGlamImage = "assets/images/Blink Glam.jpeg";
-        var cosmosTattooArtImage = "assets/images/Cosmos Tattoo Art.jpeg";
-        var theNailHubImage = "assets/images/The Nail Hub.jpeg";
+        var merchantDataCache = [];
+        var currentMerchantName = '';
+
+        var imageMap = {
+            'Glow Beauty Salon': "assets/images/Glow beauty salon.jpeg",
+            'Women-Free': "assets/images/Women-Free.jpeg",
+            'Luxury Spa': "assets/images/luxery spa.jpeg",
+            'Wellness Center': "assets/images/wellness center.jpeg",
+            'Make Up Studio': "assets/images/make up studio.jpeg",
+            'Elite Barber': "assets/images/elite barber.jpeg",
+            'Manly Mane Salon': "assets/images/Manly Mane Salon.jpeg",
+            'Blink Glam': "assets/images/Blink Glam.jpeg",
+            'Cosmos Tattoo Art': "assets/images/Cosmos Tattoo Art.jpeg",
+            'The Nail Hub': "assets/images/The Nail Hub.jpeg"
+        };
 
         function changeBookingBackground() {
-            var merchant = document.getElementById("merchant").value;
             var background = document.getElementById("bookingBackground");
-
-            if (merchant == "") {
+            var img = imageMap[currentMerchantName];
+            if (img) {
+                background.style.backgroundImage = "url('" + img + "')";
+            } else {
                 background.style.backgroundImage = "";
-            }
-            else if (merchant == "Glow Beauty Salon") {
-                background.style.backgroundImage = "url('" + glowBeautySalonImage + "')";
-            }
-            else if (merchant == "Women-Free") {
-                background.style.backgroundImage = "url('" + womenFreeImage + "')";
-            }
-            else if (merchant == "Luxury Spa") {
-                background.style.backgroundImage = "url('" + luxurySpaImage + "')";
-            }
-            else if (merchant == "Wellness Center") {
-                background.style.backgroundImage = "url('" + wellnessCenterImage + "')";
-            }
-            else if (merchant == "Make Up Studio") {
-                background.style.backgroundImage = "url('" + makeUpStudioImage + "')";
-            }
-            else if (merchant == "Elite Barber") {
-                background.style.backgroundImage = "url('" + eliteBarberImage + "')";
-            }
-            else if (merchant == "Manly Mane Salon") {
-                background.style.backgroundImage = "url('" + manlyManeSalonImage + "')";
-            }
-            else if (merchant == "Blink Glam") {
-                background.style.backgroundImage = "url('" + blinkGlamImage + "')";
-            }
-            else if (merchant == "Cosmos Tattoo Art") {
-                background.style.backgroundImage = "url('" + cosmosTattooArtImage + "')";
-            }
-            else if (merchant == "The Nail Hub") {
-                background.style.backgroundImage = "url('" + theNailHubImage + "')";
             }
         }
 
+        function onMerchantChange() {
+            var select = document.getElementById("merchant");
+            var option = select.options[select.selectedIndex];
+            currentMerchantName = option.getAttribute("data-name") || '';
+            changeBookingBackground();
+            loadMerchantServices();
+            checkTakenTimeBeforeBooking();
+            updateAvailableSlots();
+            updateBookingSummary();
+        }
+
+        function loadMerchants() {
+            fetch('/api/merchants')
+                .then(function(res) { return res.json(); })
+                .then(function(merchants) {
+                    merchantDataCache = merchants;
+                    var select = document.getElementById("merchant");
+                    var options = '<option value="">Select Merchant</option>';
+                    for (var i = 0; i < merchants.length; i = i + 1) {
+                        options = options + '<option value="' + merchants[i]._id + '" data-name="' + merchants[i].name + '">' + merchants[i].name + '</option>';
+                    }
+                    select.innerHTML = options;
+                    loadSelectedMerchant();
+                })
+                .catch(function(err) {
+                    console.log('Failed to load merchants:', err);
+                });
+        }
 
         function loadMerchantServices() {
-            var merchant = document.getElementById("merchant").value;
+            var merchantId = document.getElementById("merchant").value;
             var serviceBox = document.getElementById("service");
             var options = '<option value="">Select Service</option>';
 
-            if (merchant == "Glow Beauty Salon") {
-                options = options + '<option>Haircut</option>';
-                options = options + '<option>Golden Facial</option>';
-                options = options + '<option>HydraFacial</option>';
-                options = options + '<option>Fruit Facial</option>';
-                options = options + '<option>Anti-Aging Facial</option>';
-                options = options + '<option>Chemical Peel Facial</option>';
-            }
-            else if (merchant == "Women-Free") {
-                options = options + '<option>Waxing</option>';
-                options = options + '<option>Hair Treatment</option>';
-                options = options + '<option>Steam Bath</option>';
-                options = options + '<option>Scrub Therapy</option>';
-                options = options + '<option>Fish Pedicure</option>';
-            }
-            else if (merchant == "Luxury Spa") {
-                options = options + '<option>Thai Massage</option>';
-                options = options + '<option>Ayurvedic Oil Massage</option>';
-                options = options + '<option>Swedish Massage</option>';
-                options = options + '<option>Aromatherapy Massage</option>';
-                options = options + '<option>Foot Massage</option>';
-            }
-            else if (merchant == "Wellness Center") {
-                options = options + '<option>Yoga Session</option>';
-                options = options + '<option>Meditation</option>';
-                options = options + '<option>Zumba</option>';
-                options = options + '<option>Chiropractic</option>';
-            }
-            else if (merchant == "Make Up Studio") {
-                options = options + '<option>Bridal Makeup</option>';
-                options = options + '<option>Party Makeup</option>';
-                options = options + '<option>Photoshoot Makeup</option>';
-                options = options + '<option>Hair Styling</option>';
-                options = options + '<option>Customized Makeup</option>';
-            }
-            else if (merchant == "Elite Barber") {
-                options = options + '<option>Hair Styling</option>';
-                options = options + '<option>Beard Trim</option>';
-                options = options + '<option>Keratin Treatment</option>';
-                options = options + '<option>Eyebrow Trim</option>';
-            }
-            else if (merchant == "Manly Mane Salon") {
-                options = options + '<option>Hair Styling</option>';
-                options = options + '<option>Hair Wash</option>';
-                options = options + '<option>Beard Trim</option>';
-                options = options + '<option>Hair Dye</option>';
-            }
-            else if (merchant == "Blink Glam") {
-                options = options + '<option>Eyelash Extensions</option>';
-                options = options + '<option>Eyelash Lift</option>';
-                options = options + '<option>Under Eye Treatment</option>';
-                options = options + '<option>Eye Spa</option>';
-                options = options + '<option>Eyelash Tint</option>';
-            }
-            else if (merchant == "Cosmos Tattoo Art") {
-                options = options + '<option>Colour Tattoo</option>';
-                options = options + '<option>Hand Tattoo</option>';
-                options = options + '<option>Chest Tattoo</option>';
-                options = options + '<option>Leg Tattoo</option>';
-                options = options + '<option>Sleeve Tattoo</option>';
-                options = options + '<option>Tattoo Removal</option>';
-                options = options + '<option>Tattoo Touch-Up</option>';
-            }
-            else if (merchant == "The Nail Hub") {
-                options = options + '<option>Nail Art</option>';
-                options = options + '<option>Manicure</option>';
-                options = options + '<option>Pedicure</option>';
-                options = options + '<option>Gel Manicure + Pedicure</option>';
-                options = options + '<option>Gel Extensions</option>';
-                options = options + '<option>Nail Extensions</option>';
+            if (merchantId == '') {
+                serviceBox.innerHTML = options;
+                return;
             }
 
-            serviceBox.innerHTML = options;
-            updateBookingSummary();
+            fetch('/api/services?merchant=' + merchantId)
+                .then(function(res) { return res.json(); })
+                .then(function(services) {
+                    for (var i = 0; i < services.length; i = i + 1) {
+                        options = options + '<option value="' + services[i]._id + '">' + services[i].name + ' - $' + services[i].price + '</option>';
+                    }
+                    serviceBox.innerHTML = options;
+                    updateBookingSummary();
+                })
+                .catch(function(err) {
+                    console.log('Failed to load services:', err);
+                    serviceBox.innerHTML = options;
+                });
         }
 
         function loadSelectedMerchant() {
             var selectedMerchant = localStorage.getItem("selectedMerchant");
-
             if (selectedMerchant != "" && selectedMerchant != null) {
-                document.getElementById("merchant").value = selectedMerchant;
-                changeBookingBackground();
-                loadMerchantServices();
+                var select = document.getElementById("merchant");
+                for (var i = 0; i < select.options.length; i = i + 1) {
+                    if (select.options[i].getAttribute("data-name") == selectedMerchant) {
+                        select.selectedIndex = i;
+                        onMerchantChange();
+                        break;
+                    }
+                }
             }
         }
 
+        function getSelectedMerchantId() {
+            return document.getElementById("merchant").value;
+        }
+
+        function getSelectedServiceId() {
+            return document.getElementById("service").value;
+        }
+
         function checkTakenTimeBeforeBooking() {
-            var merchant = document.getElementById("merchant").value;
+            var merchantId = getSelectedMerchantId();
             var bookingDate = document.getElementById("bookingDate").value;
             var bookingTime = document.getElementById("bookingTime").value;
 
-            if (merchant != "" && bookingDate != "" && bookingTime != "") {
-                if (isBookingTimeTaken(merchant, bookingDate, bookingTime)) {
+            if (merchantId != "" && bookingDate != "" && bookingTime != "") {
+                if (isBookingTimeTaken(currentMerchantName, bookingDate, bookingTime)) {
                     document.getElementById("bookingTime").className = "taken-time";
                     document.getElementById("bookingTimeMessage").innerHTML = "That timing is taken. Choose at least 1 hour later.";
                 }
@@ -239,7 +190,6 @@
                 }
             }
         }
-
 
         function formatSlotLabel(timeValue) {
             var hourNumber = Number(timeValue.substring(0, 2));
@@ -284,24 +234,12 @@
         }
 
         function getDayShortName(dayNumber) {
-            if (dayNumber == 0) {
-                return "Sun";
-            }
-            else if (dayNumber == 1) {
-                return "Mon";
-            }
-            else if (dayNumber == 2) {
-                return "Tue";
-            }
-            else if (dayNumber == 3) {
-                return "Wed";
-            }
-            else if (dayNumber == 4) {
-                return "Thu";
-            }
-            else if (dayNumber == 5) {
-                return "Fri";
-            }
+            if (dayNumber == 0) return "Sun";
+            if (dayNumber == 1) return "Mon";
+            if (dayNumber == 2) return "Tue";
+            if (dayNumber == 3) return "Wed";
+            if (dayNumber == 4) return "Thu";
+            if (dayNumber == 5) return "Fri";
             return "Sat";
         }
 
@@ -313,45 +251,29 @@
         }
 
         function getSuggestedSlot(slotNumber) {
-            var merchant = document.getElementById("merchant").value;
             var first = "10:00";
             var second = "11:30";
             var third = "14:00";
             var fourth = "16:30";
 
-            if (merchant == "Luxury Spa" || merchant == "Wellness Center") {
-                first = "09:30";
-                second = "12:00";
-                third = "15:00";
-                fourth = "18:00";
+            if (currentMerchantName == "Luxury Spa" || currentMerchantName == "Wellness Center") {
+                first = "09:30"; second = "12:00"; third = "15:00"; fourth = "18:00";
             }
-            else if (merchant == "Make Up Studio" || merchant == "Blink Glam") {
-                first = "11:00";
-                second = "13:30";
-                third = "16:00";
-                fourth = "18:30";
+            else if (currentMerchantName == "Make Up Studio" || currentMerchantName == "Blink Glam") {
+                first = "11:00"; second = "13:30"; third = "16:00"; fourth = "18:30";
             }
-            else if (merchant == "Elite Barber" || merchant == "Manly Mane Salon") {
-                first = "09:00";
-                second = "10:30";
-                third = "13:00";
-                fourth = "17:00";
+            else if (currentMerchantName == "Elite Barber" || currentMerchantName == "Manly Mane Salon") {
+                first = "09:00"; second = "10:30"; third = "13:00"; fourth = "17:00";
             }
 
-            if (slotNumber == 1) {
-                return first;
-            }
-            else if (slotNumber == 2) {
-                return second;
-            }
-            else if (slotNumber == 3) {
-                return third;
-            }
+            if (slotNumber == 1) return first;
+            if (slotNumber == 2) return second;
+            if (slotNumber == 3) return third;
             return fourth;
         }
 
         function updateAvailableSlots() {
-            var merchant = document.getElementById("merchant").value;
+            var merchantId = getSelectedMerchantId();
             var bookingDate = document.getElementById("bookingDate").value;
             var bookingTime = document.getElementById("bookingTime").value;
             var slotBox = document.getElementById("availableSlots");
@@ -360,24 +282,20 @@
             var today = new Date();
             var calendarOutput = "";
             var output = "";
-            var i = 0;
 
-            for (i = 0; i < 7; i = i + 1) {
+            for (var i = 0; i < 7; i = i + 1) {
                 var nextDate = new Date(today);
                 nextDate.setDate(today.getDate() + i);
                 var dateValue = getDateInputValue(nextDate);
                 var activeClass = "";
-
                 if (bookingDate == dateValue) {
                     activeClass = " active-mini-day";
                 }
-
                 calendarOutput = calendarOutput + '<button type="button" class="mini-day-card' + activeClass + '" onclick="chooseCalendarDate(\'' + dateValue + '\')"><span>' + getDayShortName(nextDate.getDay()) + '</span><b>' + nextDate.getDate() + '</b></button>';
             }
-
             calendarBox.innerHTML = calendarOutput;
 
-            if (merchant == "") {
+            if (merchantId == "") {
                 slotDateText.innerHTML = "Choose a shop first";
                 slotBox.innerHTML = '<p class="no-slot-text">Select a merchant to see available timings.</p>';
                 return;
@@ -385,8 +303,7 @@
 
             if (bookingDate == "") {
                 slotDateText.innerHTML = "Choose a date";
-            }
-            else {
+            } else {
                 slotDateText.innerHTML = bookingDate;
             }
 
@@ -397,18 +314,17 @@
 
             if (bookingDate == "") {
                 output = '<p class="no-slot-text">Pick a date from the mini calendar to view open slots.</p>';
-            }
-            else {
-                if (!isBookingTimeTaken(merchant, bookingDate, slotOne)) {
+            } else {
+                if (!isBookingTimeTaken(currentMerchantName, bookingDate, slotOne)) {
                     output = output + '<button type="button" onclick="chooseSlot(\'' + slotOne + '\')">' + formatSlotLabel(slotOne) + '</button>';
                 }
-                if (!isBookingTimeTaken(merchant, bookingDate, slotTwo)) {
+                if (!isBookingTimeTaken(currentMerchantName, bookingDate, slotTwo)) {
                     output = output + '<button type="button" onclick="chooseSlot(\'' + slotTwo + '\')">' + formatSlotLabel(slotTwo) + '</button>';
                 }
-                if (!isBookingTimeTaken(merchant, bookingDate, slotThree)) {
+                if (!isBookingTimeTaken(currentMerchantName, bookingDate, slotThree)) {
                     output = output + '<button type="button" onclick="chooseSlot(\'' + slotThree + '\')">' + formatSlotLabel(slotThree) + '</button>';
                 }
-                if (!isBookingTimeTaken(merchant, bookingDate, slotFour)) {
+                if (!isBookingTimeTaken(currentMerchantName, bookingDate, slotFour)) {
                     output = output + '<button type="button" onclick="chooseSlot(\'' + slotFour + '\')">' + formatSlotLabel(slotFour) + '</button>';
                 }
             }
@@ -422,27 +338,19 @@
 
         function updateBookingSummary() {
             var customerName = document.getElementById("customerName").value;
-            var merchant = document.getElementById("merchant").value;
-            var service = document.getElementById("service").value;
+            var merchant = currentMerchantName;
+            var serviceSelect = document.getElementById("service");
+            var serviceText = serviceSelect.selectedIndex > 0 ? serviceSelect.options[serviceSelect.selectedIndex].text : '';
             var bookingDate = document.getElementById("bookingDate").value;
             var bookingTime = document.getElementById("bookingTime").value;
 
-            if (customerName == "") {
-                customerName = "Not selected";
-            }
-            if (merchant == "") {
-                merchant = "Not selected";
-            }
-            if (service == "") {
-                service = "Not selected";
-            }
-            if (bookingDate == "") {
-                bookingDate = "Not selected";
-            }
+            if (customerName == "") customerName = "Not selected";
+            if (merchant == "") merchant = "Not selected";
+            if (serviceText == "") serviceText = "Not selected";
+            if (bookingDate == "") bookingDate = "Not selected";
             if (bookingTime == "") {
                 bookingTime = "Not selected";
-            }
-            else {
+            } else {
                 bookingTime = formatSlotLabel(bookingTime);
             }
 
@@ -450,107 +358,72 @@
                 "<h3>Booking Summary</h3>" +
                 "<p><b>Name:</b> " + customerName + "</p>" +
                 "<p><b>Merchant:</b> " + merchant + "</p>" +
-                "<p><b>Service:</b> " + service + "</p>" +
+                "<p><b>Service:</b> " + serviceText + "</p>" +
                 "<p><b>Date:</b> " + bookingDate + "</p>" +
                 "<p><b>Time:</b> " + bookingTime + "</p>";
         }
 
         function saveBooking() {
-            var customerName = document.getElementById("customerName").value;
-            var merchant = document.getElementById("merchant").value;
-            var service = document.getElementById("service").value;
+            var token = localStorage.getItem('vanidayToken');
+            if (!token) {
+                alert('Please log in to book an appointment.');
+                window.location.href = 'login.html';
+                return;
+            }
+
+            var merchantId = getSelectedMerchantId();
+            var serviceId = getSelectedServiceId();
             var bookingDate = document.getElementById("bookingDate").value;
             var bookingTime = document.getElementById("bookingTime").value;
 
-            var loggedInName = localStorage.getItem('vanidayName');
-
-            if (loggedInName != null && loggedInName != '') {
-                customerName = loggedInName;
-            }
-
-            if (customerName == "" || merchant == "" || service == "" || bookingDate == "" || bookingTime == "") {
+            if (merchantId == "" || serviceId == "" || bookingDate == "" || bookingTime == "") {
                 alert("Please fill in all booking details.");
+                return;
             }
-            else if (isBookingTimeTaken(merchant, bookingDate, bookingTime)) {
+
+            if (isBookingTimeTaken(currentMerchantName, bookingDate, bookingTime)) {
                 alert("That timing is taken. Please choose a time at least 1 hour later.");
                 document.getElementById("bookingTime").className = "taken-time";
                 document.getElementById("bookingTimeMessage").innerHTML = "That timing is taken.";
+                return;
             }
-            else {
-                localStorage.setItem("customerName", customerName);
-                localStorage.setItem("merchant", merchant);
-                localStorage.setItem("service", service);
-                localStorage.setItem("bookingDate", bookingDate);
-                localStorage.setItem("bookingTime", bookingTime);
 
-                var allBookingsText = localStorage.getItem("allBookings");
-                var allBookings = [];
-
-                if (allBookingsText != null && allBookingsText != "") {
-                    allBookings = JSON.parse(allBookingsText);
+            fetch('/api/bookings', {
+                method: 'POST',
+                headers: getAuthHeaders(),
+                body: JSON.stringify({
+                    merchant: merchantId,
+                    service: serviceId,
+                    bookingDate: bookingDate,
+                    bookingTime: bookingTime
+                })
+            })
+            .then(function(res) { return res.json().then(function(data) { return { ok: res.ok, data: data }; }); })
+            .then(function(result) {
+                if (result.ok) {
+                    alert('Booking confirmed!');
+                    localStorage.removeItem("selectedMerchant");
+                    window.location.href = "my-booking.html";
+                } else {
+                    alert('Booking failed: ' + result.data.message);
                 }
-
-                var appointmentAmount = 100;
-                var claimedReward = localStorage.getItem('vanidayRewardClaim');
-
-                var savedRole = localStorage.getItem('vanidayRole');
-                var loyaltyAwarded = false;
-
-                if (savedRole == 'Customer') {
-                    addBookingLoyaltyPoints();
-                    loyaltyAwarded = true;
-                }
-
-                allBookings.push({
-                    customer: customerName,
-                    merchant: merchant,
-                    service: service,
-                    date: bookingDate,
-                    time: bookingTime,
-                    amount: appointmentAmount,
-                    reward: claimedReward,
-                    loyaltyAwarded: loyaltyAwarded
-                });
-
-                if (savedRole == 'Customer') {
-                    if (claimedReward == '25% next appointment discount') {
-                        localStorage.removeItem('vanidayRewardClaim');
-                        alert('25% reward applied to this appointment. 100 loyalty points added.');
-                    }
-                    else {
-                        alert('Booking confirmed. 100 loyalty points added.');
-                    }
-                }
-                else {
-                    alert('Booking confirmed. Log in or create an account next time to earn loyalty points and rewards.');
-                }
-
-                localStorage.setItem("allBookings", JSON.stringify(allBookings));
-                localStorage.removeItem("selectedMerchant");
-
-                window.location.href = "my-booking.html";
-            }
+            })
+            .catch(function(err) {
+                alert('Booking error: ' + err.message);
+            });
         }
 
         function prefillCustomerName() {
             var loggedInName = localStorage.getItem('vanidayName');
             var nameField = document.getElementById('customerName');
-
             if (loggedInName != null && loggedInName != '' && nameField.value == '') {
                 nameField.value = loggedInName;
                 updateBookingSummary();
             }
         }
 
-        loadMerchantServices();
-        loadSelectedMerchant();
-        prefillCustomerName();
-        updateAvailableSlots();
-        updateBookingSummary();
-    
         function protectCustomerPage() {
             var savedRole = localStorage.getItem('vanidayRole');
-
             if (savedRole == 'Shop Owner') {
                 window.location.href = 'shop-owner-dashboard.html';
             }
@@ -560,7 +433,10 @@
         }
 
         protectCustomerPage();
-</script>
+        loadMerchants();
+        prefillCustomerName();
+        updateAvailableSlots();
+        updateBookingSummary();
+    </script>
 </body>
 </html>
-

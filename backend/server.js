@@ -5,8 +5,16 @@ const cors = require("cors");
 const path = require("path");
 const bookingRoutes = require("./routes/bookingRoutes");
 const userRoutes = require("./routes/userRoutes");
+const merchantRoutes = require("./routes/merchantRoutes");
+const serviceRoutes = require("./routes/serviceRoutes");
+const shopRoutes = require("./routes/shopRoutes");
+const stateRoutes = require("./routes/stateRoutes");
+const { requireEnvironmentVariable } = require("./config");
 
 dotenv.config();
+
+requireEnvironmentVariable("MONGO_URI");
+requireEnvironmentVariable("JWT_SECRET");
 
 const app = express();
 
@@ -27,6 +35,10 @@ app.get("/api/health", function (req, res) {
 
 app.use("/api/users", userRoutes);
 app.use("/api/bookings", bookingRoutes);
+app.use("/api/merchants", merchantRoutes);
+app.use("/api/services", serviceRoutes);
+app.use("/api/shops", shopRoutes);
+app.use("/api/state", stateRoutes);
 
 app.use(function (req, res, next) {
   if (req.path.startsWith("/api")) {

@@ -93,6 +93,7 @@
 
     </main>
 
+    <script src="integration.js"></script>
     <script src="app.js"></script>
     <script>
         protectShopOwnerOnlyPage();
@@ -251,26 +252,70 @@
         }
 
         function loadOwnerBooking() {
-            var ownerShopName = getOwnerShopName();
-            var bookingsText = localStorage.getItem('allBookings');
-            var output = '';
+            var token = localStorage.getItem('vanidayToken');
 
-            if (bookingsText != null && bookingsText != '') {
-                var bookings = JSON.parse(bookingsText);
+            if (!token) {
+                document.getElementById('ownerBookingBox').innerHTML = '<p>Please log in to view bookings.</p>';
+                return;
+            }
 
-                for (var i = 0; i < bookings.length; i = i + 1) {
-                    if (ownerShopName == '' || sameMerchantName(bookings[i].merchant, ownerShopName)) {
-                        output = output + '<p><b>Customer:</b> ' + bookings[i].customer + '</p>' + '<p><b>Merchant:</b> ' + bookings[i].merchant + '</p>' + '<p><b>Service:</b> ' + bookings[i].service + '</p>' + '<p><b>Date:</b> ' + bookings[i].date + '</p>' + '<p><b>Time:</b> ' + bookings[i].time + '</p><hr>';
+            fetch('/api/bookings/owner', {
+                method: 'GET',
+                headers: getAuthHeaders()
+            })
+            .then(function(res) { return res.json(); })
+            .then(function(bookings) {
+                if (bookings.length > 0) {
+                    var output = '';
+                    for (var i = 0; i < bookings.length; i = i + 1) {
+                        var b = bookings[i];
+                        var customerName = b.customer ? b.customer.fullName : 'Unknown';
+                        var merchantName = b.merchant ? b.merchant.name : 'Unknown';
+                        var serviceName = b.service ? b.service.name : 'Unknown';
+                        output = output + '<div class="single-booking-box">';
+                        output = output + '<p><b>Customer:</b> ' + customerName + '</p>';
+                        output = output + '<p><b>Merchant:</b> ' + merchantName + '</p>';
+                        output = output + '<p><b>Service:</b> ' + serviceName + '</p>';
+                        output = output + '<p><b>Date:</b> ' + b.bookingDate + '</p>';
+                        output = output + '<p><b>Time:</b> ' + b.bookingTime + '</p>';
+                        output = output + '<p><b>Status:</b> ' + b.status + '</p>';
+                        output = output + '<div class="premium-booking-actions">';
+                        output = output + '<button onclick="updateBookingStatus(\'' + b._id + '\', \'Confirmed\')">Confirm</button>';
+                        output = output + '<button onclick="updateBookingStatus(\'' + b._id + '\', \'Cancelled\')">Cancel</button>';
+                        output = output + '</div>';
+                        output = output + '</div>';
                     }
+                    document.getElementById('ownerBookingBox').innerHTML = output;
+                } else {
+                    document.getElementById('ownerBookingBox').innerHTML = '<p>No customer bookings found yet.</p>';
                 }
-            }
+            })
+            .catch(function(err) {
+                document.getElementById('ownerBookingBox').innerHTML = '<p>Failed to load bookings: ' + err.message + '</p>';
+            });
+        }
 
-            if (output != '') {
-                document.getElementById('ownerBookingBox').innerHTML = output;
-            }
-            else {
-                document.getElementById('ownerBookingBox').innerHTML = '<p>No customer bookings found yet. Make sure the customer selects the same merchant name as this shop.</p>';
-            }
+        function updateBookingStatus(bookingId, status) {
+            var confirmAction = confirm('Are you sure you want to ' + status.toLowerCase() + ' this booking?');
+            if (!confirmAction) return;
+
+            fetch('/api/bookings/' + bookingId + '/status', {
+                method: 'PUT',
+                headers: getAuthHeaders(),
+                body: JSON.stringify({ status: status })
+            })
+            .then(function(res) { return res.json().then(function(data) { return { ok: res.ok, data: data }; }); })
+            .then(function(result) {
+                if (result.ok) {
+                    alert('Booking ' + status.toLowerCase() + 'd.');
+                    loadOwnerBooking();
+                } else {
+                    alert('Failed: ' + result.data.message);
+                }
+            })
+            .catch(function(err) {
+                alert('Error: ' + err.message);
+            });
         }
 
         loadSavedShopAndService();

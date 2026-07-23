@@ -59,17 +59,6 @@
         <input type="password" placeholder="Enter Password" required>
 
 
-        <select id="signupRole">
-
-            <option>Customer</option>
-
-            <option>Shop Owner</option>
-
-            <option>Admin</option>
-
-        </select>
-
-
         <button onclick="signupUser()">
 
             Signup
@@ -84,6 +73,7 @@
 
     </div>
 
+    <script src="integration.js"></script>
     <script src="app.js"></script>
 
     <script>
@@ -94,7 +84,6 @@
             var email = emailInput.value;
             var passwordInput = document.querySelector('input[type="password"]');
             var password = passwordInput.value;
-            var role = document.getElementById('signupRole').value;
 
             if (name == '' || email == '' || password == '') {
                 alert('Please fill in all fields.');
@@ -104,15 +93,19 @@
             fetch('/api/users/signup', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ fullName: name, email: email, password: password, role: role })
+                body: JSON.stringify({ fullName: name, email: email, password: password })
             })
-            .then(function(res) { return res.text().then(function(text) { return { ok: res.ok, text: text }; }); })
+            .then(function(res) { return res.json().then(function(data) { return { ok: res.ok, data: data }; }); })
             .then(function(result) {
                 if (result.ok) {
-                    alert('Signup successful! Please login.');
-                    window.location.href = 'login.html';
+                    localStorage.setItem('vanidayToken', result.data.token);
+                    localStorage.setItem('vanidayName', result.data.fullName);
+                    localStorage.setItem('vanidayRole', result.data.role);
+                    localStorage.setItem('vanidayUserId', result.data.userId);
+                    alert('Signup successful! Redirecting to dashboard.');
+                    window.location.href = 'dashboard.html';
                 } else {
-                    alert('Signup failed: ' + result.text);
+                    alert('Signup failed: ' + result.data.message);
                 }
             })
             .catch(function(err) {

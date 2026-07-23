@@ -59,12 +59,12 @@
         <p>Please book an appointment first.</p>
     </div>
 
+    <script src="integration.js"></script>
+    <script src="app.js"></script>
     <script>
         function showToast(message) {
             var toast = document.getElementById('toastNotification');
-            if (toast == null) {
-                return;
-            }
+            if (toast == null) return;
             toast.innerHTML = message;
             toast.classList.add('show');
             setTimeout(function () {
@@ -73,97 +73,89 @@
         }
 
         function loadBookingDetails() {
-            var allBookingsText = localStorage.getItem("allBookings");
-            var output = "";
+            var token = localStorage.getItem('vanidayToken');
 
-            if (allBookingsText != null && allBookingsText != "") {
-                var allBookings = JSON.parse(allBookingsText);
+            if (!token) {
+                document.getElementById("bookingDetails").innerHTML =
+                    '<h2>Please Log In</h2><p>You need to be logged in to view your bookings. <a href="login.html">Login here</a></p>';
+                return;
+            }
 
-                if (allBookings.length > 0) {
-                    output = "<h2>All Upcoming Bookings</h2>";
+            fetch('/api/bookings/mine', {
+                method: 'GET',
+                headers: getAuthHeaders()
+            })
+            .then(function(res) { return res.json(); })
+            .then(function(bookings) {
+                if (bookings.length > 0) {
+                    var output = "<h2>All Upcoming Bookings</h2>";
 
-                    for (var i = 0; i < allBookings.length; i = i + 1) {
+                    for (var i = 0; i < bookings.length; i = i + 1) {
+                        var b = bookings[i];
+                        var merchantName = b.merchant ? b.merchant.name : 'Unknown';
+                        var serviceName = b.service ? b.service.name : 'Unknown';
+                        var customerName = b.customer ? b.customer.fullName : 'Unknown';
+
                         output = output + "<div class='single-booking-box'>";
-                        output = output + "<div class='gold-success-tick'><span>✓</span></div>";
-                        output = output + "<div class='booking-status-pill'>Status: Confirmed</div>";
+                        output = output + "<div class='gold-success-tick'><span>&#10003;</span></div>";
+                        output = output + "<div class='booking-status-pill'>Status: " + b.status + "</div>";
                         output = output + "<div class='premium-booking-lines'>";
                         output = output + "<p><b>Booking:</b> " + (i + 1) + "</p>";
-                        output = output + "<p><b>Customer:</b> " + allBookings[i].customer + "</p>";
-                        output = output + "<p><b>Merchant:</b> " + allBookings[i].merchant + "</p>";
-                        output = output + "<p><b>Service:</b> " + allBookings[i].service + "</p>";
-                        output = output + "<p><b>Date:</b> " + allBookings[i].date + "</p>";
-                        output = output + "<p><b>Time:</b> " + allBookings[i].time + "</p>";
+                        output = output + "<p><b>Customer:</b> " + customerName + "</p>";
+                        output = output + "<p><b>Merchant:</b> " + merchantName + "</p>";
+                        output = output + "<p><b>Service:</b> " + serviceName + "</p>";
+                        output = output + "<p><b>Date:</b> " + b.bookingDate + "</p>";
+                        output = output + "<p><b>Time:</b> " + b.bookingTime + "</p>";
                         output = output + "</div>";
                         output = output + "<div class='premium-booking-actions'>";
-                        output = output + "<button onclick='cancelBooking(" + i + ")'>Cancel</button>";
+                        output = output + "<button onclick='cancelBooking(\"" + b._id + "\")'>Cancel</button>";
                         output = output + "<button onclick='rescheduleBooking()'>Reschedule</button>";
                         output = output + "</div>";
                         output = output + "</div>";
                     }
 
                     document.getElementById("bookingDetails").innerHTML = output;
+                } else {
+                    document.getElementById("bookingDetails").innerHTML =
+                        '<h2>No Bookings Found</h2><p>You have no upcoming bookings. <a href="booking.html">Book now</a></p>';
                 }
-            }
+            })
+            .catch(function(err) {
+                document.getElementById("bookingDetails").innerHTML =
+                    '<h2>Error Loading Bookings</h2><p>' + err.message + '</p>';
+            });
         }
 
-        function deductBookingLoyaltyPoints() {
-            var pts = parseInt(localStorage.getItem('vanidayLoyaltyPoints')) || 100;
-            if (pts >= 200) { pts = pts - 100; }
-            localStorage.setItem('vanidayLoyaltyPoints', pts);
-        }
+        function cancelBooking(bookingId) {
+            var confirmCancel = confirm('Are you sure you want to cancel this booking?');
+            if (!confirmCancel) return;
 
-        function cancelBooking(bookingNumber) {
-            var allBookingsText = localStorage.getItem("allBookings");
-
-            if (allBookingsText != null && allBookingsText != "") {
-                var allBookings = JSON.parse(allBookingsText);
-                var cancelledBooking = allBookings[bookingNumber];
-                var hadLoyaltyAwarded = false;
-
-                if (cancelledBooking != null && cancelledBooking.loyaltyAwarded === true) {
-                    hadLoyaltyAwarded = true;
-                    deductBookingLoyaltyPoints();
-                }
-
-                allBookings.splice(bookingNumber, 1);
-                localStorage.setItem("allBookings", JSON.stringify(allBookings));
-
-                if (allBookings.length == 0) {
-                    localStorage.removeItem("customerName");
-                    localStorage.removeItem("merchant");
-                    localStorage.removeItem("service");
-                    localStorage.removeItem("bookingDate");
-                    localStorage.removeItem("bookingTime");
-                }
-                else {
-                    var lastBooking = allBookings[allBookings.length - 1];
-                    localStorage.setItem("customerName", lastBooking.customer);
-                    localStorage.setItem("merchant", lastBooking.merchant);
-                    localStorage.setItem("service", lastBooking.service);
-                    localStorage.setItem("bookingDate", lastBooking.date);
-                    localStorage.setItem("bookingTime", lastBooking.time);
-                }
-
-                if (hadLoyaltyAwarded) {
-                    showToast("Booking cancelled. 100 loyalty points deducted.");
-                }
-                else {
+            fetch('/api/bookings/' + bookingId + '/cancel', {
+                method: 'PUT',
+                headers: getAuthHeaders()
+            })
+            .then(function(res) { return res.json().then(function(data) { return { ok: res.ok, data: data }; }); })
+            .then(function(result) {
+                if (result.ok) {
                     showToast("Booking cancelled.");
+                    setTimeout(function () {
+                        loadBookingDetails();
+                    }, 1000);
+                } else {
+                    alert("Cancel failed: " + result.data.message);
                 }
-            }
-
-            setTimeout(function () {
-                window.location.href = "my-booking.html";
-            }, 1500);
+            })
+            .catch(function(err) {
+                alert("Cancel error: " + err.message);
+            });
         }
 
         function rescheduleBooking() {
             window.location.href = "booking.html";
         }
-    
+
         function protectCustomerPage() {
             var savedRole = localStorage.getItem('vanidayRole');
-
             if (savedRole == 'Shop Owner') {
                 window.location.href = 'shop-owner-dashboard.html';
             }
@@ -174,7 +166,7 @@
 
         protectCustomerPage();
         loadBookingDetails();
-</script>
+    </script>
     <div id="toastNotification" class="toast-notification"></div>
 </body>
 
