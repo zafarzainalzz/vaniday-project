@@ -65,8 +65,6 @@
 
             <option>Shop Owner</option>
 
-            <option>Merchant Admin</option>
-
         </select>
 
         <button onclick="loginUser()">
@@ -83,47 +81,52 @@
     <script src="app.js"></script>
 
     <script>
-
         function loginUser() {
-
             var input = document.getElementById('loginName');
             var value = input.value;
             var role = document.getElementById('loginRole').value;
+            var passwordInput = document.querySelector('input[type="password"]');
+            var password = passwordInput.value;
 
-            if (value == '') {
-                alert('Please enter your name or email.');
+            if (value == '' || password == '') {
+                alert('Please enter your email and password.');
+                return;
             }
-            else {
-                var name = value;
 
-                if (value.indexOf('@') != -1) {
-                    name = value.substring(0, value.indexOf('@'));
-                }
+            fetch('/api/users/login', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email: value, password: password })
+            })
+            .then(function(res) { return res.json().then(function(data) { return { ok: res.ok, data: data }; }); })
+            .then(function(result) {
+                if (result.ok) {
+                    var dbRole = result.data.role;
+                    localStorage.setItem('vanidayName', result.data.fullName);
+                    localStorage.setItem('vanidayRole', dbRole);
+                    localStorage.setItem('vanidayUserId', result.data.userId);
 
-                if (name.toLowerCase() == 'merchant') {
-                    role = 'Merchant Admin';
-                }
-
-                localStorage.setItem('vanidayName', name);
-                localStorage.setItem('vanidayRole', role);
-                if (role == 'Shop Owner') {
-                    localStorage.removeItem('ownerAssignedShop');
-                    var mappedShop = getOwnerShopName();
-                    if (mappedShop != '') {
-                        localStorage.setItem('ownerAssignedShop', mappedShop);
+                    if (dbRole == 'Customer') {
+                        window.location.href = 'dashboard.html';
                     }
+                    else if (dbRole == 'Shop Owner') {
+                        localStorage.removeItem('ownerAssignedShop');
+                        var mappedShop = getOwnerShopName();
+                        if (mappedShop != '') {
+                            localStorage.setItem('ownerAssignedShop', mappedShop);
+                        }
+                        window.location.href = 'shop-owner-dashboard.html';
+                    }
+                    else if (dbRole == 'Admin') {
+                        window.location.href = 'merchant-admin.html';
+                    }
+                } else {
+                    alert('Login failed: ' + result.data);
                 }
-
-                if (role == 'Customer') {
-                    window.location.href = 'dashboard.html';
-                }
-                else if (role == 'Shop Owner') {
-                    window.location.href = 'shop-owner-dashboard.html';
-                }
-                else if (role == 'Merchant Admin') {
-                    window.location.href = 'merchant-admin.html';
-                }
-            }
+            })
+            .catch(function(err) {
+                alert('Login error: ' + err.message);
+            });
         }
 
     </script>

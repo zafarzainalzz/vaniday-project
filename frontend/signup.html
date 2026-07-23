@@ -65,6 +65,7 @@
 
             <option>Shop Owner</option>
 
+            <option>Admin</option>
 
         </select>
 
@@ -87,31 +88,36 @@
 
     <script>
         function signupUser() {
-            var input = document.getElementById('signupName');
-            var name = input.value;
+            var nameInput = document.getElementById('signupName');
+            var name = nameInput.value;
+            var emailInput = document.querySelector('input[type="email"]');
+            var email = emailInput.value;
+            var passwordInput = document.querySelector('input[type="password"]');
+            var password = passwordInput.value;
             var role = document.getElementById('signupRole').value;
 
-            if (name == '') {
-                alert('Please enter your full name.');
+            if (name == '' || email == '' || password == '') {
+                alert('Please fill in all fields.');
+                return;
             }
-            else {
-                localStorage.setItem('vanidayName', name);
-                localStorage.setItem('vanidayRole', role);
-                if (role == 'Shop Owner') {
-                    localStorage.removeItem('ownerAssignedShop');
-                    var mappedShop = getOwnerShopName();
-                    if (mappedShop != '') {
-                        localStorage.setItem('ownerAssignedShop', mappedShop);
-                    }
-                }
 
-                if (role == 'Customer') {
-                    window.location.href = 'dashboard.html';
+            fetch('/api/users/signup', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ fullName: name, email: email, password: password, role: role })
+            })
+            .then(function(res) { return res.text().then(function(text) { return { ok: res.ok, text: text }; }); })
+            .then(function(result) {
+                if (result.ok) {
+                    alert('Signup successful! Please login.');
+                    window.location.href = 'login.html';
+                } else {
+                    alert('Signup failed: ' + result.text);
                 }
-                else if (role == 'Shop Owner') {
-                    window.location.href = 'shop-owner-dashboard.html';
-                }
-            }
+            })
+            .catch(function(err) {
+                alert('Signup error: ' + err.message);
+            });
         }
     </script>
 
