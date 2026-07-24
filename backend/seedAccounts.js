@@ -1,6 +1,6 @@
 const bcrypt = require("bcrypt");
 const User = require("./models/User");
-const Shop = require("./models/Shop");
+const Merchant = require("./models/Merchant");
 
 const shops = [
   "Glow Beauty Salon",
@@ -46,10 +46,19 @@ async function seedSystemAccounts() {
         loyaltyPoints: 0
       }, "1234567");
 
-      await Shop.findOneAndUpdate(
-        { ownerId: user._id },
-        { ownerId: user._id, name: shopName, assignedShop: shopName },
-        { upsert: true, new: true, setDefaultsOnInsert: true }
+      await Merchant.findOneAndUpdate(
+        { owner: user._id },
+        {
+          owner: user._id,
+          name: shopName,
+          description: "",
+          address: "",
+          phone: "",
+          email: slug + "@shops.vaniday.local",
+          image: "",
+          available: ""
+        },
+        { upsert: true, new: true, setDefaultsOnInsert: true, runValidators: true }
       );
     }
 
