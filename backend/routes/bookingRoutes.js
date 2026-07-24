@@ -173,7 +173,21 @@ router.get("/mine", authenticate, async function (req, res) {
 // GET /api/bookings - Get bookings (filtered by role)
 router.get("/", authenticate, async function (req, res) {
     try {
-        var filter = req.user.role === "Customer" ? { customer: req.user.id } : {};
+        var role = req.user.role;
+        var filter = {};
+
+        if (role === "Customer") {
+            filter = { customer: req.user.id };
+        } else if (role === "Shop Owner") {
+            var ownedMerchants = await Merchant.find({ owner: req.user.id }).select("_id");
+            var merchantIds = ownedMerchants.map(function (m) { return m._id; });
+            filter = { merchant: { $in: merchantIds } };
+        } else if (role === "Merchant Admin") {
+            filter = {};
+        } else {
+            return res.status(403).json({ message: "Access denied." });
+        }
+
         var bookings = await Booking.find(filter)
             .populate("customer", "fullName email")
             .populate("merchant", "name")

@@ -53,7 +53,10 @@
         if(token()) {
             var points=await getJson(API+'/users/me/points');
             if(points && typeof points.loyaltyPoints!=='undefined') originalSetItem.call(localStorage,'vanidayLoyaltyPoints',String(points.loyaltyPoints));
-            var bookings=await getJson(API+'/bookings');
+            var role=originalGet('vanidayRole');
+            var bookingsUrl=API+'/bookings';
+            if(role==='Shop Owner'||role==='Merchant Admin') bookingsUrl=API+'/bookings/owner';
+            var bookings=await getJson(bookingsUrl);
             if(Array.isArray(bookings)) originalSetItem.call(localStorage,'allBookings',JSON.stringify(bookings.map(window.VanidayApi ? window.VanidayApi.toLegacyBooking : function(b){return b;})));
         }
     }
