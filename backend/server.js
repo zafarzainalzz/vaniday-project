@@ -68,9 +68,7 @@ mongoose.connect(mongoUri)
   .then(async function () {
     console.log("MongoDB connected");
     await seedSystemAccounts();
-    if (process.env.SEED_DEMO_DATA === "true") {
-      await seedDemoServices();
-    }
+    await seedDemoServices();
     app.listen(port, "0.0.0.0", function () {
       console.log("Server started on port " + port);
     });
