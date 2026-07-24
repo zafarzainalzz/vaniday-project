@@ -24,7 +24,7 @@
 
     <div class="form-container booking-form">
         <h1>Book Appointment</h1>
-        <p class="login-loyalty-note">You must be logged in to book. Log in or create an account to earn loyalty points and rewards.</p>
+        <p class="login-loyalty-note">You can book without logging in. Log in or create an account to earn loyalty points and rewards.</p>
 
         <input id="customerName" type="text" placeholder="Customer Name" onkeyup="updateBookingSummary()" required>
 
@@ -365,16 +365,11 @@
 
         function saveBooking() {
             var token = localStorage.getItem('vanidayToken');
-            if (!token) {
-                alert('Please log in to book an appointment.');
-                window.location.href = 'login.html';
-                return;
-            }
-
             var merchantId = getSelectedMerchantId();
             var serviceId = getSelectedServiceId();
             var bookingDate = document.getElementById("bookingDate").value;
             var bookingTime = document.getElementById("bookingTime").value;
+            var customerNameInput = document.getElementById("customerName").value.trim();
 
             if (merchantId == "" || serviceId == "" || bookingDate == "" || bookingTime == "") {
                 alert("Please fill in all booking details.");
@@ -388,21 +383,51 @@
                 return;
             }
 
+            if (token && localStorage.getItem('vanidayName')) {
+                customerNameInput = localStorage.getItem('vanidayName');
+            }
+
+            if (!customerNameInput) {
+                alert("Please enter your name to continue.");
+                return;
+            }
+
+            var headers = { 'Content-Type': 'application/json' };
+            if (token) {
+                headers['Authorization'] = 'Bearer ' + token;
+            }
+
             fetch('/api/bookings', {
                 method: 'POST',
-                headers: getAuthHeaders(),
+                headers: headers,
                 body: JSON.stringify({
                     merchant: merchantId,
                     service: serviceId,
                     bookingDate: bookingDate,
-                    bookingTime: bookingTime
+                    bookingTime: bookingTime,
+                    customerName: customerNameInput,
+                    amount: 100,
+                    reward: localStorage.getItem('selectedReward') || ''
                 })
             })
             .then(function(res) { return res.json().then(function(data) { return { ok: res.ok, data: data }; }); })
             .then(function(result) {
                 if (result.ok) {
-                    alert('Booking confirmed!');
+                    if (result.data.loyaltyPoints !== undefined && result.data.loyaltyPoints !== null) {
+                        localStorage.setItem('vanidayLoyaltyPoints', String(result.data.loyaltyPoints));
+                    }
+                    if (result.data.guestToken) {
+                        localStorage.setItem('vanidayGuestToken', result.data.guestToken);
+                    }
+
+                    if (result.data.isGuest) {
+                        alert('Booking confirmed! Save your booking token from "My Bookings" to look up your reservation later.');
+                    } else {
+                        alert('Booking confirmed!');
+                    }
+
                     localStorage.removeItem("selectedMerchant");
+                    localStorage.removeItem("selectedReward");
                     window.location.href = "my-booking.html";
                 } else {
                     alert('Booking failed: ' + result.data.message);
@@ -414,9 +439,10 @@
         }
 
         function prefillCustomerName() {
+            var token = localStorage.getItem('vanidayToken');
             var loggedInName = localStorage.getItem('vanidayName');
             var nameField = document.getElementById('customerName');
-            if (loggedInName != null && loggedInName != '' && nameField.value == '') {
+            if (token && loggedInName != null && loggedInName != '' && nameField.value == '') {
                 nameField.value = loggedInName;
                 updateBookingSummary();
             }

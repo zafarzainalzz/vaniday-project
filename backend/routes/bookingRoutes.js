@@ -1,9 +1,10 @@
 const express = require("express");
+const crypto = require("crypto");
 const Booking = require("../models/Booking");
 const User = require("../models/User");
 const Merchant = require("../models/Merchant");
 const Service = require("../models/Service");
-const { authenticate, requireRole } = require("../middleware/auth");
+const { authenticate, optionalAuthenticate, requireRole } = require("../middleware/auth");
 
 const router = express.Router();
 
@@ -39,23 +40,28 @@ async function hasTimeConflict(merchantId, bookingDate, bookingTime, excludeBook
     return false;
 }
 
-// POST /api/bookings - Create a booking (authenticated)
-router.post("/", authenticate, async function (req, res) {
+// POST /api/bookings - Create a booking (supports both logged-in users and guests)
+router.post("/", optionalAuthenticate, async function (req, res) {
     try {
-        const { merchant, service, bookingDate, bookingTime } = req.body;
-
-        if (!merchant || !service || !bookingDate || !bookingTime) {
-            return res.status(400).json({ message: "Merchant, service, booking date, and booking time are required." });
+        if (req.user && req.user.role !== "Customer") {
+            return res.status(403).json({ message: "Only customers or guests can create bookings." });
         }
 
-        const merchantDoc = await Merchant.findById(merchant);
+        var merchant = String(req.body.merchant || "").trim();
+        var service = String(req.body.service || "").trim();
+        var bookingDate = String(req.body.bookingDate || "").trim();
+        var bookingTime = String(req.body.bookingTime || "").trim();
 
+        if (!merchant || !service || !bookingDate || !bookingTime) {
+            return res.status(400).json({ message: "Merchant, service, date and time are required." });
+        }
+
+        var merchantDoc = await Merchant.findById(merchant);
         if (!merchantDoc || !merchantDoc.active) {
             return res.status(404).json({ message: "Merchant not found or inactive." });
         }
 
-        const serviceDoc = await Service.findById(service);
-
+        var serviceDoc = await Service.findById(service);
         if (!serviceDoc || !serviceDoc.active) {
             return res.status(404).json({ message: "Service not found or inactive." });
         }
@@ -64,36 +70,53 @@ router.post("/", authenticate, async function (req, res) {
             return res.status(400).json({ message: "Service does not belong to the selected merchant." });
         }
 
-        const conflict = await hasTimeConflict(merchant, bookingDate, bookingTime, null);
-
-        if (conflict) {
-            return res.status(409).json({ message: "Time conflict: another active booking exists within 1 hour of this slot." });
+        if (await hasTimeConflict(merchant, bookingDate, bookingTime, null)) {
+            return res.status(409).json({ message: "That timing is taken. Please choose another time." });
         }
 
-        const customer = await User.findById(req.user.id);
+        var user = null;
+        var guestToken = "";
+        var customerName = String(req.body.customerName || "").trim();
+        var customerEmail = String(req.body.customerEmail || "").trim().toLowerCase();
 
-        const booking = new Booking({
-            customer: req.user.id,
-            customerName: customer ? customer.fullName : "",
-            customerEmail: customer ? customer.email : "",
+        if (req.user) {
+            user = await User.findById(req.user.id);
+            if (!user) return res.status(404).json({ message: "Customer account not found." });
+            customerName = user.fullName;
+            customerEmail = user.email;
+        } else {
+            if (!customerName) {
+                return res.status(400).json({ message: "Customer name is required for guest booking." });
+            }
+            guestToken = crypto.randomBytes(24).toString("hex");
+        }
+
+        var amount = Number(req.body.amount);
+        var booking = new Booking({
+            customer: user ? user._id : undefined,
+            customerName: customerName,
+            customerEmail: customerEmail,
+            guestToken: guestToken,
             merchant: merchant,
             service: service,
             bookingDate: bookingDate,
             bookingTime: bookingTime,
-            amount: Number(req.body.amount) || 100,
-            reward: req.body.reward || "",
-            loyaltyAwarded: true,
+            amount: Number.isFinite(amount) && amount >= 0 ? amount : 100,
+            reward: user ? String(req.body.reward || "").trim() : "",
+            loyaltyAwarded: !!user,
             status: "Confirmed"
         });
 
         await booking.save();
 
-        if (customer) {
-            customer.loyaltyPoints = (customer.loyaltyPoints || 0) + 100;
-            await customer.save();
+        var loyaltyPoints = null;
+        if (user) {
+            user.loyaltyPoints = (user.loyaltyPoints || 0) + 100;
+            await user.save();
+            loyaltyPoints = user.loyaltyPoints;
         }
 
-        const populated = await Booking.findById(booking._id)
+        var populated = await Booking.findById(booking._id)
             .populate("customer", "fullName email")
             .populate("merchant", "name")
             .populate("service", "name price");
@@ -101,7 +124,9 @@ router.post("/", authenticate, async function (req, res) {
         res.status(201).json({
             message: "Booking created successfully.",
             booking: populated,
-            loyaltyPoints: customer ? customer.loyaltyPoints : 0
+            loyaltyPoints: loyaltyPoints,
+            guestToken: guestToken || undefined,
+            isGuest: !user
         });
     } catch (error) {
         console.error(error);
@@ -109,10 +134,31 @@ router.post("/", authenticate, async function (req, res) {
     }
 });
 
+// GET /api/bookings/guest - Get guest bookings via X-Guest-Token header
+router.get("/guest", async function (req, res) {
+    try {
+        var token = String(req.headers["x-guest-token"] || req.query.token || "").trim();
+        if (!token) {
+            return res.status(401).json({ message: "Guest booking access token required." });
+        }
+
+        var bookings = await Booking.find({ guestToken: token })
+            .select("+guestToken")
+            .populate("merchant", "name")
+            .populate("service", "name price")
+            .sort({ createdAt: -1 });
+
+        res.status(200).json(bookings);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: "Failed to get guest bookings." });
+    }
+});
+
 // GET /api/bookings/mine - Get logged-in customer's bookings
 router.get("/mine", authenticate, async function (req, res) {
     try {
-        const bookings = await Booking.find({ customer: req.user.id, status: { $ne: "Cancelled" } })
+        var bookings = await Booking.find({ customer: req.user.id, status: { $ne: "Cancelled" } })
             .populate("customer", "fullName email")
             .populate("merchant", "name")
             .populate("service", "name price")
@@ -125,6 +171,23 @@ router.get("/mine", authenticate, async function (req, res) {
     }
 });
 
+// GET /api/bookings - Get bookings (filtered by role)
+router.get("/", authenticate, async function (req, res) {
+    try {
+        var filter = req.user.role === "Customer" ? { customer: req.user.id } : {};
+        var bookings = await Booking.find(filter)
+            .populate("customer", "fullName email")
+            .populate("merchant", "name")
+            .populate("service", "name price")
+            .sort({ createdAt: -1 });
+
+        res.status(200).json(bookings);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: "Failed to get bookings." });
+    }
+});
+
 // GET /api/bookings/owner - Get shop owner's bookings
 router.get("/owner", authenticate, requireRole("Shop Owner", "Merchant Admin"), async function (req, res) {
     try {
@@ -134,10 +197,10 @@ router.get("/owner", authenticate, requireRole("Shop Owner", "Merchant Admin"), 
             merchantQuery = {};
         }
 
-        const ownedMerchants = await Merchant.find(merchantQuery).select("_id");
-        const merchantIds = ownedMerchants.map(function (m) { return m._id; });
+        var ownedMerchants = await Merchant.find(merchantQuery).select("_id");
+        var merchantIds = ownedMerchants.map(function (m) { return m._id; });
 
-        const bookings = await Booking.find({ merchant: { $in: merchantIds }, status: { $ne: "Cancelled" } })
+        var bookings = await Booking.find({ merchant: { $in: merchantIds }, status: { $ne: "Cancelled" } })
             .populate("customer", "fullName email")
             .populate("merchant", "name")
             .populate("service", "name price")
@@ -201,7 +264,7 @@ router.put("/:id/reschedule", authenticate, async function (req, res) {
 // PUT /api/bookings/:id/cancel - Cancel a booking
 router.put("/:id/cancel", authenticate, async function (req, res) {
     try {
-        const booking = await Booking.findById(req.params.id);
+        var booking = await Booking.findById(req.params.id);
 
         if (!booking) {
             return res.status(404).json({ message: "Booking not found." });
@@ -211,13 +274,12 @@ router.put("/:id/cancel", authenticate, async function (req, res) {
             return res.status(400).json({ message: "Booking is already cancelled." });
         }
 
-        var isCustomer = booking.customer.toString() === req.user.id;
+        var isCustomer = booking.customer && booking.customer.toString() === req.user.id;
         var isOwner = false;
 
         if (!isCustomer) {
-            const merchant = await Merchant.findById(booking.merchant);
-
-            if (merchant && merchant.owner.toString() === req.user.id) {
+            var merchantDoc = await Merchant.findById(booking.merchant);
+            if (merchantDoc && merchantDoc.owner.toString() === req.user.id) {
                 isOwner = true;
             }
         }
@@ -239,32 +301,33 @@ router.put("/:id/cancel", authenticate, async function (req, res) {
 // PUT /api/bookings/:id/status - Update booking status (shop owner or admin)
 router.put("/:id/status", authenticate, requireRole("Shop Owner", "Merchant Admin"), async function (req, res) {
     try {
-        const { status } = req.body;
+        var status = String(req.body.status || "").trim();
+        var allowedStatuses = ["Pending", "Confirmed", "Completed", "Cancelled"];
 
-        if (!status || ["Pending", "Confirmed", "Completed", "Cancelled"].indexOf(status) === -1) {
+        if (!status || allowedStatuses.indexOf(status) === -1) {
             return res.status(400).json({ message: "Valid status required: Pending, Confirmed, Completed, or Cancelled." });
         }
 
-        const booking = await Booking.findById(req.params.id);
+        var booking = await Booking.findById(req.params.id);
 
         if (!booking) {
             return res.status(404).json({ message: "Booking not found." });
         }
 
-        const merchant = await Merchant.findById(booking.merchant);
+        var merchantDoc = await Merchant.findById(booking.merchant);
 
-        if (!merchant) {
+        if (!merchantDoc) {
             return res.status(404).json({ message: "Merchant not found." });
         }
 
-        if (req.user.role !== "Merchant Admin" && merchant.owner.toString() !== req.user.id) {
+        if (req.user.role !== "Merchant Admin" && merchantDoc.owner.toString() !== req.user.id) {
             return res.status(403).json({ message: "Access denied. You can only update bookings for your own merchant." });
         }
 
         booking.status = status;
         await booking.save();
 
-        const updated = await Booking.findById(booking._id)
+        var updated = await Booking.findById(booking._id)
             .populate("customer", "fullName email")
             .populate("merchant", "name")
             .populate("service", "name price");
@@ -282,13 +345,13 @@ router.put("/:id/status", authenticate, requireRole("Shop Owner", "Merchant Admi
 // DELETE /api/bookings/:id - Delete a single booking (customer or admin)
 router.delete("/:id", authenticate, async function (req, res) {
     try {
-        const booking = await Booking.findById(req.params.id);
+        var booking = await Booking.findById(req.params.id);
 
         if (!booking) {
             return res.status(404).json({ message: "Booking not found." });
         }
 
-        var isCustomer = booking.customer.toString() === req.user.id;
+        var isCustomer = booking.customer && booking.customer.toString() === req.user.id;
 
         if (!isCustomer && req.user.role !== "Merchant Admin") {
             return res.status(403).json({ message: "Access denied." });
@@ -305,7 +368,7 @@ router.delete("/:id", authenticate, async function (req, res) {
 // DELETE /api/bookings - Clear all bookings (admin only)
 router.delete("/", authenticate, requireRole("Merchant Admin"), async function (req, res) {
     try {
-        const result = await Booking.deleteMany({});
+        var result = await Booking.deleteMany({});
         res.status(200).json({ message: "All bookings cleared.", deletedCount: result.deletedCount });
     } catch (error) {
         console.error(error);

@@ -55,28 +55,69 @@ router.post("/signup", async function (req, res) {
     }
 });
 
-// Login route - public, returns JWT
+function normalizeRole(role) {
+    if (role === "Shop Owner") return "Shop Owner";
+    if (role === "Merchant Admin" || role === "Admin") return "Merchant Admin";
+    return "Customer";
+}
+
+function escapeRegex(str) {
+    return String(str).replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+}
+
+// Login route - public, supports name/email/username login with optional role selector
 router.post("/login", async function (req, res) {
     try {
-        const { email, password } = req.body;
+        var identifier = String(req.body.identifier || req.body.email || req.body.username || "").trim();
+        var password = String(req.body.password || "");
+        var selectedRole = normalizeRole(req.body.role);
 
-        if (!email || !password) {
-            return res.status(400).json({ message: "Email and password are required." });
+        if (!identifier || !password) {
+            return res.status(400).json({ message: "Name/email and password are required." });
         }
 
-        const user = await User.findOne({ email: email });
+        var lower = identifier.toLowerCase();
+        var users = await User.find({
+            $or: [
+                { email: lower },
+                { username: lower },
+                { fullName: new RegExp("^" + escapeRegex(identifier) + "$", "i") }
+            ]
+        }).limit(3);
+
+        if (users.length === 0) {
+            return res.status(404).json({ message: "Account not found." });
+        }
+
+        if (users.length > 1) {
+            var matched = [];
+            for (var i = 0; i < users.length; i++) {
+                if (await bcrypt.compare(password, users[i].password)) {
+                    matched.push(users[i]);
+                }
+            }
+            users = matched;
+        }
+
+        var user = users.length === 1 ? users[0] : null;
 
         if (!user) {
-            return res.status(404).json({ message: "User not found." });
+            return res.status(401).json({
+                message: users.length > 1
+                    ? "More than one customer has this name. Please use your email."
+                    : "Incorrect password."
+            });
         }
 
-        const isPasswordCorrect = await bcrypt.compare(password, user.password);
-
-        if (!isPasswordCorrect) {
+        if (!await bcrypt.compare(password, user.password)) {
             return res.status(401).json({ message: "Incorrect password." });
         }
 
-        const token = generateToken(user);
+        if (req.body.role && selectedRole !== normalizeRole(user.role)) {
+            return res.status(403).json({ message: "Please select the correct account type." });
+        }
+
+        var token = generateToken(user);
 
         res.status(200).json({
             message: "Login successful.",
@@ -84,8 +125,9 @@ router.post("/login", async function (req, res) {
             userId: user._id,
             fullName: user.fullName,
             email: user.email,
-            role: user.role,
-            loyaltyPoints: user.loyaltyPoints
+            username: user.username || "",
+            role: normalizeRole(user.role),
+            loyaltyPoints: user.loyaltyPoints || 0
         });
 
     } catch (error) {

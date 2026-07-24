@@ -7,7 +7,7 @@ function getJwtSecret() {
 
 function generateToken(user) {
   return jwt.sign(
-    { id: user._id, email: user.email, role: user.role },
+    { id: user._id, email: user.email, role: user.role, username: user.username || "" },
     getJwtSecret(),
     { expiresIn: "7d" }
   );
@@ -31,6 +31,25 @@ function authenticate(req, res, next) {
   }
 }
 
+function optionalAuthenticate(req, res, next) {
+  var authHeader = req.headers.authorization;
+
+  if (!authHeader || !authHeader.startsWith("Bearer ")) {
+    req.user = null;
+    return next();
+  }
+
+  var token = authHeader.split(" ")[1];
+
+  try {
+    req.user = jwt.verify(token, getJwtSecret());
+  } catch (error) {
+    req.user = null;
+  }
+
+  next();
+}
+
 function requireRole() {
   var allowedRoles = Array.prototype.slice.call(arguments);
 
@@ -47,4 +66,4 @@ function requireRole() {
   };
 }
 
-module.exports = { generateToken: generateToken, authenticate: authenticate, requireRole: requireRole };
+module.exports = { generateToken: generateToken, authenticate: authenticate, optionalAuthenticate: optionalAuthenticate, requireRole: requireRole };

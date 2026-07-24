@@ -54,6 +54,12 @@
         My Bookings
     </h1>
 
+    <div id="guestTokenSection" style="display:none; margin: 0 auto 20px; max-width: 600px; text-align: center;">
+        <p style="margin-bottom: 8px;">Have a booking token? Look up your guest booking below.</p>
+        <input id="guestTokenInput" type="text" placeholder="Paste your booking token" style="width: 70%; display: inline-block; padding: 10px; border: 1px solid #ccc; border-radius: 6px;">
+        <button onclick="viewGuestBooking()" style="display: inline-block; padding: 10px 16px; background: #b8860b; color: white; border: none; border-radius: 6px; cursor: pointer;">Look Up</button>
+    </div>
+
     <div id="bookingDetails" class="premium-booking-card">
         <h2>No Booking Found</h2>
         <p>Please book an appointment first.</p>
@@ -74,56 +80,105 @@
 
         function loadBookingDetails() {
             var token = localStorage.getItem('vanidayToken');
+            var guestToken = localStorage.getItem('vanidayGuestToken');
 
-            if (!token) {
+            if (token) {
+                document.getElementById('guestTokenSection').style.display = 'none';
+                loadAuthenticatedBookings();
+            } else if (guestToken) {
+                document.getElementById('guestTokenSection').style.display = 'none';
+                document.getElementById('guestTokenInput').value = guestToken;
+                loadGuestBookings(guestToken);
+            } else {
+                document.getElementById('guestTokenSection').style.display = 'block';
                 document.getElementById("bookingDetails").innerHTML =
-                    '<h2>Please Log In</h2><p>You need to be logged in to view your bookings. <a href="login.html">Login here</a></p>';
-                return;
+                    '<h2>No Session Found</h2><p>Please log in or enter a booking token to view your bookings. <a href="login.html">Login here</a></p>';
             }
+        }
 
+        function loadAuthenticatedBookings() {
             fetch('/api/bookings/mine', {
                 method: 'GET',
                 headers: getAuthHeaders()
             })
             .then(function(res) { return res.json(); })
             .then(function(bookings) {
-                if (bookings.length > 0) {
-                    var output = "<h2>All Upcoming Bookings</h2>";
+                renderBookings(bookings);
+            })
+            .catch(function(err) {
+                document.getElementById("bookingDetails").innerHTML =
+                    '<h2>Error Loading Bookings</h2><p>' + err.message + '</p>';
+            });
+        }
 
-                    for (var i = 0; i < bookings.length; i = i + 1) {
-                        var b = bookings[i];
-                        var merchantName = b.merchant ? b.merchant.name : 'Unknown';
-                        var serviceName = b.service ? b.service.name : 'Unknown';
-                        var customerName = b.customer ? b.customer.fullName : 'Unknown';
-
-                        output = output + "<div class='single-booking-box'>";
-                        output = output + "<div class='gold-success-tick'><span>&#10003;</span></div>";
-                        output = output + "<div class='booking-status-pill'>Status: " + b.status + "</div>";
-                        output = output + "<div class='premium-booking-lines'>";
-                        output = output + "<p><b>Booking:</b> " + (i + 1) + "</p>";
-                        output = output + "<p><b>Customer:</b> " + customerName + "</p>";
-                        output = output + "<p><b>Merchant:</b> " + merchantName + "</p>";
-                        output = output + "<p><b>Service:</b> " + serviceName + "</p>";
-                        output = output + "<p><b>Date:</b> " + b.bookingDate + "</p>";
-                        output = output + "<p><b>Time:</b> " + b.bookingTime + "</p>";
-                        output = output + "</div>";
-                        output = output + "<div class='premium-booking-actions'>";
-                        output = output + "<button onclick='cancelBooking(\"" + b._id + "\")'>Cancel</button>";
-                        output = output + "<button onclick='rescheduleBooking(\"" + b._id + "\")'>Reschedule</button>";
-                        output = output + "</div>";
-                        output = output + "</div>";
-                    }
-
-                    document.getElementById("bookingDetails").innerHTML = output;
+        function loadGuestBookings(token) {
+            fetch('/api/bookings/guest', {
+                method: 'GET',
+                headers: { 'X-Guest-Token': token }
+            })
+            .then(function(res) { return res.json().then(function(data) { return { ok: res.ok, data: data }; }); })
+            .then(function(result) {
+                if (result.ok) {
+                    renderBookings(result.data);
                 } else {
                     document.getElementById("bookingDetails").innerHTML =
-                        '<h2>No Bookings Found</h2><p>You have no upcoming bookings. <a href="booking.html">Book now</a></p>';
+                        '<h2>Guest Booking Lookup Failed</h2><p>' + (result.data.message || 'Invalid token.') + '</p>';
                 }
             })
             .catch(function(err) {
                 document.getElementById("bookingDetails").innerHTML =
                     '<h2>Error Loading Bookings</h2><p>' + err.message + '</p>';
             });
+        }
+
+        function renderBookings(bookings) {
+            if (bookings.length > 0) {
+                var output = "<h2>All Upcoming Bookings</h2>";
+
+                for (var i = 0; i < bookings.length; i = i + 1) {
+                    var b = bookings[i];
+                    var merchantName = b.merchant ? b.merchant.name : 'Unknown';
+                    var serviceName = b.service ? b.service.name : 'Unknown';
+                    var customerLabel = b.customerName || (b.customer ? b.customer.fullName : 'Unknown');
+
+                    output = output + "<div class='single-booking-box'>";
+                    output = output + "<div class='gold-success-tick'><span>&#10003;</span></div>";
+                    output = output + "<div class='booking-status-pill'>Status: " + b.status + "</div>";
+                    output = output + "<div class='premium-booking-lines'>";
+                    output = output + "<p><b>Booking:</b> " + (i + 1) + "</p>";
+                    output = output + "<p><b>Customer:</b> " + customerLabel + "</p>";
+                    output = output + "<p><b>Merchant:</b> " + merchantName + "</p>";
+                    output = output + "<p><b>Service:</b> " + serviceName + "</p>";
+                    output = output + "<p><b>Date:</b> " + b.bookingDate + "</p>";
+                    output = output + "<p><b>Time:</b> " + b.bookingTime + "</p>";
+                    if (b.guestToken) {
+                        output = output + "<p><b>Token:</b> <code>" + b.guestToken + "</code></p>";
+                    }
+                    output = output + "</div>";
+                    if (localStorage.getItem('vanidayToken')) {
+                        output = output + "<div class='premium-booking-actions'>";
+                        output = output + "<button onclick='cancelBooking(\"" + b._id + "\")'>Cancel</button>";
+                        output = output + "<button onclick='rescheduleBooking(\"" + b._id + "\")'>Reschedule</button>";
+                        output = output + "</div>";
+                    }
+                    output = output + "</div>";
+                }
+
+                document.getElementById("bookingDetails").innerHTML = output;
+            } else {
+                document.getElementById("bookingDetails").innerHTML =
+                    '<h2>No Bookings Found</h2><p>You have no upcoming bookings. <a href="booking.html">Book now</a></p>';
+            }
+        }
+
+        function viewGuestBooking() {
+            var tokenInput = document.getElementById('guestTokenInput').value.trim();
+            if (!tokenInput) {
+                alert('Please enter a booking token.');
+                return;
+            }
+            localStorage.setItem('vanidayGuestToken', tokenInput);
+            loadGuestBookings(tokenInput);
         }
 
         function cancelBooking(bookingId) {

@@ -10,6 +10,7 @@ const serviceRoutes = require("./routes/serviceRoutes");
 const shopRoutes = require("./routes/shopRoutes");
 const stateRoutes = require("./routes/stateRoutes");
 const { requireEnvironmentVariable } = require("./config");
+const { seedSystemAccounts } = require("./seedAccounts");
 
 dotenv.config({ path: path.join(__dirname, ".env") });
 
@@ -66,8 +67,9 @@ app.use(function (error, req, res, next) {
 
 const port = process.env.PORT || 5000;
 mongoose.connect(mongoUri)
-  .then(function () {
+  .then(async function () {
     console.log("MongoDB connected");
+    await seedSystemAccounts();
     app.listen(port, "0.0.0.0", function () {
       console.log("Server started on port " + port);
     });

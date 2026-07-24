@@ -57,9 +57,19 @@
 
         <h1>Login</h1>
 
-        <input id="loginName" type="email" placeholder="Enter Email" required>
+        <input id="loginName" type="text" placeholder="Enter name, email or shop name" required>
 
         <input id="loginPassword" type="password" placeholder="Enter Password" required>
+
+        <select id="loginRole">
+
+            <option>Customer</option>
+
+            <option>Shop Owner</option>
+
+            <option>Merchant Admin</option>
+
+        </select>
 
         <button onclick="loginUser()">
             Login
@@ -77,11 +87,12 @@
     <script>
 
         async function loginUser() {
-            var email = document.getElementById('loginName').value.trim();
+            var identifier = document.getElementById('loginName').value.trim();
+            var role = document.getElementById('loginRole').value;
             var password = document.getElementById('loginPassword').value;
 
-            if (email == '' || password == '') {
-                alert('Please enter your email and password.');
+            if (identifier == '' || password == '') {
+                alert('Please enter your name/email/shop name and password.');
                 return;
             }
 
@@ -89,7 +100,7 @@
                 var response = await fetch('/api/users/login', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ email: email, password: password })
+                    body: JSON.stringify({ identifier: identifier, password: password, role: role })
                 });
                 var result = await response.json();
                 if (!response.ok) {
@@ -103,7 +114,7 @@
                 localStorage.setItem('vanidayEmail', result.email);
                 localStorage.setItem('vanidayRole', result.role);
                 localStorage.setItem('vanidayLoyaltyPoints', String(result.loyaltyPoints || 0));
-                if (window.VanidaySync) window.VanidaySync.hydrate();
+                if (window.VanidaySync) await window.VanidaySync.hydrate();
 
                 if (result.role == 'Customer') window.location.href = 'dashboard.html';
                 else if (result.role == 'Shop Owner') window.location.href = 'shop-owner-dashboard.html';
