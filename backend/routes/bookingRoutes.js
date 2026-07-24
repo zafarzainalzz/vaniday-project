@@ -91,7 +91,6 @@ router.post("/", optionalAuthenticate, async function (req, res) {
             guestToken = crypto.randomBytes(24).toString("hex");
         }
 
-        var amount = Number(req.body.amount);
         var booking = new Booking({
             customer: user ? user._id : undefined,
             customerName: customerName,
@@ -101,7 +100,7 @@ router.post("/", optionalAuthenticate, async function (req, res) {
             service: service,
             bookingDate: bookingDate,
             bookingTime: bookingTime,
-            amount: Number.isFinite(amount) && amount >= 0 ? amount : 100,
+            amount: serviceDoc.price,
             reward: user ? String(req.body.reward || "").trim() : "",
             loyaltyAwarded: !!user,
             status: "Confirmed"
