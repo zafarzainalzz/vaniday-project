@@ -222,7 +222,10 @@
 
     </main>
 
+    <script src="app.js"></script>
     <script>
+        protectCustomerOnlyPage();
+
         function showToast(message) {
             var toast = document.getElementById('toastNotification');
             if (toast == null) {
@@ -236,17 +239,10 @@
         }
 
         var savedName = localStorage.getItem('vanidayName');
-        var savedRole = localStorage.getItem('vanidayRole');
         var greeting = document.getElementById('dashboardGreeting');
 
-        if (savedRole == 'Shop Owner') {
-            window.location.href = 'shop-owner-dashboard.html';
-        } else if (savedRole == 'Merchant Admin') {
-            window.location.href = 'merchant-admin.html';
-        } else {
-            if (savedName != null && savedName != '') {
-                greeting.innerHTML = 'Hi ' + savedName + ', customer dashboard';
-            }
+        if (savedName != null && savedName != '') {
+            greeting.innerHTML = 'Hi ' + savedName + ', customer dashboard';
         }
 
         var loyaltyPoints = parseInt(localStorage.getItem('vanidayLoyaltyPoints'));
@@ -407,18 +403,7 @@
         if (lastClaimed != null && lastClaimed != '') {
             document.getElementById('lastClaimedReward').innerHTML = lastClaimed;
         }
-
-        function logoutUser() {
-            localStorage.removeItem('vanidayToken');
-            localStorage.removeItem('vanidayRole');
-            localStorage.removeItem('vanidayName');
-            localStorage.removeItem('vanidayUserId');
-            localStorage.removeItem('vanidayEmail');
-            window.location.href = 'index.html';
-        }
     </script>
-
-    <script src="app.js"></script>
 
     <div id="toastNotification" class="toast-notification"></div>
 </body>

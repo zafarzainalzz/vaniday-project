@@ -555,17 +555,7 @@
             });
         }
 
-        function protectCustomerPage() {
-            var savedRole = localStorage.getItem('vanidayRole');
-            if (savedRole == 'Shop Owner') {
-                window.location.href = 'shop-owner-dashboard.html';
-            }
-            else if (savedRole == 'Merchant Admin' || savedRole == 'Admin') {
-                window.location.href = 'merchant-admin.html';
-            }
-        }
-
-        protectCustomerPage();
+        protectCustomerOnlyPage();
         rescheduleBookingId = getRescheduleId();
         if (rescheduleBookingId && !localStorage.getItem('vanidayToken')) {
             alert('Please log in to reschedule a booking.');
