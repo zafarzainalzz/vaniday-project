@@ -36,6 +36,16 @@
             </button>
         </section>
 
+        <section class="dashboard-feature-grid dashboard-section-spaced">
+            <div class="dashboard-panel soft-panel noise-overlay" id="platformStats">
+                <div class="panel-label left-label">✦ PLATFORM OVERVIEW</div>
+                <h2>Platform Statistics</h2>
+                <div id="adminStatsBox">
+                    <p>Loading platform stats...</p>
+                </div>
+            </div>
+        </section>
+
         <section class="admin-chart-calendar-row dashboard-section-spaced simple-top-calendar">
             <div class="dashboard-panel soft-panel noise-overlay" id="adminCalendarPanel">
                 <div class="panel-label left-label">✦ PLATFORM BOOKING CALENDAR</div>
@@ -57,23 +67,16 @@
             <div class="dashboard-panel soft-panel noise-overlay" id="allShops">
                 <div class="panel-label left-label">✦ MANAGE ALL SHOPS</div>
                 <h2>All Shops</h2>
-                <p><button class="shop-link-button" onclick="openAdminShop('Glow Beauty Salon')">Glow Beauty Salon</button></p>
-                <p><button class="shop-link-button" onclick="openAdminShop('Women-Free')">Women-Free</button></p>
-                <p><button class="shop-link-button" onclick="openAdminShop('Luxury Spa')">Luxury Spa</button></p>
-                <p><button class="shop-link-button" onclick="openAdminShop('Wellness Center')">Wellness Center</button></p>
-                <p><button class="shop-link-button" onclick="openAdminShop('Make Up Studio')">Make Up Studio</button></p>
-                <p><button class="shop-link-button" onclick="openAdminShop('Elite Barber')">Elite Barber</button></p>
-                <p><button class="shop-link-button" onclick="openAdminShop('Manly Mane Salon')">Manly Mane Salon</button></p>
-                <p><button class="shop-link-button" onclick="openAdminShop('Blink Glam')">Blink Glam</button></p>
-                <p><button class="shop-link-button" onclick="openAdminShop('Cosmos Tattoo Art')">Cosmos Tattoo Art</button></p>
-                <p><button class="shop-link-button" onclick="openAdminShop('The Nail Hub')">The Nail Hub</button></p>
+                <div id="adminShopsList">
+                    <p>Loading shops...</p>
+                </div>
             </div>
 
             <div class="dashboard-panel soft-panel noise-overlay" id="allBookings">
                 <div class="panel-label left-label">✦ MANAGE ALL BOOKINGS</div>
-                <h2>Latest Booking</h2>
+                <h2>Latest Bookings</h2>
                 <div id="adminBookingBox">
-                    <p>No bookings found yet.</p>
+                    <p>Loading bookings...</p>
                 </div>
             </div>
 
@@ -81,15 +84,12 @@
                 <div class="panel-label left-label">✦ FULL PLATFORM CONTROL</div>
                 <h2>Platform Actions</h2>
                 <button onclick="window.location.href='merchants.html'">View Merchant List</button>
-                <button onclick="clearBookingData()">Clear Test Booking</button>
+                <button onclick="clearAllBookings()">Clear All Bookings</button>
                 <button onclick="window.location.href='signup.html'">Create New Account</button>
                 <p id="adminActionText">Admin actions will appear here.</p>
             </div>
 
-
-
         </section>
-
 
     </main>
 
@@ -97,114 +97,179 @@
     <script>
         protectMerchantAdminOnlyPage();
 
-        var savedName = localStorage.getItem('vanidayName');
+        var adminStatsData = null;
+        var adminBookingsData = [];
+        var adminMerchantsData = [];
 
+        var savedName = localStorage.getItem('vanidayName');
         if (savedName != null && savedName != '') {
             document.getElementById('adminGreeting').innerHTML = 'Hi ' + savedName + ', merchant admin dashboard';
         }
 
-
-        function openAdminShop(shopName) {
-            localStorage.setItem('selectedMerchant', shopName);
-            window.location.href = 'booking.html';
+        function showAdminAction(msg, isError) {
+            var el = document.getElementById('adminActionText');
+            el.innerHTML = isError ? '<span style="color:red">' + msg + '</span>' : '<span style="color:green">' + msg + '</span>';
         }
 
-        function loadAdminActivityBar() {
-            var bookingsText = localStorage.getItem('allBookings');
-            var bookingCount = 0;
+        function loadAdminStats() {
+            fetch('/api/state/admin/stats', {
+                method: 'GET',
+                headers: getAuthHeaders()
+            })
+            .then(function(res) {
+                if (res.status === 403) {
+                    document.getElementById('adminStatsBox').innerHTML = '<p style="color:red">Access denied. Admin only.</p>';
+                    return null;
+                }
+                return res.json();
+            })
+            .then(function(data) {
+                if (!data) return;
+                adminStatsData = data;
 
-            if (bookingsText != null && bookingsText != '') {
-                var bookings = JSON.parse(bookingsText);
-                bookingCount = bookings.length;
-            }
+                var output = '';
+                output = output + '<div class="chart-summary-box">';
+                output = output + '<p><b>Total Users:</b> ' + data.totalUsers + '</p>';
+                output = output + '<p><b>Total Merchants:</b> ' + data.totalMerchants + ' (' + data.activeMerchants + ' active)</p>';
+                output = output + '<p><b>Total Bookings:</b> ' + data.totalBookings + '</p>';
+                output = output + '<p><b>Confirmed:</b> ' + data.confirmedBookings + '</p>';
+                output = output + '<p><b>Completed:</b> ' + data.completedBookings + '</p>';
+                output = output + '<p><b>Cancelled:</b> ' + data.cancelledBookings + '</p>';
+                output = output + '</div>';
+                document.getElementById('adminStatsBox').innerHTML = output;
+            })
+            .catch(function(err) {
+                document.getElementById('adminStatsBox').innerHTML = '<p style="color:red">Failed to load stats: ' + err.message + '</p>';
+            });
+        }
 
-            var barWidth = bookingCount * 10;
+        function loadAdminMerchants() {
+            fetch('/api/merchants', {
+                method: 'GET',
+                headers: getAuthHeaders()
+            })
+            .then(function(res) { return res.json(); })
+            .then(function(merchants) {
+                adminMerchantsData = merchants;
+                var box = document.getElementById('adminShopsList');
 
-            if (barWidth < 8) {
-                barWidth = 8;
-            }
+                if (!merchants || merchants.length === 0) {
+                    box.innerHTML = '<p>No shops found.</p>';
+                    return;
+                }
 
-            if (barWidth > 100) {
-                barWidth = 100;
-            }
+                var output = '';
+                for (var i = 0; i < merchants.length; i = i + 1) {
+                    var m = merchants[i];
+                    var statusLabel = m.active ? '' : ' <small>(inactive)</small>';
+                    output = output + '<p><button class="shop-link-button" onclick="openAdminShop(\'' + m.name.replace(/'/g, "\\'") + '\')">' + m.name + statusLabel + '</button></p>';
+                }
+                box.innerHTML = output;
+            })
+            .catch(function(err) {
+                document.getElementById('adminShopsList').innerHTML = '<p style="color:red">Failed to load shops: ' + err.message + '</p>';
+            });
+        }
 
-            document.getElementById('adminActivityBar').style.width = barWidth + '%';
-            document.getElementById('adminActivityText').innerHTML = 'Total platform bookings: ' + bookingCount;
+        function loadAdminBookings() {
+            fetch('/api/bookings', {
+                method: 'GET',
+                headers: getAuthHeaders()
+            })
+            .then(function(res) {
+                if (res.status === 403) {
+                    document.getElementById('adminBookingBox').innerHTML = '<p style="color:red">Access denied. Admin only.</p>';
+                    return null;
+                }
+                return res.json();
+            })
+            .then(function(bookings) {
+                if (!bookings) return;
+                adminBookingsData = bookings;
+
+                var box = document.getElementById('adminBookingBox');
+
+                if (!bookings || bookings.length === 0) {
+                    box.innerHTML = '<p>No bookings found.</p>';
+                    return;
+                }
+
+                var output = '';
+                var limit = bookings.length > 20 ? 20 : bookings.length;
+                for (var i = bookings.length - 1; i >= bookings.length - limit; i = i - 1) {
+                    var b = bookings[i];
+                    var customerLabel = b.customerName || (b.customer ? b.customer.fullName : 'Unknown');
+                    var merchantLabel = b.merchant ? b.merchant.name : 'Unknown';
+                    var serviceLabel = b.service ? b.service.name : 'Unknown';
+                    var statusColor = b.status === 'Cancelled' ? 'red' : (b.status === 'Confirmed' ? 'green' : 'inherit');
+
+                    output = output + '<div class="single-booking-box">';
+                    output = output + '<p><b>Customer:</b> ' + customerLabel + '</p>';
+                    output = output + '<p><b>Merchant:</b> ' + merchantLabel + '</p>';
+                    output = output + '<p><b>Service:</b> ' + serviceLabel + '</p>';
+                    output = output + '<p><b>Date:</b> ' + b.bookingDate + '</p>';
+                    output = output + '<p><b>Time:</b> ' + b.bookingTime + '</p>';
+                    output = output + '<p><b>Status:</b> <span style="color:' + statusColor + '">' + b.status + '</span></p>';
+                    output = output + '</div>';
+                }
+
+                if (bookings.length > limit) {
+                    output = output + '<p><i>Showing ' + limit + ' of ' + bookings.length + ' bookings.</i></p>';
+                }
+
+                box.innerHTML = output;
+            })
+            .catch(function(err) {
+                document.getElementById('adminBookingBox').innerHTML = '<p style="color:red">Failed to load bookings: ' + err.message + '</p>';
+            });
         }
 
         function loadAdminShopChart() {
-            var shopNames = ['Glow Beauty Salon', 'Women-Free', 'Luxury Spa', 'Wellness Center', 'Make Up Studio', 'Elite Barber', 'Manly Mane Salon', 'Blink Glam', 'Cosmos Tattoo Art', 'The Nail Hub'];
-            var shortNames = ['Glow', 'Women', 'Spa', 'Well', 'Make', 'Elite', 'Manly', 'Blink', 'Tattoo', 'Nail'];
-            var bookingsText = localStorage.getItem('allBookings');
+            var shopNames = [];
+            var shortNames = [];
             var counts = [];
+
+            if (adminStatsData && adminStatsData.bookingsByMerchant) {
+                var names = Object.keys(adminStatsData.bookingsByMerchant);
+                for (var i = 0; i < names.length; i = i + 1) {
+                    shopNames.push(names[i]);
+                    counts.push(adminStatsData.bookingsByMerchant[names[i]]);
+                    var words = names[i].split(' ');
+                    var short = words.length > 1 ? words[0].substring(0, 4) : names[i].substring(0, 4);
+                    shortNames.push(short);
+                }
+            } else if (adminMerchantsData.length > 0) {
+                for (var j = 0; j < adminMerchantsData.length; j = j + 1) {
+                    shopNames.push(adminMerchantsData[j].name);
+                    var words2 = adminMerchantsData[j].name.split(' ');
+                    shortNames.push(words2.length > 1 ? words2[0].substring(0, 4) : adminMerchantsData[j].name.substring(0, 4));
+                    counts.push(0);
+                }
+            }
+
+            if (shopNames.length === 0) {
+                document.getElementById('adminShopChart').innerHTML = '<p>No merchant data available.</p>';
+                return;
+            }
+
             var maxCount = 1;
             var points = '';
             var labels = '';
             var numbers = '';
             var shopList = '';
-
-            for (var s = 0; s < shopNames.length; s = s + 1) {
-                counts[s] = 0;
-            }
-
-            if (bookingsText != null && bookingsText != '') {
-                var bookings = JSON.parse(bookingsText);
-
-                for (var i = 0; i < bookings.length; i = i + 1) {
-                    for (var j = 0; j < shopNames.length; j = j + 1) {
-                        if (bookings[i].merchant == shopNames[j]) {
-                            counts[j] = counts[j] + 1;
-                        }
-                    }
-                }
-            }
+            var highestIdx = 0;
+            var lowestIdx = 0;
 
             for (var k = 0; k < counts.length; k = k + 1) {
-                if (counts[k] > maxCount) {
-                    maxCount = counts[k];
-                }
-            }
-
-            var highestBookingIndex = 0;
-            var lowestBookingIndex = 0;
-            var highestViewsIndex = 0;
-            var lowestViewsIndex = 0;
-            var viewCounts = [];
-
-            for (var v = 0; v < shopNames.length; v = v + 1) {
-                var savedViews = localStorage.getItem('views_' + cleanMerchantName(shopNames[v]));
-
-                if (savedViews == null || savedViews == '') {
-                    viewCounts[v] = 0;
-                }
-                else {
-                    viewCounts[v] = Number(savedViews);
-                }
-
-                if (counts[v] > counts[highestBookingIndex]) {
-                    highestBookingIndex = v;
-                }
-
-                if (counts[v] < counts[lowestBookingIndex]) {
-                    lowestBookingIndex = v;
-                }
-
-                if (viewCounts[v] > viewCounts[highestViewsIndex]) {
-                    highestViewsIndex = v;
-                }
-
-                if (viewCounts[v] < viewCounts[lowestViewsIndex]) {
-                    lowestViewsIndex = v;
-                }
+                if (counts[k] > maxCount) maxCount = counts[k];
+                if (counts[k] > counts[highestIdx]) highestIdx = k;
+                if (counts[k] < counts[lowestIdx]) lowestIdx = k;
             }
 
             for (var x = 0; x < shopNames.length; x = x + 1) {
                 var xPos = 45 + (x * 50);
                 var yPos = 250 - ((counts[x] / maxCount) * 180);
-
-                if (counts[x] == 0) {
-                    yPos = 250;
-                }
+                if (counts[x] === 0) yPos = 250;
 
                 points = points + xPos + ',' + yPos + ' ';
                 labels = labels + '<text class="chart-label" x="' + xPos + '" y="285" text-anchor="middle">' + shortNames[x] + '</text>';
@@ -212,49 +277,74 @@
                 shopList = shopList + '<span>' + shortNames[x] + ': <b>' + counts[x] + '</b></span>';
             }
 
-            var chartSummary = '<div class="chart-summary-box"><p><b>Greatest bookings:</b> ' + shopNames[highestBookingIndex] + ' (' + counts[highestBookingIndex] + ')</p><p><b>Least bookings:</b> ' + shopNames[lowestBookingIndex] + ' (' + counts[lowestBookingIndex] + ')</p><p><b>Greatest views:</b> ' + shopNames[highestViewsIndex] + ' (' + viewCounts[highestViewsIndex] + ')</p><p><b>Least views:</b> ' + shopNames[lowestViewsIndex] + ' (' + viewCounts[lowestViewsIndex] + ')</p></div>';
-            document.getElementById('adminShopChart').innerHTML = '<div class="admin-shop-line-chart"><svg viewBox="0 0 540 310" preserveAspectRatio="none"><line class="chart-axis-line" x1="35" y1="250" x2="520" y2="250"></line><line class="chart-axis-line" x1="35" y1="55" x2="35" y2="250"></line><line class="chart-grid-line" x1="35" y1="190" x2="520" y2="190"></line><line class="chart-grid-line" x1="35" y1="130" x2="520" y2="130"></line><line class="chart-grid-line" x1="35" y1="70" x2="520" y2="70"></line><polyline class="chart-line-path" points="' + points + '"></polyline>' + numbers + labels + '</svg>' + chartSummary + '<div class="chart-shop-list">' + shopList + '</div></div>';
+            var chartSummary = '<div class="chart-summary-box">';
+            chartSummary = chartSummary + '<p><b>Most bookings:</b> ' + shopNames[highestIdx] + ' (' + counts[highestIdx] + ')</p>';
+            chartSummary = chartSummary + '<p><b>Fewest bookings:</b> ' + shopNames[lowestIdx] + ' (' + counts[lowestIdx] + ')</p>';
+            chartSummary = chartSummary + '</div>';
+
+            var svg = '<svg viewBox="0 0 540 310" preserveAspectRatio="none">';
+            svg = svg + '<line class="chart-axis-line" x1="35" y1="250" x2="520" y2="250"></line>';
+            svg = svg + '<line class="chart-axis-line" x1="35" y1="55" x2="35" y2="250"></line>';
+            svg = svg + '<line class="chart-grid-line" x1="35" y1="190" x2="520" y2="190"></line>';
+            svg = svg + '<line class="chart-grid-line" x1="35" y1="130" x2="520" y2="130"></line>';
+            svg = svg + '<line class="chart-grid-line" x1="35" y1="70" x2="520" y2="70"></line>';
+            svg = svg + '<polyline class="chart-line-path" points="' + points + '"></polyline>';
+            svg = svg + numbers + labels + '</svg>';
+
+            document.getElementById('adminShopChart').innerHTML = '<div class="admin-shop-line-chart">' + svg + chartSummary + '<div class="chart-shop-list">' + shopList + '</div></div>';
         }
 
-        function loadAdminBooking() {
-            var bookingsText = localStorage.getItem('allBookings');
-            var output = '';
-
-            if (bookingsText != null && bookingsText != '') {
-                var bookings = JSON.parse(bookingsText);
-
-                for (var i = bookings.length - 1; i >= 0; i = i - 1) {
-                    output = output + '<p><b>Customer:</b> ' + bookings[i].customer + '</p>' + '<p><b>Merchant:</b> ' + bookings[i].merchant + '</p>' + '<p><b>Service:</b> ' + bookings[i].service + '</p>' + '<p><b>Date:</b> ' + bookings[i].date + '</p>' + '<p><b>Time:</b> ' + bookings[i].time + '</p><hr>';
-                }
-            }
-
-            if (output != '') {
-                document.getElementById('adminBookingBox').innerHTML = output;
-            }
+        function openAdminShop(shopName) {
+            localStorage.setItem('selectedMerchant', shopName);
+            window.location.href = 'booking.html';
         }
 
-        function clearBookingData() {
-            var confirmDelete = confirm('Are you sure you want to clear all test booking data?');
+        function clearAllBookings() {
+            var confirmDelete = confirm('Are you sure you want to delete ALL bookings? This action cannot be undone.');
 
-            if (confirmDelete == false) {
+            if (!confirmDelete) {
                 return;
             }
 
-            localStorage.removeItem('customerName');
-            localStorage.removeItem('merchant');
-            localStorage.removeItem('service');
-            localStorage.removeItem('bookingDate');
-            localStorage.removeItem('bookingTime');
-            localStorage.removeItem('allBookings');
-            document.getElementById('adminActionText').innerHTML = 'All test booking data cleared.';
-            document.getElementById('adminBookingBox').innerHTML = '<p>No bookings found yet.</p>';
-            loadAdminShopChart();
-            renderBookingCalendar('adminCalendar', 'adminCalendarDetails', 'ALL');
+            var secondConfirm = confirm('This will permanently remove every booking in the system. Continue?');
+
+            if (!secondConfirm) {
+                return;
+            }
+
+            fetch('/api/bookings', {
+                method: 'DELETE',
+                headers: getAuthHeaders()
+            })
+            .then(function(res) {
+                if (res.status === 403) {
+                    showAdminAction('Access denied. Admin only.', true);
+                    return null;
+                }
+                return res.json();
+            })
+            .then(function(result) {
+                if (!result) return;
+                showAdminAction('All bookings cleared. (' + (result.deletedCount || 0) + ' removed)');
+                document.getElementById('adminBookingBox').innerHTML = '<p>No bookings found.</p>';
+                adminBookingsData = [];
+                loadAdminStats();
+                loadAdminShopChart();
+                renderBookingCalendar('adminCalendar', 'adminCalendarDetails', 'ALL');
+            })
+            .catch(function(err) {
+                showAdminAction('Failed to clear bookings: ' + err.message, true);
+            });
         }
 
-        loadAdminBooking();
-        loadAdminShopChart();
+        loadAdminStats();
+        loadAdminMerchants();
+        loadAdminBookings();
         renderBookingCalendar('adminCalendar', 'adminCalendarDetails', 'ALL');
+
+        setTimeout(function() {
+            loadAdminShopChart();
+        }, 1000);
     </script>
 
 </body>
