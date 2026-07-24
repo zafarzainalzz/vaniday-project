@@ -6,7 +6,7 @@ const { authenticate, requireRole } = require("../middleware/auth");
 const router = express.Router();
 
 async function isMerchantOwner(userId, role, merchantId) {
-    if (role === "Admin") {
+    if (role === "Merchant Admin") {
         return true;
     }
 
@@ -20,7 +20,7 @@ async function isMerchantOwner(userId, role, merchantId) {
 }
 
 // POST /api/services - Create a service (Shop Owner for their merchant, or Admin)
-router.post("/", authenticate, requireRole("Shop Owner", "Admin"), async function (req, res) {
+router.post("/", authenticate, requireRole("Shop Owner", "Merchant Admin"), async function (req, res) {
     try {
         const { merchant, name, description, price, duration } = req.body;
 
@@ -93,7 +93,7 @@ router.get("/:id", async function (req, res) {
 });
 
 // PUT /api/services/:id - Update service (owner of parent merchant or Admin)
-router.put("/:id", authenticate, requireRole("Shop Owner", "Admin"), async function (req, res) {
+router.put("/:id", authenticate, requireRole("Shop Owner", "Merchant Admin"), async function (req, res) {
     try {
         const service = await Service.findById(req.params.id);
 
@@ -127,7 +127,7 @@ router.put("/:id", authenticate, requireRole("Shop Owner", "Admin"), async funct
 });
 
 // DELETE /api/services/:id - Deactivate service (owner of parent merchant or Admin)
-router.delete("/:id", authenticate, requireRole("Shop Owner", "Admin"), async function (req, res) {
+router.delete("/:id", authenticate, requireRole("Shop Owner", "Merchant Admin"), async function (req, res) {
     try {
         const service = await Service.findById(req.params.id);
 

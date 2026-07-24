@@ -11,6 +11,8 @@
 
     <link rel="stylesheet" href="style.css">
 
+    <script src="integration.js"></script>
+
 </head>
 
 <body class="auth-page signup-page auth-split-page">
@@ -54,9 +56,9 @@
 
         <input id="signupName" type="text" placeholder="Full Name" required>
 
-        <input type="email" placeholder="Enter Email" required>
+        <input id="signupEmail" type="email" placeholder="Enter Email" required>
 
-        <input type="password" placeholder="Enter Password" required>
+        <input id="signupPassword" type="password" placeholder="Enter Password" required>
 
 
         <button onclick="signupUser()">
@@ -73,44 +75,45 @@
 
     </div>
 
-    <script src="integration.js"></script>
     <script src="app.js"></script>
 
     <script>
-        function signupUser() {
-            var nameInput = document.getElementById('signupName');
-            var name = nameInput.value;
-            var emailInput = document.querySelector('input[type="email"]');
-            var email = emailInput.value;
-            var passwordInput = document.querySelector('input[type="password"]');
-            var password = passwordInput.value;
+        async function signupUser() {
+            var name = document.getElementById('signupName').value.trim();
+            var email = document.getElementById('signupEmail').value.trim();
+            var password = document.getElementById('signupPassword').value;
 
             if (name == '' || email == '' || password == '') {
-                alert('Please fill in all fields.');
+                alert('Please enter your full name, email and password.');
                 return;
             }
 
-            fetch('/api/users/signup', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ fullName: name, email: email, password: password })
-            })
-            .then(function(res) { return res.json().then(function(data) { return { ok: res.ok, data: data }; }); })
-            .then(function(result) {
-                if (result.ok) {
-                    localStorage.setItem('vanidayToken', result.data.token);
-                    localStorage.setItem('vanidayName', result.data.fullName);
-                    localStorage.setItem('vanidayRole', result.data.role);
-                    localStorage.setItem('vanidayUserId', result.data.userId);
-                    alert('Signup successful! Redirecting to dashboard.');
-                    window.location.href = 'dashboard.html';
-                } else {
-                    alert('Signup failed: ' + result.data.message);
+            try {
+                var response = await fetch('/api/users/signup', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ fullName: name, email: email, password: password })
+                });
+                var result = await response.json();
+                if (!response.ok) {
+                    alert(result.message || 'Signup failed.');
+                    return;
                 }
-            })
-            .catch(function(err) {
-                alert('Signup error: ' + err.message);
-            });
+
+                localStorage.setItem('vanidayToken', result.token);
+                localStorage.setItem('vanidayUserId', result.userId);
+                localStorage.setItem('vanidayName', result.fullName);
+                localStorage.setItem('vanidayEmail', result.email);
+                localStorage.setItem('vanidayRole', result.role);
+                localStorage.setItem('vanidayLoyaltyPoints', String(result.loyaltyPoints || 100));
+                if (window.VanidaySync) await window.VanidaySync.importCurrentUserState();
+
+                if (result.role == 'Customer') window.location.href = 'dashboard.html';
+                else if (result.role == 'Shop Owner') window.location.href = 'shop-owner-dashboard.html';
+                else window.location.href = 'merchant-admin.html';
+            } catch (error) {
+                alert('Cannot connect to the backend. Start the server and try again.');
+            }
         }
     </script>
 

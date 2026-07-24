@@ -11,16 +11,27 @@ const shopRoutes = require("./routes/shopRoutes");
 const stateRoutes = require("./routes/stateRoutes");
 const { requireEnvironmentVariable } = require("./config");
 
-dotenv.config();
+dotenv.config({ path: path.join(__dirname, ".env") });
 
-requireEnvironmentVariable("MONGO_URI");
+const mongoUri = requireEnvironmentVariable("MONGO_URI");
 requireEnvironmentVariable("JWT_SECRET");
 
 const app = express();
+const allowedOrigins = String(process.env.CLIENT_ORIGIN || "")
+  .split(",")
+  .map(function (origin) { return origin.trim(); })
+  .filter(Boolean);
 
-app.use(cors());
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
+app.use(cors({
+  origin: function (origin, callback) {
+    if (!origin || allowedOrigins.length === 0 || allowedOrigins.indexOf(origin) !== -1) {
+      return callback(null, true);
+    }
+    return callback(new Error("Origin not allowed by CORS"));
+  }
+}));
+app.use(express.json({ limit: "1mb" }));
+app.use(express.urlencoded({ extended: true, limit: "1mb" }));
 
 const frontendPath = path.join(__dirname, "..", "frontend");
 app.use(express.static(frontendPath));
@@ -41,21 +52,28 @@ app.use("/api/shops", shopRoutes);
 app.use("/api/state", stateRoutes);
 
 app.use(function (req, res, next) {
-  if (req.path.startsWith("/api")) {
-    return next();
-  }
+  if (req.path.startsWith("/api")) return next();
   res.sendFile(path.join(frontendPath, "index.html"));
 });
 
-mongoose.connect(process.env.MONGO_URI)
+app.use(function (error, req, res, next) {
+  if (error && error.message === "Origin not allowed by CORS") {
+    return res.status(403).json({ message: error.message });
+  }
+  console.error(error);
+  res.status(500).json({ message: "Unexpected server error." });
+});
+
+const port = process.env.PORT || 5000;
+mongoose.connect(mongoUri)
   .then(function () {
     console.log("MongoDB connected");
+    app.listen(port, "0.0.0.0", function () {
+      console.log("Server started on port " + port);
+    });
   })
   .catch(function (error) {
-    console.log("MongoDB connection error:");
+    console.error("MongoDB connection error:");
     console.error(error);
+    process.exit(1);
   });
-
-app.listen(process.env.PORT, function () {
-  console.log("Server started on port " + process.env.PORT);
-});

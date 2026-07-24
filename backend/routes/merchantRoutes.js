@@ -5,11 +5,11 @@ const { authenticate, requireRole } = require("../middleware/auth");
 const router = express.Router();
 
 // GET /api/merchants/owner/mine - Get current owner's merchants (must be before /:id)
-router.get("/owner/mine", authenticate, requireRole("Shop Owner", "Admin"), async function (req, res) {
+router.get("/owner/mine", authenticate, requireRole("Shop Owner", "Merchant Admin"), async function (req, res) {
     try {
         var query = { owner: req.user.id };
 
-        if (req.user.role === "Admin") {
+        if (req.user.role === "Merchant Admin") {
             query = {};
         }
 
@@ -22,7 +22,7 @@ router.get("/owner/mine", authenticate, requireRole("Shop Owner", "Admin"), asyn
 });
 
 // POST /api/merchants - Create a merchant (Shop Owner or Admin)
-router.post("/", authenticate, requireRole("Shop Owner", "Admin"), async function (req, res) {
+router.post("/", authenticate, requireRole("Shop Owner", "Merchant Admin"), async function (req, res) {
     try {
         const { name, description, address, phone, email, image, available } = req.body;
 
@@ -87,7 +87,7 @@ router.get("/:id", async function (req, res) {
 });
 
 // PUT /api/merchants/:id - Update merchant (owner or Admin only)
-router.put("/:id", authenticate, requireRole("Shop Owner", "Admin"), async function (req, res) {
+router.put("/:id", authenticate, requireRole("Shop Owner", "Merchant Admin"), async function (req, res) {
     try {
         const merchant = await Merchant.findById(req.params.id);
 
@@ -123,7 +123,7 @@ router.put("/:id", authenticate, requireRole("Shop Owner", "Admin"), async funct
 });
 
 // DELETE /api/merchants/:id - Deactivate merchant (owner or Admin only)
-router.delete("/:id", authenticate, requireRole("Shop Owner", "Admin"), async function (req, res) {
+router.delete("/:id", authenticate, requireRole("Shop Owner", "Merchant Admin"), async function (req, res) {
     try {
         const merchant = await Merchant.findById(req.params.id);
 

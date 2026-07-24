@@ -109,7 +109,7 @@
                         output = output + "</div>";
                         output = output + "<div class='premium-booking-actions'>";
                         output = output + "<button onclick='cancelBooking(\"" + b._id + "\")'>Cancel</button>";
-                        output = output + "<button onclick='rescheduleBooking()'>Reschedule</button>";
+                        output = output + "<button onclick='rescheduleBooking(\"" + b._id + "\")'>Reschedule</button>";
                         output = output + "</div>";
                         output = output + "</div>";
                     }
@@ -150,8 +150,8 @@
             });
         }
 
-        function rescheduleBooking() {
-            window.location.href = "booking.html";
+        function rescheduleBooking(bookingId) {
+            window.location.href = "booking.html?reschedule=" + encodeURIComponent(bookingId);
         }
 
         function protectCustomerPage() {

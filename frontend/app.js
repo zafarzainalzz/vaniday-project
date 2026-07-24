@@ -32,6 +32,7 @@ function logoutUser() {
     localStorage.removeItem('vanidayName');
     localStorage.removeItem('vanidayUserId');
     localStorage.removeItem('vanidayToken');
+    localStorage.removeItem('vanidayEmail');
     localStorage.removeItem('ownerAssignedShop');
     window.location.href = 'index.html';
 }

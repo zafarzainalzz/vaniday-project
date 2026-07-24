@@ -7,6 +7,16 @@ const bookingSchema = new mongoose.Schema({
         required: true
     },
 
+    customerName: {
+        type: String,
+        default: ""
+    },
+
+    customerEmail: {
+        type: String,
+        default: ""
+    },
+
     merchant: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "Merchant",
@@ -29,16 +39,26 @@ const bookingSchema = new mongoose.Schema({
         required: true
     },
 
-    status: {
-        type: String,
-        enum: ["Pending", "Confirmed", "Cancelled"],
-        default: "Pending"
+    amount: {
+        type: Number,
+        default: 100
     },
 
-    createdAt: {
-        type: Date,
-        default: Date.now
+    reward: {
+        type: String,
+        default: ""
+    },
+
+    loyaltyAwarded: {
+        type: Boolean,
+        default: false
+    },
+
+    status: {
+        type: String,
+        enum: ["Pending", "Confirmed", "Completed", "Cancelled"],
+        default: "Pending"
     }
-});
+}, { timestamps: true });
 
 module.exports = mongoose.model("Booking", bookingSchema);

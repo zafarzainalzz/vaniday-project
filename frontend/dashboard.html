@@ -6,6 +6,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard</title>
     <link rel="stylesheet" href="style.css">
+
+    <script src="integration.js"></script>
     <style>
         .toast-notification {
             position: fixed;
@@ -239,7 +241,7 @@
 
         if (savedRole == 'Shop Owner') {
             window.location.href = 'shop-owner-dashboard.html';
-        } else if (savedRole == 'Merchant Admin' || savedRole == 'Admin') {
+        } else if (savedRole == 'Merchant Admin') {
             window.location.href = 'merchant-admin.html';
         } else {
             if (savedName != null && savedName != '') {
@@ -288,6 +290,17 @@
         }
 
         updateDashboardValues();
+
+        async function refreshLoyaltyFromBackend() {
+            try {
+                var result = await VanidayApi.request('/api/users/me/points');
+                loyaltyPoints = Number(result.loyaltyPoints) || 0;
+                updateDashboardValues();
+            } catch (error) {
+                // Keep the current display when the backend is unavailable.
+            }
+        }
+        refreshLoyaltyFromBackend();
 
         if (loyaltyPoints >= 1000) {
             document.getElementById('discountPromotionText').innerHTML = '<b>Unlocked:</b> 25% off your next appointment is available now.';
@@ -353,18 +366,22 @@
         function setupRewardClaim(reward) {
             var button = document.getElementById(reward.buttonId);
             if (button) {
-                button.onclick = function () {
-                    if (loyaltyPoints >= reward.pointsNeeded) {
-                        loyaltyPoints = loyaltyPoints - reward.pointsNeeded;
-                        localStorage.setItem('vanidayLoyaltyPoints', loyaltyPoints);
+                button.onclick = async function () {
+                    try {
+                        var result = await VanidayApi.request('/api/users/me/rewards/claim', {
+                            method: 'POST',
+                            body: JSON.stringify({ rewardName: reward.name, points: reward.pointsNeeded })
+                        });
+                        loyaltyPoints = result.loyaltyPoints;
+                        localStorage.setItem('vanidayLoyaltyPoints', String(loyaltyPoints));
                         localStorage.setItem('vanidayRewardClaim', reward.name);
                         document.getElementById('claimMessage').innerHTML = 'Claimed: ' + reward.name + '.';
                         document.getElementById('lastClaimedReward').innerHTML = reward.name;
                         updateDashboardValues();
                         showToast('Reward claimed successfully: ' + reward.name);
-                    } else {
-                        document.getElementById('claimMessage').innerHTML = 'You need ' + reward.pointsNeeded + ' loyalty points to claim this reward.';
-                        showToast('Not enough points. You need ' + reward.pointsNeeded + ' loyalty points.');
+                    } catch (error) {
+                        document.getElementById('claimMessage').innerHTML = error.message;
+                        showToast(error.message);
                     }
                 };
             }
@@ -392,19 +409,18 @@
         }
 
         function logoutUser() {
+            localStorage.removeItem('vanidayToken');
             localStorage.removeItem('vanidayRole');
             localStorage.removeItem('vanidayName');
             localStorage.removeItem('vanidayUserId');
+            localStorage.removeItem('vanidayEmail');
             window.location.href = 'index.html';
         }
     </script>
 
-    <script src="integration.js"></script>
     <script src="app.js"></script>
 
     <div id="toastNotification" class="toast-notification"></div>
 </body>
 
 </html>
-
-

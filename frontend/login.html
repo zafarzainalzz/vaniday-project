@@ -11,6 +11,8 @@
 
     <link rel="stylesheet" href="style.css">
 
+    <script src="integration.js"></script>
+
 </head>
 
 <body class="auth-page login-page auth-split-page">
@@ -55,9 +57,9 @@
 
         <h1>Login</h1>
 
-        <input id="loginName" type="text" placeholder="Enter Name or Email" required>
+        <input id="loginName" type="email" placeholder="Enter Email" required>
 
-        <input type="password" placeholder="Enter Password" required>
+        <input id="loginPassword" type="password" placeholder="Enter Password" required>
 
         <button onclick="loginUser()">
             Login
@@ -70,56 +72,45 @@
 
     </div>
 
-    <script src="integration.js"></script>
     <script src="app.js"></script>
 
     <script>
-        function loginUser() {
-            var input = document.getElementById('loginName');
-            var value = input.value;
-            var passwordInput = document.querySelector('input[type="password"]');
-            var password = passwordInput.value;
 
-            if (value == '' || password == '') {
+        async function loginUser() {
+            var email = document.getElementById('loginName').value.trim();
+            var password = document.getElementById('loginPassword').value;
+
+            if (email == '' || password == '') {
                 alert('Please enter your email and password.');
                 return;
             }
 
-            fetch('/api/users/login', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ email: value, password: password })
-            })
-            .then(function(res) { return res.json().then(function(data) { return { ok: res.ok, data: data }; }); })
-            .then(function(result) {
-                if (result.ok) {
-                    var dbRole = result.data.role;
-                    localStorage.setItem('vanidayName', result.data.fullName);
-                    localStorage.setItem('vanidayRole', dbRole);
-                    localStorage.setItem('vanidayUserId', result.data.userId);
-                    localStorage.setItem('vanidayToken', result.data.token);
-
-                    if (dbRole == 'Customer') {
-                        window.location.href = 'dashboard.html';
-                    }
-                    else if (dbRole == 'Shop Owner') {
-                        localStorage.removeItem('ownerAssignedShop');
-                        var mappedShop = getOwnerShopName();
-                        if (mappedShop != '') {
-                            localStorage.setItem('ownerAssignedShop', mappedShop);
-                        }
-                        window.location.href = 'shop-owner-dashboard.html';
-                    }
-                    else if (dbRole == 'Admin') {
-                        window.location.href = 'merchant-admin.html';
-                    }
-                } else {
-                    alert('Login failed: ' + result.data.message);
+            try {
+                var response = await fetch('/api/users/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email: email, password: password })
+                });
+                var result = await response.json();
+                if (!response.ok) {
+                    alert(result.message || 'Login failed.');
+                    return;
                 }
-            })
-            .catch(function(err) {
-                alert('Login error: ' + err.message);
-            });
+
+                localStorage.setItem('vanidayToken', result.token);
+                localStorage.setItem('vanidayUserId', result.userId);
+                localStorage.setItem('vanidayName', result.fullName);
+                localStorage.setItem('vanidayEmail', result.email);
+                localStorage.setItem('vanidayRole', result.role);
+                localStorage.setItem('vanidayLoyaltyPoints', String(result.loyaltyPoints || 0));
+                if (window.VanidaySync) window.VanidaySync.hydrate();
+
+                if (result.role == 'Customer') window.location.href = 'dashboard.html';
+                else if (result.role == 'Shop Owner') window.location.href = 'shop-owner-dashboard.html';
+                else window.location.href = 'merchant-admin.html';
+            } catch (error) {
+                alert('Cannot connect to the backend. Start the server and try again.');
+            }
         }
 
     </script>
@@ -127,6 +118,3 @@
 </body>
 
 </html>
-
-
-
