@@ -9,7 +9,7 @@ const merchantRoutes = require("./routes/merchantRoutes");
 const serviceRoutes = require("./routes/serviceRoutes");
 const stateRoutes = require("./routes/stateRoutes");
 const { requireEnvironmentVariable } = require("./config");
-const { seedSystemAccounts } = require("./seedAccounts");
+const { seedSystemAccounts, seedDemoServices } = require("./seedAccounts");
 
 dotenv.config({ path: path.join(__dirname, ".env") });
 
@@ -68,6 +68,9 @@ mongoose.connect(mongoUri)
   .then(async function () {
     console.log("MongoDB connected");
     await seedSystemAccounts();
+    if (process.env.SEED_DEMO_DATA === "true") {
+      await seedDemoServices();
+    }
     app.listen(port, "0.0.0.0", function () {
       console.log("Server started on port " + port);
     });
