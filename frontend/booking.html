@@ -32,9 +32,16 @@
             <option value="">Select Merchant</option>
         </select>
 
-        <select id="service" onchange="updateBookingSummary()">
-            <option value="">Select Service</option>
-        </select>
+        <div class="service-dropdown-wrapper">
+            <div class="service-dropdown-header" id="serviceDropdownHeader" onclick="toggleServiceDropdown()">
+                <span id="serviceDropdownLabel">Select Service</span>
+                <span class="service-dropdown-arrow">&#9662;</span>
+            </div>
+            <div class="service-dropdown-list" id="serviceDropdownList">
+                <div class="service-dropdown-loading">Loading services...</div>
+            </div>
+        </div>
+        <input type="hidden" id="service" value="">
 
         <div class="booking-date-time-row">
             <div>
@@ -136,28 +143,68 @@
                 });
         }
 
+        function toggleServiceDropdown() {
+            var list = document.getElementById("serviceDropdownList");
+            list.classList.toggle("open");
+        }
+
+        function selectServiceOption(serviceId, serviceName, servicePrice) {
+            document.getElementById("service").value = serviceId;
+            document.getElementById("serviceDropdownLabel").textContent = serviceName + " - $" + servicePrice;
+            document.getElementById("serviceDropdownList").classList.remove("open");
+            updateBookingSummary();
+        }
+
         function loadMerchantServices() {
-            var merchantId = document.getElementById("merchant").value;
-            var serviceBox = document.getElementById("service");
-            var options = '<option value="">Select Service</option>';
+            var list = document.getElementById("serviceDropdownList");
+            var label = document.getElementById("serviceDropdownLabel");
 
-            if (merchantId == '') {
-                serviceBox.innerHTML = options;
-                return;
-            }
+            document.getElementById("service").value = "";
+            label.textContent = "Select Service";
+            list.innerHTML = '<div class="service-dropdown-loading">Loading services...</div>';
 
-            fetch('/api/services?merchant=' + merchantId)
+            fetch('/api/services')
                 .then(function(res) { return res.json(); })
                 .then(function(services) {
-                    for (var i = 0; i < services.length; i = i + 1) {
-                        options = options + '<option value="' + services[i]._id + '">' + services[i].name + ' - $' + services[i].price + '</option>';
+                    if (!services || services.length === 0) {
+                        list.innerHTML = '<div class="service-dropdown-empty">No services available</div>';
+                        return;
                     }
-                    serviceBox.innerHTML = options;
+
+                    var grouped = {};
+                    var merchantNames = [];
+                    for (var i = 0; i < services.length; i = i + 1) {
+                        var svc = services[i];
+                        var mName = svc.merchant && svc.merchant.name ? svc.merchant.name : "Other";
+                        if (!grouped[mName]) {
+                            grouped[mName] = [];
+                            merchantNames.push(mName);
+                        }
+                        grouped[mName].push(svc);
+                    }
+
+                    var html = "";
+                    for (var m = 0; m < merchantNames.length; m = m + 1) {
+                        var mName = merchantNames[m];
+                        var svcs = grouped[mName];
+                        html = html + '<div class="service-dropdown-group">';
+                        html = html + '<div class="service-dropdown-group-title">' + mName + '</div>';
+                        for (var s = 0; s < svcs.length; s = s + 1) {
+                            var svc = svcs[s];
+                            html = html + '<div class="service-dropdown-item" onclick="selectServiceOption(\'' + svc._id + '\', \'' + svc.name.replace(/'/g, "\\'") + '\', ' + svc.price + ')">';
+                            html = html + '<span class="service-dropdown-item-name">' + svc.name + '</span>';
+                            html = html + '<span class="service-dropdown-item-price">$' + svc.price + '</span>';
+                            html = html + '</div>';
+                        }
+                        html = html + '</div>';
+                    }
+
+                    list.innerHTML = html;
                     updateBookingSummary();
                 })
                 .catch(function(err) {
                     console.log('Failed to load services:', err);
-                    serviceBox.innerHTML = options;
+                    list.innerHTML = '<div class="service-dropdown-empty">Failed to load services</div>';
                 });
         }
 
@@ -348,8 +395,8 @@
         function updateBookingSummary() {
             var customerName = document.getElementById("customerName").value;
             var merchant = currentMerchantName;
-            var serviceSelect = document.getElementById("service");
-            var serviceText = serviceSelect.selectedIndex > 0 ? serviceSelect.options[serviceSelect.selectedIndex].text : '';
+            var serviceText = document.getElementById("serviceDropdownLabel").textContent;
+            if (serviceText === "Select Service") serviceText = "";
             var bookingDate = document.getElementById("bookingDate").value;
             var bookingTime = document.getElementById("bookingTime").value;
 
@@ -520,14 +567,8 @@
                 }
 
                 setTimeout(function() {
-                    var serviceSelect = document.getElementById('service');
                     if (target.service) {
-                        for (var k = 0; k < serviceSelect.options.length; k = k + 1) {
-                            if (serviceSelect.options[k].value === target.service._id) {
-                                serviceSelect.selectedIndex = k;
-                                break;
-                            }
-                        }
+                        selectServiceOption(target.service._id, target.service.name, target.service.price || 0);
                     }
 
                     if (target.bookingDate) {
@@ -562,10 +603,18 @@
             window.location.href = 'login.html';
         } else {
             loadMerchants();
+            loadMerchantServices();
             prefillCustomerName();
             updateAvailableSlots();
             updateBookingSummary();
         }
+
+        document.addEventListener("click", function(e) {
+            var wrapper = document.querySelector(".service-dropdown-wrapper");
+            if (wrapper && !wrapper.contains(e.target)) {
+                document.getElementById("serviceDropdownList").classList.remove("open");
+            }
+        });
     </script>
 </body>
 </html>
