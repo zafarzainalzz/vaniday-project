@@ -232,34 +232,49 @@ router.put("/:id/reschedule", authenticate, async function (req, res) {
         var booking = await Booking.findOne({ _id: req.params.id, customer: req.user.id });
 
         if (!booking) {
-            return res.status(404).json({ message: "Booking not found." });
+            return res.status(404).json({ message: "Booking not found or access denied." });
         }
 
         if (booking.status === "Cancelled") {
             return res.status(400).json({ message: "A cancelled booking cannot be rescheduled." });
         }
 
-        var merchant = req.body.merchant || booking.merchant;
-        var service = req.body.service || booking.service;
-        var bookingDate = req.body.bookingDate || booking.bookingDate;
-        var bookingTime = req.body.bookingTime || booking.bookingTime;
+        if (booking.status === "Completed") {
+            return res.status(400).json({ message: "A completed booking cannot be rescheduled." });
+        }
 
-        var conflict = await Booking.findOne({
-            _id: { $ne: booking._id },
-            merchant: merchant,
-            bookingDate: bookingDate,
-            bookingTime: bookingTime,
-            status: { $ne: "Cancelled" }
-        });
+        var merchant = String(req.body.merchant || booking.merchant).trim();
+        var service = String(req.body.service || booking.service).trim();
+        var bookingDate = String(req.body.bookingDate || booking.bookingDate).trim();
+        var bookingTime = String(req.body.bookingTime || booking.bookingTime).trim();
 
-        if (conflict) {
-            return res.status(409).json({ message: "That timing is taken." });
+        if (!merchant || !service || !bookingDate || !bookingTime) {
+            return res.status(400).json({ message: "Merchant, service, date and time are required." });
+        }
+
+        var merchantDoc = await Merchant.findById(merchant);
+        if (!merchantDoc || !merchantDoc.active) {
+            return res.status(404).json({ message: "Merchant not found or inactive." });
+        }
+
+        var serviceDoc = await Service.findById(service);
+        if (!serviceDoc || !serviceDoc.active) {
+            return res.status(404).json({ message: "Service not found or inactive." });
+        }
+
+        if (serviceDoc.merchant.toString() !== merchant) {
+            return res.status(400).json({ message: "Service does not belong to the selected merchant." });
+        }
+
+        if (await hasTimeConflict(merchant, bookingDate, bookingTime, booking._id)) {
+            return res.status(409).json({ message: "That timing is taken. Please choose another time." });
         }
 
         booking.merchant = merchant;
         booking.service = service;
         booking.bookingDate = bookingDate;
         booking.bookingTime = bookingTime;
+        booking.amount = serviceDoc.price;
         await booking.save();
 
         var populated = await Booking.findById(booking._id)
@@ -267,7 +282,7 @@ router.put("/:id/reschedule", authenticate, async function (req, res) {
             .populate("merchant", "name")
             .populate("service", "name price");
 
-        res.status(200).json({ message: "Booking rescheduled.", booking: populated });
+        res.status(200).json({ message: "Booking rescheduled successfully.", booking: populated });
     } catch (error) {
         console.error(error);
         res.status(500).json({ message: "Failed to reschedule booking." });

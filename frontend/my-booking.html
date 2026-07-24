@@ -155,7 +155,7 @@
                         output = output + "<p><b>Token:</b> <code>" + b.guestToken + "</code></p>";
                     }
                     output = output + "</div>";
-                    if (localStorage.getItem('vanidayToken')) {
+                    if (localStorage.getItem('vanidayToken') && b.status !== 'Cancelled' && b.status !== 'Completed') {
                         output = output + "<div class='premium-booking-actions'>";
                         output = output + "<button onclick='cancelBooking(\"" + b._id + "\")'>Cancel</button>";
                         output = output + "<button onclick='rescheduleBooking(\"" + b._id + "\")'>Reschedule</button>";

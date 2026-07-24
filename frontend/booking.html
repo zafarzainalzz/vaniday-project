@@ -22,9 +22,9 @@
         </div>
     </nav>
 
-    <div class="form-container booking-form">
-        <h1>Book Appointment</h1>
-        <p class="login-loyalty-note">You can book without logging in. Log in or create an account to earn loyalty points and rewards.</p>
+     <div class="form-container booking-form">
+         <h1 id="bookingFormTitle">Book Appointment</h1>
+         <p class="login-loyalty-note" id="bookingFormNote">You can book without logging in. Log in or create an account to earn loyalty points and rewards.</p>
 
         <input id="customerName" type="text" placeholder="Customer Name" onkeyup="updateBookingSummary()" required>
 
@@ -67,13 +67,19 @@
             <p><b>Time:</b> Not selected</p>
         </div>
 
-        <button onclick="saveBooking()">Confirm Booking</button>
+         <button id="bookingSubmitBtn" onclick="saveBooking()">Confirm Booking</button>
     </div>
 
     <script src="app.js"></script>
     <script>
-        var merchantDataCache = [];
-        var currentMerchantName = '';
+         var merchantDataCache = [];
+         var currentMerchantName = '';
+         var rescheduleBookingId = null;
+
+         function getRescheduleId() {
+             var params = new URLSearchParams(window.location.search);
+             return params.get('reschedule');
+         }
 
         var imageMap = {
             'Glow Beauty Salon': "assets/images/Glow beauty salon.jpeg",
@@ -121,6 +127,9 @@
                     }
                     select.innerHTML = options;
                     loadSelectedMerchant();
+                    if (rescheduleBookingId) {
+                        loadRescheduleBooking();
+                    }
                 })
                 .catch(function(err) {
                     console.log('Failed to load merchants:', err);
@@ -397,43 +406,62 @@
                 headers['Authorization'] = 'Bearer ' + token;
             }
 
-            fetch('/api/bookings', {
-                method: 'POST',
-                headers: headers,
-                body: JSON.stringify({
+            var url = '/api/bookings';
+            var method = 'POST';
+            var body = {
+                merchant: merchantId,
+                service: serviceId,
+                bookingDate: bookingDate,
+                bookingTime: bookingTime,
+                customerName: customerNameInput,
+                reward: localStorage.getItem('selectedReward') || ''
+            };
+
+            if (rescheduleBookingId) {
+                url = '/api/bookings/' + rescheduleBookingId + '/reschedule';
+                method = 'PUT';
+                body = {
                     merchant: merchantId,
                     service: serviceId,
                     bookingDate: bookingDate,
-                    bookingTime: bookingTime,
-                    customerName: customerNameInput,
-                    reward: localStorage.getItem('selectedReward') || ''
-                })
+                    bookingTime: bookingTime
+                };
+            }
+
+            fetch(url, {
+                method: method,
+                headers: headers,
+                body: JSON.stringify(body)
             })
             .then(function(res) { return res.json().then(function(data) { return { ok: res.ok, data: data }; }); })
             .then(function(result) {
                 if (result.ok) {
-                    if (result.data.loyaltyPoints !== undefined && result.data.loyaltyPoints !== null) {
-                        localStorage.setItem('vanidayLoyaltyPoints', String(result.data.loyaltyPoints));
-                    }
-                    if (result.data.guestToken) {
-                        localStorage.setItem('vanidayGuestToken', result.data.guestToken);
-                    }
-
-                    if (result.data.isGuest) {
-                        alert('Booking confirmed! Save your booking token from "My Bookings" to look up your reservation later.');
+                    if (rescheduleBookingId) {
+                        alert('Booking rescheduled successfully!');
                     } else {
-                        alert('Booking confirmed!');
+                        if (result.data.loyaltyPoints !== undefined && result.data.loyaltyPoints !== null) {
+                            localStorage.setItem('vanidayLoyaltyPoints', String(result.data.loyaltyPoints));
+                        }
+                        if (result.data.guestToken) {
+                            localStorage.setItem('vanidayGuestToken', result.data.guestToken);
+                        }
+
+                        if (result.data.isGuest) {
+                            alert('Booking confirmed! Save your booking token from "My Bookings" to look up your reservation later.');
+                        } else {
+                            alert('Booking confirmed!');
+                        }
                     }
 
                     localStorage.removeItem("selectedMerchant");
                     localStorage.removeItem("selectedReward");
                     window.location.href = "my-booking.html";
                 } else {
-                    alert('Booking failed: ' + result.data.message);
+                    alert('Error: ' + result.data.message);
                 }
             })
             .catch(function(err) {
-                alert('Booking error: ' + err.message);
+                alert('Error: ' + err.message);
             });
         }
 
@@ -447,6 +475,86 @@
             }
         }
 
+        function loadRescheduleBooking() {
+            var token = localStorage.getItem('vanidayToken');
+            if (!token || !rescheduleBookingId) return;
+
+            fetch('/api/bookings/mine', {
+                method: 'GET',
+                headers: getAuthHeaders()
+            })
+            .then(function(res) { return res.json(); })
+            .then(function(bookings) {
+                var target = null;
+                for (var i = 0; i < bookings.length; i = i + 1) {
+                    if (bookings[i]._id === rescheduleBookingId) {
+                        target = bookings[i];
+                        break;
+                    }
+                }
+
+                if (!target) {
+                    alert('Booking not found or access denied.');
+                    window.location.href = 'my-booking.html';
+                    return;
+                }
+
+                if (target.status === 'Cancelled' || target.status === 'Completed') {
+                    alert('A ' + target.status.toLowerCase() + ' booking cannot be rescheduled.');
+                    window.location.href = 'my-booking.html';
+                    return;
+                }
+
+                document.getElementById('bookingFormTitle').innerHTML = 'Reschedule Booking';
+                document.getElementById('bookingFormNote').innerHTML = 'Update your appointment details below. The new time will be validated against availability.';
+                document.getElementById('bookingSubmitBtn').innerHTML = 'Reschedule Booking';
+
+                var merchantSelect = document.getElementById('merchant');
+                for (var j = 0; j < merchantSelect.options.length; j = j + 1) {
+                    var opt = merchantSelect.options[j];
+                    if (target.merchant && opt.value === target.merchant._id) {
+                        merchantSelect.selectedIndex = j;
+                        onMerchantChange();
+                        break;
+                    }
+                }
+
+                setTimeout(function() {
+                    var serviceSelect = document.getElementById('service');
+                    if (target.service) {
+                        for (var k = 0; k < serviceSelect.options.length; k = k + 1) {
+                            if (serviceSelect.options[k].value === target.service._id) {
+                                serviceSelect.selectedIndex = k;
+                                break;
+                            }
+                        }
+                    }
+
+                    if (target.bookingDate) {
+                        document.getElementById('bookingDate').value = target.bookingDate;
+                    }
+                    if (target.bookingTime) {
+                        document.getElementById('bookingTime').value = target.bookingTime;
+                    }
+
+                    var nameField = document.getElementById('customerName');
+                    if (target.customer && target.customer.fullName) {
+                        nameField.value = target.customer.fullName;
+                    } else if (target.customerName) {
+                        nameField.value = target.customerName;
+                    }
+
+                    updateAvailableSlots();
+                    checkTakenTimeBeforeBooking();
+                    updateBookingSummary();
+                }, 500);
+            })
+            .catch(function(err) {
+                alert('Failed to load booking: ' + err.message);
+                window.location.href = 'my-booking.html';
+            });
+        }
+
         function protectCustomerPage() {
             var savedRole = localStorage.getItem('vanidayRole');
             if (savedRole == 'Shop Owner') {
@@ -458,10 +566,16 @@
         }
 
         protectCustomerPage();
-        loadMerchants();
-        prefillCustomerName();
-        updateAvailableSlots();
-        updateBookingSummary();
+        rescheduleBookingId = getRescheduleId();
+        if (rescheduleBookingId && !localStorage.getItem('vanidayToken')) {
+            alert('Please log in to reschedule a booking.');
+            window.location.href = 'login.html';
+        } else {
+            loadMerchants();
+            prefillCustomerName();
+            updateAvailableSlots();
+            updateBookingSummary();
+        }
     </script>
 </body>
 </html>
