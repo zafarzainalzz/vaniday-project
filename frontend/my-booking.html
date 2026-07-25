@@ -155,7 +155,7 @@
                         output = output + "<p><b>Token:</b> <code>" + b.guestToken + "</code></p>";
                     }
                     output = output + "</div>";
-                    if (localStorage.getItem('vanidayToken') && b.status !== 'Cancelled' && b.status !== 'Completed') {
+                    if ((localStorage.getItem('vanidayToken') || localStorage.getItem('vanidayGuestToken')) && b.status !== 'Cancelled' && b.status !== 'Completed') {
                         output = output + "<div class='premium-booking-actions'>";
                         output = output + "<button onclick='cancelBooking(\"" + b._id + "\")'>Cancel</button>";
                         output = output + "<button onclick='rescheduleBooking(\"" + b._id + "\")'>Reschedule</button>";
@@ -185,9 +185,14 @@
             var confirmCancel = confirm('Are you sure you want to cancel this booking?');
             if (!confirmCancel) return;
 
+            var cancelHeaders = getAuthHeaders();
+            if (!localStorage.getItem('vanidayToken') && localStorage.getItem('vanidayGuestToken')) {
+                cancelHeaders['X-Guest-Token'] = localStorage.getItem('vanidayGuestToken');
+            }
+
             fetch('/api/bookings/' + bookingId + '/cancel', {
                 method: 'PUT',
-                headers: getAuthHeaders()
+                headers: cancelHeaders
             })
             .then(function(res) { return res.json().then(function(data) { return { ok: res.ok, data: data }; }); })
             .then(function(result) {
@@ -209,7 +214,7 @@
             window.location.href = "booking.html?reschedule=" + encodeURIComponent(bookingId);
         }
 
-        protectCustomerOnlyPage();
+        protectPublicBookingPage();
         loadBookingDetails();
     </script>
     <div id="toastNotification" class="toast-notification"></div>

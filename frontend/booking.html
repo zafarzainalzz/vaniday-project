@@ -404,6 +404,8 @@
             var headers = { 'Content-Type': 'application/json' };
             if (token) {
                 headers['Authorization'] = 'Bearer ' + token;
+            } else if (localStorage.getItem('vanidayGuestToken')) {
+                headers['X-Guest-Token'] = localStorage.getItem('vanidayGuestToken');
             }
 
             var url = '/api/bookings';
@@ -477,11 +479,15 @@
 
         function loadRescheduleBooking() {
             var token = localStorage.getItem('vanidayToken');
-            if (!token || !rescheduleBookingId) return;
+            var guestToken = localStorage.getItem('vanidayGuestToken');
+            if ((!token && !guestToken) || !rescheduleBookingId) return;
 
-            fetch('/api/bookings/mine', {
+            var lookupUrl = token ? '/api/bookings/mine' : '/api/bookings/guest';
+            var lookupHeaders = token ? getAuthHeaders() : { 'X-Guest-Token': guestToken };
+
+            fetch(lookupUrl, {
                 method: 'GET',
-                headers: getAuthHeaders()
+                headers: lookupHeaders
             })
             .then(function(res) { return res.json(); })
             .then(function(bookings) {
@@ -555,11 +561,11 @@
             });
         }
 
-        protectCustomerOnlyPage();
+        protectPublicBookingPage();
         rescheduleBookingId = getRescheduleId();
-        if (rescheduleBookingId && !localStorage.getItem('vanidayToken')) {
-            alert('Please log in to reschedule a booking.');
-            window.location.href = 'login.html';
+        if (rescheduleBookingId && !localStorage.getItem('vanidayToken') && !localStorage.getItem('vanidayGuestToken')) {
+            alert('Your booking token is required to reschedule this booking.');
+            window.location.href = 'my-booking.html';
         } else {
             loadMerchants();
             prefillCustomerName();

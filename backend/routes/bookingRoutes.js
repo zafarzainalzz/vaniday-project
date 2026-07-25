@@ -227,12 +227,20 @@ router.get("/owner", authenticate, requireRole("Shop Owner", "Merchant Admin"), 
 });
 
 // PUT /api/bookings/:id/reschedule - Reschedule a booking (customer only)
-router.put("/:id/reschedule", authenticate, async function (req, res) {
+router.put("/:id/reschedule", optionalAuthenticate, async function (req, res) {
     try {
-        var booking = await Booking.findOne({ _id: req.params.id, customer: req.user.id });
+        var booking = await Booking.findById(req.params.id).select("+guestToken");
 
         if (!booking) {
             return res.status(404).json({ message: "Booking not found or access denied." });
+        }
+
+        var guestToken = String(req.headers["x-guest-token"] || "").trim();
+        var isCustomer = req.user && req.user.role === "Customer" && booking.customer && booking.customer.toString() === req.user.id;
+        var isGuest = !req.user && guestToken && booking.guestToken && booking.guestToken === guestToken;
+
+        if (!isCustomer && !isGuest) {
+            return res.status(403).json({ message: "Booking not found or access denied." });
         }
 
         if (booking.status === "Cancelled") {
@@ -290,9 +298,9 @@ router.put("/:id/reschedule", authenticate, async function (req, res) {
 });
 
 // PUT /api/bookings/:id/cancel - Cancel a booking
-router.put("/:id/cancel", authenticate, async function (req, res) {
+router.put("/:id/cancel", optionalAuthenticate, async function (req, res) {
     try {
-        var booking = await Booking.findById(req.params.id);
+        var booking = await Booking.findById(req.params.id).select("+guestToken");
 
         if (!booking) {
             return res.status(404).json({ message: "Booking not found." });
@@ -302,17 +310,21 @@ router.put("/:id/cancel", authenticate, async function (req, res) {
             return res.status(400).json({ message: "Booking is already cancelled." });
         }
 
-        var isCustomer = booking.customer && booking.customer.toString() === req.user.id;
+        var guestToken = String(req.headers["x-guest-token"] || "").trim();
+        var isGuest = !req.user && guestToken && booking.guestToken && booking.guestToken === guestToken;
+        var isCustomer = req.user && booking.customer && booking.customer.toString() === req.user.id;
         var isOwner = false;
 
-        if (!isCustomer) {
+        if (req.user && !isCustomer) {
             var merchantDoc = await Merchant.findById(booking.merchant);
             if (merchantDoc && merchantDoc.owner.toString() === req.user.id) {
                 isOwner = true;
             }
         }
 
-        if (!isCustomer && !isOwner && req.user.role !== "Merchant Admin") {
+        var isAdmin = req.user && req.user.role === "Merchant Admin";
+
+        if (!isGuest && !isCustomer && !isOwner && !isAdmin) {
             return res.status(403).json({ message: "Access denied. You can only cancel your own bookings." });
         }
 

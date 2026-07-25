@@ -116,32 +116,66 @@ function getOwnerShopName() {
 
 function renderVanidayNav() {
     var role = getCurrentRole();
+    var token = localStorage.getItem('vanidayToken');
     var navDiv = document.querySelector('nav div');
 
     if (navDiv == null) {
         return;
     }
 
-    if (role == 'Customer') {
-        navDiv.innerHTML = '<a href="index.html">Home</a><a href="merchants.html">Merchants</a><a href="booking.html">Book</a><a href="my-booking.html">My Bookings</a><a href="index.html" onclick="logoutUser()">Logout</a>';
+    if (token && role == 'Customer') {
+        navDiv.innerHTML = '<a href="index.html">Home</a><a href="merchants.html">Merchants</a><a href="booking.html">Book</a><a href="my-booking.html">My Bookings</a><a href="dashboard.html">Dashboard</a><a href="index.html" onclick="logoutUser()">Logout</a>';
     }
-    else if (role == 'Shop Owner') {
+    else if (token && role == 'Shop Owner') {
         navDiv.innerHTML = '<a href="index.html">Home</a><a href="merchants.html">Merchants</a><a href="shop-owner-dashboard.html">Shop Dashboard</a><a href="index.html" onclick="logoutUser()">Logout</a>';
     }
-    else if (role == 'Merchant Admin') {
+    else if (token && role == 'Merchant Admin') {
         navDiv.innerHTML = '<a href="index.html">Home</a><a href="merchants.html">Merchants</a><a href="merchant-admin.html">Dashboard</a><a href="index.html" onclick="logoutUser()">Logout</a>';
+    }
+    else {
+        var guestLinks = '<a href="index.html">Home</a><a href="merchants.html">Merchants</a><a href="booking.html">Book</a><a href="my-booking.html">My Bookings</a><a href="login.html">Login</a><a href="signup.html">Signup</a>';
+        var parentNav = navDiv.closest('nav');
+        if (parentNav && parentNav.classList.contains('glass-navbar')) {
+            guestLinks = guestLinks + '<a class="nav-cta" href="booking.html">Book Now <span>↗</span></a>';
+        }
+        navDiv.innerHTML = guestLinks;
     }
 }
 
 function protectCustomerOnlyPage() {
     var role = getCurrentRole();
+    var token = localStorage.getItem('vanidayToken');
 
-    if (role == 'Shop Owner') {
-        window.location.href = 'shop-owner-dashboard.html';
+    if (!token || role != 'Customer') {
+        if (token && role == 'Shop Owner') {
+            window.location.replace('shop-owner-dashboard.html');
+        }
+        else if (token && role == 'Merchant Admin') {
+            window.location.replace('merchant-admin.html');
+        }
+        else {
+            window.location.replace('login.html');
+        }
+        return false;
     }
-    else if (role == 'Merchant Admin') {
-        window.location.href = 'merchant-admin.html';
+
+    return true;
+}
+
+function protectPublicBookingPage() {
+    var role = getCurrentRole();
+    var token = localStorage.getItem('vanidayToken');
+
+    if (token && role == 'Shop Owner') {
+        window.location.replace('shop-owner-dashboard.html');
+        return false;
     }
+    else if (token && role == 'Merchant Admin') {
+        window.location.replace('merchant-admin.html');
+        return false;
+    }
+
+    return true;
 }
 
 function protectShopOwnerOnlyPage() {
