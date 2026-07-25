@@ -34,7 +34,13 @@ app.use(express.json({ limit: "1mb" }));
 app.use(express.urlencoded({ extended: true, limit: "1mb" }));
 
 const frontendPath = path.join(__dirname, "..", "frontend");
-app.use(express.static(frontendPath));
+app.use(express.static(frontendPath, {
+  setHeaders: function (res, filePath) {
+    if (filePath.endsWith(".html")) {
+      res.setHeader("Cache-Control", "no-cache, no-store, must-revalidate");
+    }
+  }
+}));
 
 app.get("/api/health", function (req, res) {
   res.json({
