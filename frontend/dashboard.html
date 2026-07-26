@@ -44,6 +44,18 @@
             font-weight: 600;
             letter-spacing: 0.3px;
         }
+
+        /* Two balanced summary cards after removing the wallet card. */
+        .dashboard-page .reward-summary-row.dashboard-glow-cards {
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            width: 100%;
+        }
+
+        @media (max-width: 900px) {
+            .dashboard-page .reward-summary-row.dashboard-glow-cards {
+                grid-template-columns: 1fr;
+            }
+        }
     </style>
 </head>
 
@@ -258,7 +270,6 @@
             localStorage.setItem('vanidayWalletBalance', walletBalance);
 
             document.getElementById('loyaltyPointsValue').innerHTML = loyaltyPoints + ' pts';
-            document.getElementById('walletBalanceValue').innerHTML = '$' + walletBalance;
             document.getElementById('totalBookingsValue').innerHTML = totalBookings;
 
             if (loyaltyPoints >= 1000) {
@@ -267,14 +278,38 @@
                 document.getElementById('loyaltyPointsNote').innerHTML = 'You have ' + loyaltyPoints + ' points. Earn more with every booking.';
             }
 
-            if (walletBalance >= 50) {
-                document.getElementById('walletBalanceNote').innerHTML = '$50 cashback unlocked for other services.';
-            } else {
-                document.getElementById('walletBalanceNote').innerHTML = 'Spend over $200 to unlock $50 cashback.';
-            }
         }
 
         updateDashboardValues();
+
+        async function refreshBookingsFromBackend() {
+            try {
+                var bookings = await VanidayApi.request('/api/bookings/mine');
+                if (Array.isArray(bookings)) {
+                    totalBookings = bookings.length;
+                    document.getElementById('totalBookingsValue').innerHTML = totalBookings;
+
+                    // Keep My Bookings and the dashboard consistent with the database.
+                    if (window.VanidayApi && typeof window.VanidayApi.toLegacyBooking === 'function') {
+                        var legacyBookings = bookings.map(window.VanidayApi.toLegacyBooking);
+                        localStorage.setItem('allBookings', JSON.stringify(legacyBookings));
+                    }
+                }
+            } catch (error) {
+                // Fallback to locally saved records only when the backend cannot be reached.
+                var saved = localStorage.getItem('allBookings');
+                try {
+                    var localBookings = saved ? JSON.parse(saved) : [];
+                    if (Array.isArray(localBookings)) {
+                        totalBookings = localBookings.length;
+                        document.getElementById('totalBookingsValue').innerHTML = totalBookings;
+                    }
+                } catch (ignore) {
+                    document.getElementById('totalBookingsValue').innerHTML = totalBookings;
+                }
+            }
+        }
+        refreshBookingsFromBackend();
 
         async function refreshLoyaltyFromBackend() {
             try {
