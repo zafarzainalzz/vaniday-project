@@ -144,16 +144,11 @@
                     <button id="promotionClaimDiscount">Claim</button>
                 </div>
 
-                <div class="promotion-claim-row">
-                    <div class="promotion-icon green-promo">$</div>
-                    <p id="cashbackPromotionText">Spend more than <b>$200</b> to unlock <b>$50 cashback</b> for other services.</p>
-                    <button id="promotionClaimCashback">Claim</button>
-                </div>
             </div>
 
             <div class="dashboard-panel soft-panel noise-overlay claim-panel">
                 <h2>Claim Rewards</h2>
-                <p>Choose what you want to claim instead of only using 25% off for your next appointment.</p>
+                <p>Choose a reward and use your loyalty points to claim it.</p>
                 <div class="reward-claim-list">
                     <div class="reward-claim-item">
                         <div class="reward-claim-icon">25%</div>
@@ -161,10 +156,17 @@
                         <button id="claimDiscountButton">Claim</button>
                     </div>
 
+
                     <div class="reward-claim-item">
-                        <div class="reward-claim-icon">$</div>
-                        <strong>$50 Cashback</strong>
-                        <button id="claimCashbackButton">Claim</button>
+                        <div class="reward-claim-icon">💇</div>
+                        <strong>Free Appointment at Manly Mane Salon - 500 pts</strong>
+                        <button id="claimManlyManeButton">Claim</button>
+                    </div>
+
+                    <div class="reward-claim-item">
+                        <div class="reward-claim-icon">🧘</div>
+                        <strong>Free Yoga Session at The Wellness Centre - 600 pts</strong>
+                        <button id="claimYogaButton">Claim</button>
                     </div>
 
                     <div class="reward-claim-item">
@@ -251,10 +253,6 @@
             loyaltyPoints = 100;
         }
 
-        var walletBalance = parseInt(localStorage.getItem('vanidayWalletBalance'));
-        if (isNaN(walletBalance)) {
-            walletBalance = 0;
-        }
 
         var allBookingsText = localStorage.getItem('allBookings');
         var allBookings = [];
@@ -267,7 +265,6 @@
 
         function updateDashboardValues() {
             localStorage.setItem('vanidayLoyaltyPoints', loyaltyPoints);
-            localStorage.setItem('vanidayWalletBalance', walletBalance);
 
             document.getElementById('loyaltyPointsValue').innerHTML = loyaltyPoints + ' pts';
             document.getElementById('totalBookingsValue').innerHTML = totalBookings;
@@ -326,9 +323,6 @@
             document.getElementById('discountPromotionText').innerHTML = '<b>Unlocked:</b> 25% off your next appointment is available now.';
         }
 
-        if (walletBalance >= 50) {
-            document.getElementById('cashbackPromotionText').innerHTML = '<b>Unlocked:</b> $50 cashback can be claimed for other services.';
-        }
 
         document.getElementById('promotionClaimFirst').onclick = function () {
             var alreadyClaimed = localStorage.getItem('vanidayPromo_FIRST10');
@@ -355,23 +349,9 @@
             }
         };
 
-        document.getElementById('promotionClaimCashback').onclick = function () {
-            var alreadyClaimed = localStorage.getItem('vanidayPromo_CASHBACK50');
-            if (alreadyClaimed == 'claimed') {
-                showToast('You have already claimed this cashback.');
-            } else if (walletBalance >= 50) {
-                localStorage.setItem('vanidayPromo_CASHBACK50', 'claimed');
-                walletBalance = walletBalance + 50;
-                updateDashboardValues();
-                document.getElementById('cashbackPromotionText').innerHTML = '<b>Unlocked:</b> $50 cashback can be claimed for other services.';
-                document.getElementById('claimMessage').innerHTML = 'Claimed: $50 cashback added to your wallet.';
-                showToast('$50 cashback added to your wallet.');
-            } else {
-                showToast('Spend more than $200 to claim $50 cashback.');
-            }
-        };
-
         var rewards = [
+            { buttonId: 'claimManlyManeButton', name: 'Free Appointment at Manly Mane Salon', pointsNeeded: 500 },
+            { buttonId: 'claimYogaButton', name: 'Free Yoga Session at The Wellness Centre', pointsNeeded: 600 },
             { buttonId: 'claimDiscountButton', name: '25% off next appointment', pointsNeeded: 1000 },
             { buttonId: 'claimGlowButton', name: 'Free Glow Add-on', pointsNeeded: 500 },
             { buttonId: 'claimSmallDiscountButton', name: '5% off next booking', pointsNeeded: 500 },
@@ -410,18 +390,6 @@
         for (var i = 0; i < rewards.length; i++) {
             setupRewardClaim(rewards[i]);
         }
-
-        document.getElementById('claimCashbackButton').onclick = function () {
-            if (walletBalance >= 50) {
-                localStorage.setItem('vanidayWalletClaim', '50 cashback');
-                document.getElementById('claimMessage').innerHTML = 'Claimed: $50 cashback for other services.';
-                document.getElementById('lastClaimedReward').innerHTML = '$50 cashback';
-                showToast('Cashback claimed successfully.');
-            } else {
-                document.getElementById('claimMessage').innerHTML = 'Spend more than $200 to claim $50 cashback.';
-                showToast('Spend more than $200 to claim $50 cashback.');
-            }
-        };
 
         var lastClaimed = localStorage.getItem('vanidayRewardClaim');
         if (lastClaimed != null && lastClaimed != '') {

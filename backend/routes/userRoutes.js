@@ -267,12 +267,30 @@ router.post("/points/deduct", authenticate, async function (req, res) {
 // POST /api/users/me/rewards/claim - Claim a reward (deducts points server-side)
 router.post("/me/rewards/claim", authenticate, async function (req, res) {
     try {
-        const points = Number(req.body.points);
-        const rewardName = String(req.body.rewardName || "").trim();
+        const requestedRewardName = String(req.body.rewardName || "").trim();
 
-        if (!rewardName || !Number.isFinite(points) || points < 0) {
-            return res.status(400).json({ message: "Reward and valid points are required." });
+        // Server-controlled reward catalogue prevents customers from changing
+        // the points cost in the browser before submitting a claim.
+        const rewardCatalogue = {
+            "Free Appointment at Manly Mane Salon": 500,
+            "Free Yoga Session at The Wellness Centre": 600,
+            "25% off next appointment": 1000,
+            "Free Glow Add-on": 500,
+            "5% off next booking": 500,
+            "Free Premium Hair Treatment": 1000,
+            "$20 Vaniday Voucher": 2500,
+            "Free Spa Session": 5000,
+            "$100 NTUC Voucher": 10000,
+            "Business Class Upgrade Voucher": 20000,
+            "Vaniday VIP Gold Membership": 50000
+        };
+
+        if (!Object.prototype.hasOwnProperty.call(rewardCatalogue, requestedRewardName)) {
+            return res.status(400).json({ message: "Invalid reward selected." });
         }
+
+        const rewardName = requestedRewardName;
+        const points = rewardCatalogue[rewardName];
 
         const user = await User.findOneAndUpdate(
             { _id: req.user.id, loyaltyPoints: { $gte: points } },
