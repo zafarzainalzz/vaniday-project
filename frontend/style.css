@@ -5237,3 +5237,379 @@ body.dashboard-page .page-title {
         box-sizing: border-box;
     }
 }
+
+/* =========================================================
+   FINAL COHESIVE VANIDAY UI
+   Visual consistency only. Existing JavaScript behaviour remains unchanged.
+   ========================================================= */
+
+:root {
+    --vaniday-page-width: 1180px;
+    --vaniday-panel-radius: 22px;
+    --vaniday-control-radius: 12px;
+    --vaniday-panel-gap: 20px;
+}
+
+body:not(.home-body):not(.appointment-chat-page) nav {
+    min-height: 76px;
+    padding: 14px clamp(18px, 4vw, 48px);
+}
+
+body:not(.home-body):not(.appointment-chat-page) nav h1,
+body:not(.home-body):not(.appointment-chat-page) nav h2 {
+    margin: 0;
+    font-size: 1.65rem;
+    letter-spacing: .02em;
+}
+
+body:not(.home-body):not(.appointment-chat-page) nav > div {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    flex-wrap: wrap;
+    gap: 8px 18px;
+}
+
+body:not(.home-body):not(.appointment-chat-page) nav a {
+    margin: 0;
+    line-height: 1.2;
+}
+
+.page-title {
+    width: min(var(--vaniday-page-width), 92%);
+    margin: 34px auto 24px;
+    text-align: center;
+    line-height: 1.15;
+}
+
+.merchant-grid,
+.shop-detail-shell,
+.dashboard-studio,
+.booking-container,
+.premium-booking-card,
+.login-container,
+.signup-container {
+    width: min(var(--vaniday-page-width), 92%);
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.merchant-card,
+.dashboard-panel,
+.single-booking-box,
+.shop-detail-hero,
+.shop-left-panel,
+.shop-right-panel,
+.login-container,
+.signup-container {
+    border-radius: var(--vaniday-panel-radius) !important;
+}
+
+input,
+select,
+textarea {
+    font-family: inherit;
+}
+
+.dashboard-page .dashboard-studio {
+    padding: 34px 0 56px;
+}
+
+.dashboard-page .dashboard-hero-row {
+    margin-bottom: 22px;
+    align-items: center;
+}
+
+.dashboard-page .dashboard-hero-row h1 {
+    margin-bottom: 8px;
+    line-height: 1.1;
+}
+
+.dashboard-page .dashboard-feature-grid,
+.dashboard-page .admin-chart-calendar-row {
+    gap: var(--vaniday-panel-gap) !important;
+    align-items: stretch !important;
+}
+
+.dashboard-page .dashboard-panel {
+    min-width: 0;
+    height: auto !important;
+    max-height: none !important;
+    overflow: visible !important;
+    padding: 26px !important;
+}
+
+.dashboard-page .dashboard-panel h2 {
+    margin-top: 8px;
+    margin-bottom: 14px;
+    line-height: 1.15;
+}
+
+.dashboard-page .dashboard-panel input,
+.dashboard-page .dashboard-panel select,
+.dashboard-page .dashboard-panel textarea {
+    width: 100%;
+    min-height: 44px;
+    margin: 7px 0;
+    border-radius: var(--vaniday-control-radius);
+}
+
+.dashboard-page .dashboard-panel > button {
+    min-height: 42px;
+    border-radius: var(--vaniday-control-radius);
+}
+
+/* Owner dashboard: calendar first, balanced forms, bookings full width. */
+.owner-calendar-top-grid {
+    display: grid !important;
+    grid-template-columns: 1fr !important;
+}
+
+.owner-calendar-top-grid #ownerCalendarPanel {
+    width: 100% !important;
+    max-width: 900px !important;
+    margin: 0 auto !important;
+}
+
+.owner-calendar-top-grid #ownerCalendarPanel .booking-calendar {
+    width: 100%;
+}
+
+.shop-owner-dashboard-page .dashboard-feature-grid,
+body:has(#shopOwnerGreeting) .dashboard-feature-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+#customerBookings {
+    grid-column: 1 / -1;
+}
+
+.owner-bottom-grid {
+    grid-template-columns: 1fr !important;
+}
+
+.owner-bottom-grid #services {
+    width: 100%;
+}
+
+#ownerServicesBox {
+    overflow: visible !important;
+    max-height: none !important;
+}
+
+#ownerBookingBox,
+#adminBookingBox {
+    max-height: 520px !important;
+    overflow-y: auto !important;
+    overflow-x: hidden !important;
+    padding-right: 6px;
+}
+
+/* Admin dashboard: keep calendar and graph, align them evenly. */
+.admin-chart-calendar-row {
+    display: grid !important;
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+}
+
+#adminCalendarPanel,
+#adminShopChartPanel {
+    min-height: 520px;
+}
+
+#adminShopChart,
+#adminShopChart svg,
+.admin-shop-chart,
+.admin-shop-chart svg {
+    width: 100% !important;
+    max-width: 100% !important;
+}
+
+.admin-top-grid {
+    display: grid !important;
+    grid-template-columns: 1.05fr 1.35fr .9fr !important;
+    gap: var(--vaniday-panel-gap) !important;
+}
+
+.admin-top-grid #allShops,
+.admin-top-grid #platformControl {
+    overflow: visible !important;
+    max-height: none !important;
+}
+
+#adminShopsList {
+    display: flex;
+    flex-wrap: wrap;
+    align-content: flex-start;
+    gap: 10px;
+}
+
+#adminShopsList p {
+    display: contents;
+    margin: 0 !important;
+}
+
+#adminShopsList .shop-link-button {
+    width: auto !important;
+    max-width: 100%;
+    margin: 0 !important;
+    padding: 10px 15px !important;
+    border-radius: 999px !important;
+    white-space: normal;
+    line-height: 1.25;
+}
+
+#platformControl button {
+    width: 100%;
+    margin: 7px 0 !important;
+}
+
+.chart-summary-box {
+    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+    gap: 12px !important;
+}
+
+.chart-summary-box p {
+    min-height: 58px;
+    padding: 12px 14px;
+    display: flex;
+    align-items: center;
+    border-radius: 14px;
+    background: rgba(255,255,255,.07);
+    border: 1px solid rgba(255,255,255,.1);
+}
+
+/* Merchant search: same appearance for every role, compact and functional. */
+.merchant-page .merchant-search-panel,
+.merchant-page .simple-search-panel {
+    width: min(440px, 86vw) !important;
+    margin: 18px auto 28px !important;
+}
+
+.merchant-page .premium-search-row {
+    width: 100% !important;
+    height: 40px !important;
+    min-height: 40px !important;
+}
+
+.merchant-page .premium-search-wrap input,
+.merchant-page .simple-search-panel input,
+.merchant-page .merchant-search-panel input {
+    height: 38px !important;
+    min-height: 38px !important;
+    font-size: 14px !important;
+}
+
+.merchant-page #merchantSearchMessage {
+    margin: 8px 0 0 !important;
+    text-align: center;
+    font-size: 13px !important;
+}
+
+/* Shop details: cleaner columns; old in-page AI panel intentionally removed. */
+.shop-detail-layout {
+    gap: 24px !important;
+    align-items: start !important;
+}
+
+.review-card {
+    position: relative;
+}
+
+.review-edit-btn,
+.review-delete-btn {
+    margin-left: 7px !important;
+}
+
+.review-delete-btn {
+    border-color: rgba(200, 70, 70, .6) !important;
+}
+
+@media (max-width: 980px) {
+    .admin-chart-calendar-row,
+    .admin-top-grid,
+    body:has(#shopOwnerGreeting) .dashboard-feature-grid {
+        grid-template-columns: 1fr !important;
+    }
+
+    #customerBookings {
+        grid-column: auto;
+    }
+
+    .chart-summary-box {
+        grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    }
+}
+
+@media (max-width: 650px) {
+    body:not(.home-body):not(.appointment-chat-page) nav {
+        align-items: flex-start;
+    }
+
+    body:not(.home-body):not(.appointment-chat-page) nav > div {
+        justify-content: flex-start;
+    }
+
+    .dashboard-page .dashboard-panel {
+        padding: 20px !important;
+    }
+
+    .chart-summary-box {
+        grid-template-columns: 1fr !important;
+    }
+}
+
+
+
+/* Final requested corrections only. */
+.booking-page .login-loyalty-note,
+.booking-page #bookingFormNote {
+    color: #111111 !important;
+}
+
+.my-booking-page .page-title {
+    color: #ffffff !important;
+}
+
+.my-booking-page #guestTokenSection p,
+.my-booking-page #bookingDetails > h2,
+.my-booking-page #bookingDetails > p,
+.my-booking-page .booking-intro-text {
+    color: rgba(255, 255, 255, 0.92) !important;
+}
+
+body:not(.home-body) nav .nav-cta {
+    padding: 10px 16px !important;
+    border-radius: 999px !important;
+    background: linear-gradient(135deg, #fff8cc, #ffd700) !important;
+    color: #111111 !important;
+    font-weight: 800 !important;
+    box-shadow: 0 8px 20px rgba(255, 215, 0, 0.2) !important;
+}
+
+body:not(.home-body) nav .nav-cta:hover {
+    background: #ffffff !important;
+    color: #111111 !important;
+}
+
+/* Keep the merchant search design, with a smaller magnifying glass. */
+.merchant-page .search-glass-outside {
+    left: 38px !important;
+    width: 32px !important;
+    height: 32px !important;
+    min-width: 32px !important;
+}
+
+.merchant-page .search-glass-outside::before {
+    left: 8px !important;
+    top: 7px !important;
+    width: 12px !important;
+    height: 12px !important;
+    border-width: 3px !important;
+}
+
+.merchant-page .search-glass-outside::after {
+    left: 19px !important;
+    top: 20px !important;
+    width: 10px !important;
+    height: 3px !important;
+}

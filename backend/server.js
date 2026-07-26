@@ -8,6 +8,7 @@ const userRoutes = require("./routes/userRoutes");
 const merchantRoutes = require("./routes/merchantRoutes");
 const serviceRoutes = require("./routes/serviceRoutes");
 const stateRoutes = require("./routes/stateRoutes");
+const chatRoutes = require("./routes/chatRoutes");
 const { requireEnvironmentVariable } = require("./config");
 const { seedSystemAccounts, seedDemoServices } = require("./seedAccounts");
 
@@ -55,6 +56,7 @@ app.use("/api/bookings", bookingRoutes);
 app.use("/api/merchants", merchantRoutes);
 app.use("/api/services", serviceRoutes);
 app.use("/api/state", stateRoutes);
+app.use("/api/chat", chatRoutes);
 
 app.use(function (req, res, next) {
   if (req.path.startsWith("/api")) return next();

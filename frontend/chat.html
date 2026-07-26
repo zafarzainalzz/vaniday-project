@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vaniday Tele Assistant</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="chat.css">
+</head>
+<body class="appointment-chat-page">
+    <header>
+        <nav>
+            <h2>Vaniday</h2>
+            <div>
+                <a href="index.html">Home</a>
+                <a href="merchants.html">Merchants</a>
+                <a href="booking.html">Book</a>
+                <a href="my-booking.html">My Bookings</a>
+                <a href="chat.html">Tele Assistant</a>
+            </div>
+        </nav>
+    </header>
+
+    <main class="chat-page-shell">
+        <section class="chat-intro-panel">
+            <p class="chat-kicker">TELE ASSISTANT</p>
+            <h1>Book through a simple conversation.</h1>
+            <p>Start with “hey”. The assistant can guide you to book, cancel, or reschedule an appointment.</p>
+            <div class="chat-feature-card">
+                <strong>Connected to Vaniday bookings</strong>
+                <span>Completed actions are saved in MongoDB and appear in My Bookings and the shop-owner dashboard.</span>
+            </div>
+        </section>
+
+        <section class="chat-window" aria-label="Appointment assistant chat">
+            <div class="chat-window-header">
+                <div class="chat-avatar">T</div>
+                <div>
+                    <h2>Vaniday Tele Assistant</h2>
+                    <p>Online</p>
+                </div>
+                <button type="button" class="chat-reset-button" onclick="resetAppointmentChat()">Restart</button>
+            </div>
+
+            <div id="appointmentChatMessages" class="chat-messages" aria-live="polite"></div>
+
+            <div id="chatQuickActions" class="chat-quick-actions">
+                <button type="button" onclick="sendQuickChatMessage('Book appointment')">Book appointment</button>
+                <button type="button" onclick="sendQuickChatMessage('Cancel appointment')">Cancel</button>
+                <button type="button" onclick="sendQuickChatMessage('Reschedule appointment')">Reschedule</button>
+            </div>
+
+            <form class="chat-input-row" onsubmit="sendAppointmentChat(event)">
+                <input id="appointmentChatInput" type="text" placeholder="Type hey to begin..." autocomplete="off" required>
+                <button id="appointmentChatSend" type="submit">Send</button>
+            </form>
+        </section>
+    </main>
+
+    <script src="integration.js"></script>
+    <script src="app.js"></script>
+    <script src="chat.js"></script>
+</body>
+</html>

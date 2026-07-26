@@ -124,20 +124,43 @@ function renderVanidayNav() {
     }
 
     if (token && role == 'Customer') {
-        navDiv.innerHTML = '<a href="index.html">Home</a><a href="merchants.html">Merchants</a><a href="booking.html">Book</a><a href="my-booking.html">My Bookings</a><a href="dashboard.html">Dashboard</a><a href="index.html" onclick="logoutUser()">Logout</a>';
+        navDiv.innerHTML =
+            '<a href="index.html">Home</a>' +
+            '<a href="merchants.html">Merchants</a>' +
+            '<a href="booking.html">Book</a>' +
+            '<a href="my-booking.html">My Bookings</a>' +
+            '<a href="chat.html">Tele Assistant</a>' +
+            '<a href="dashboard.html">Dashboard</a>' +
+            '<a href="index.html" onclick="logoutUser()">Logout</a>';
     }
     else if (token && role == 'Shop Owner') {
-        navDiv.innerHTML = '<a href="index.html">Home</a><a href="merchants.html">Merchants</a><a href="shop-owner-dashboard.html">Shop Dashboard</a><a href="index.html" onclick="logoutUser()">Logout</a>';
+        navDiv.innerHTML =
+            '<a href="index.html">Home</a>' +
+            '<a href="merchants.html">Merchants</a>' +
+            '<a href="shop-owner-dashboard.html">Shop Dashboard</a>' +
+            '<a href="index.html" onclick="logoutUser()">Logout</a>';
     }
     else if (token && role == 'Merchant Admin') {
-        navDiv.innerHTML = '<a href="index.html">Home</a><a href="merchants.html">Merchants</a><a href="merchant-admin.html">Dashboard</a><a href="index.html" onclick="logoutUser()">Logout</a>';
+        navDiv.innerHTML =
+            '<a href="index.html">Home</a>' +
+            '<a href="merchants.html">Merchants</a>' +
+            '<a href="merchant-admin.html">Dashboard</a>' +
+            '<a href="index.html" onclick="logoutUser()">Logout</a>';
     }
     else {
-        var guestLinks = '<a href="index.html">Home</a><a href="merchants.html">Merchants</a><a href="booking.html">Book</a><a href="my-booking.html">My Bookings</a><a href="login.html">Login</a><a href="signup.html">Signup</a>';
+        var guestLinks =
+            '<a href="index.html">Home</a>' +
+            '<a href="merchants.html">Merchants</a>' +
+            '<a href="booking.html">Book</a>' +
+            '<a href="my-booking.html">My Bookings</a>' +
+            '<a href="chat.html">Tele Assistant</a>' +
+            '<a href="login.html">Login</a>' +
+            '<a href="signup.html">Signup</a>' +
+            '<a class="nav-cta" href="booking.html">Book Now <span>↗</span></a>';
+
         var parentNav = navDiv.closest('nav');
-        if (parentNav && parentNav.classList.contains('glass-navbar')) {
-            guestLinks = guestLinks + '<a class="nav-cta" href="booking.html">Book Now <span>↗</span></a>';
-        }
+
+
         navDiv.innerHTML = guestLinks;
     }
 }
@@ -900,7 +923,6 @@ function renderShopDetailPage() {
 
     renderDetailComments(shop.name);
     renderDetailCalendar(shop.name);
-    renderShopChat(shop.name);
 }
 
 function clickDetailLike() {
@@ -911,6 +933,82 @@ function clickDetailLike() {
     if (isShopLiked(shopName)) {
         document.getElementById('detailLikeBtn').className = 'heart-like-btn detail-heart liked-heart';
     }
+}
+
+function getReviewOwnerKey() {
+    var email = localStorage.getItem('vanidayEmail');
+    var name = localStorage.getItem('vanidayName');
+    var guestKey = localStorage.getItem('vanidayReviewGuestKey');
+
+    if (email != null && email != '') {
+        return 'customer-' + email.toLowerCase();
+    }
+
+    if (guestKey == null || guestKey == '') {
+        guestKey = 'guest-' + Date.now() + '-' + Math.floor(Math.random() * 1000000);
+        localStorage.setItem('vanidayReviewGuestKey', guestKey);
+    }
+
+    if (name != null && name != '') {
+        return guestKey + '-' + name.toLowerCase();
+    }
+
+    return guestKey;
+}
+
+function canManageDetailReview(review) {
+    if (review == null || review.ownerKey == null || review.ownerKey == '') {
+        return false;
+    }
+
+    return review.ownerKey == getReviewOwnerKey();
+}
+
+function editDetailReview(reviewNumber) {
+    var shopName = getSelectedDetailShop();
+    var reviews = getReviewList(shopName);
+
+    if (reviews[reviewNumber] == null || canManageDetailReview(reviews[reviewNumber]) == false) {
+        alert('You can only edit your own review.');
+        return;
+    }
+
+    var changedText = prompt('Edit your review:', reviews[reviewNumber].text);
+
+    if (changedText == null) {
+        return;
+    }
+
+    changedText = cleanDisplayText(changedText);
+
+    if (changedText == '') {
+        alert('The review cannot be empty.');
+        return;
+    }
+
+    reviews[reviewNumber].text = changedText;
+    saveReviewList(shopName, reviews);
+    renderDetailComments(shopName);
+}
+
+function deleteDetailReview(reviewNumber) {
+    var shopName = getSelectedDetailShop();
+    var reviews = getReviewList(shopName);
+
+    if (reviews[reviewNumber] == null || canManageDetailReview(reviews[reviewNumber]) == false) {
+        alert('You can only delete your own review.');
+        return;
+    }
+
+    var confirmed = confirm('Delete this review?');
+
+    if (confirmed == false) {
+        return;
+    }
+
+    reviews.splice(reviewNumber, 1);
+    saveReviewList(shopName, reviews);
+    renderDetailComments(shopName);
 }
 
 function renderDetailComments(shopName) {
@@ -929,6 +1027,11 @@ function renderDetailComments(shopName) {
             output = output + '<div class="review-top-line"><b>' + reviews[i].name + '</b><span class="review-stars">' + getReviewStars(reviews[i].rating) + '</span></div>';
             output = output + '<p>' + reviews[i].text + '</p>';
             output = output + '<button class="tiny-review-btn" onclick="rateDetailReview(' + i + ')">Helpful · ' + reviews[i].helpful + '</button>';
+
+            if (canManageDetailReview(reviews[i])) {
+                output = output + '<button class="tiny-review-btn review-edit-btn" onclick="editDetailReview(' + i + ')">Edit</button>';
+                output = output + '<button class="tiny-review-btn review-delete-btn" onclick="deleteDetailReview(' + i + ')">Delete</button>';
+            }
 
             if (reviews[i].reply != '') {
                 output = output + '<div class="owner-reply-box"><b>Owner reply:</b><p>' + reviews[i].reply + '</p></div>';
@@ -982,7 +1085,7 @@ function addDetailComment() {
     }
 
     var reviews = getReviewList(shopName);
-    var review = {name:nameText, rating:ratingText, text:text, helpful:0, reply:''};
+    var review = {name:nameText, rating:ratingText, text:text, helpful:0, reply:'', ownerKey:getReviewOwnerKey()};
     reviews[reviews.length] = review;
     saveReviewList(shopName, reviews);
     document.getElementById('commentInput').value = '';
