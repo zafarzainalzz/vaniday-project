@@ -5748,3 +5748,72 @@ body:not(.home-body) nav .nav-cta:hover {
 .merchant-page .merchant-card p:last-of-type {
     margin-bottom: 10px !important;
 }
+
+/* =========================================================
+   FINAL LAYOUT ALIGNMENT: homepage footer + merchant admin cards
+   Layout only. Existing functions and JavaScript remain unchanged.
+   ========================================================= */
+
+/* Match the homepage footer to the same 7vw content edges used by the
+   Promotions / QR Booking and capability boxes above it. */
+.home-body .professional-footer {
+    width: calc(100% - 14vw) !important;
+    max-width: none !important;
+    margin-left: 7vw !important;
+    margin-right: 7vw !important;
+    box-sizing: border-box !important;
+}
+
+/* Keep the three Merchant Admin management panels level and equal. */
+.admin-top-grid {
+    align-items: stretch !important;
+}
+
+.admin-top-grid #allShops,
+.admin-top-grid #allBookings,
+.admin-top-grid #platformControl {
+    height: 360px !important;
+    min-height: 360px !important;
+    max-height: 360px !important;
+    box-sizing: border-box !important;
+    overflow: hidden !important;
+}
+
+.admin-top-grid #adminShopsList,
+.admin-top-grid #adminBookingBox {
+    max-height: 248px !important;
+    overflow-y: auto !important;
+    overflow-x: hidden !important;
+    padding-right: 6px;
+}
+
+.admin-top-grid #platformControl {
+    display: flex !important;
+    flex-direction: column !important;
+}
+
+.admin-top-grid #adminActionText {
+    margin-top: auto !important;
+}
+
+@media (max-width: 900px) {
+    .home-body .professional-footer {
+        width: 92% !important;
+        margin-left: auto !important;
+        margin-right: auto !important;
+    }
+
+    .admin-top-grid #allShops,
+    .admin-top-grid #allBookings,
+    .admin-top-grid #platformControl {
+        height: auto !important;
+        min-height: 0 !important;
+        max-height: none !important;
+        overflow: visible !important;
+    }
+
+    .admin-top-grid #adminShopsList,
+    .admin-top-grid #adminBookingBox {
+        max-height: 360px !important;
+    }
+}
