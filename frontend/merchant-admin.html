@@ -86,7 +86,6 @@
     <script>
         protectMerchantAdminOnlyPage();
 
-        var adminStatsData = null;
         var adminBookingsData = [];
         var adminMerchantsData = [];
 
@@ -122,6 +121,7 @@
                     output = output + '<p><button class="shop-link-button" onclick="openAdminShop(\'' + m.name.replace(/'/g, "\\'") + '\')">' + m.name + statusLabel + '</button></p>';
                 }
                 box.innerHTML = output;
+                loadAdminShopChart();
             })
             .catch(function(err) {
                 document.getElementById('adminShopsList').innerHTML = '<p style="color:red">Failed to load shops: ' + err.message + '</p>';
@@ -143,6 +143,7 @@
             .then(function(bookings) {
                 if (!bookings) return;
                 adminBookingsData = bookings;
+                loadAdminShopChart();
                 syncCalendarBookingsFromApi(bookings);
                 renderBookingCalendar('adminCalendar', 'adminCalendarDetails', 'ALL');
 
@@ -187,23 +188,55 @@
             var shopNames = [];
             var shortNames = [];
             var counts = [];
+            var countByShop = {};
 
-            if (adminStatsData && adminStatsData.bookingsByMerchant) {
-                var names = Object.keys(adminStatsData.bookingsByMerchant);
-                for (var i = 0; i < names.length; i = i + 1) {
-                    shopNames.push(names[i]);
-                    counts.push(adminStatsData.bookingsByMerchant[names[i]]);
-                    var words = names[i].split(' ');
-                    var short = words.length > 1 ? words[0].substring(0, 4) : names[i].substring(0, 4);
-                    shortNames.push(short);
+            function normaliseShopName(value) {
+                if (value == null) return '';
+                if (typeof value === 'object') {
+                    value = value.name || value.shopName || value.merchantName || value.title || '';
                 }
-            } else if (adminMerchantsData.length > 0) {
-                for (var j = 0; j < adminMerchantsData.length; j = j + 1) {
-                    shopNames.push(adminMerchantsData[j].name);
-                    var words2 = adminMerchantsData[j].name.split(' ');
-                    shortNames.push(words2.length > 1 ? words2[0].substring(0, 4) : adminMerchantsData[j].name.substring(0, 4));
-                    counts.push(0);
+                return String(value).trim().toLowerCase();
+            }
+
+            function displayShopName(booking) {
+                if (!booking) return '';
+                var value = booking.merchant || booking.merchantName || booking.shopName || booking.shop || '';
+                if (value && typeof value === 'object') {
+                    value = value.name || value.shopName || value.merchantName || value.title || '';
                 }
+                return String(value || '').trim();
+            }
+
+            for (var b = 0; b < adminBookingsData.length; b = b + 1) {
+                var bookingShop = displayShopName(adminBookingsData[b]);
+                var bookingKey = normaliseShopName(bookingShop);
+                if (!bookingKey) continue;
+                countByShop[bookingKey] = (countByShop[bookingKey] || 0) + 1;
+            }
+
+            for (var i = 0; i < adminMerchantsData.length; i = i + 1) {
+                var merchantName = String(adminMerchantsData[i].name || adminMerchantsData[i].shopName || '').trim();
+                if (!merchantName) continue;
+                shopNames.push(merchantName);
+                counts.push(countByShop[normaliseShopName(merchantName)] || 0);
+                var words = merchantName.split(' ');
+                shortNames.push(words.length > 1 ? words[0].substring(0, 4) : merchantName.substring(0, 4));
+            }
+
+            /* Keep older bookings visible even if their merchant record was removed or renamed. */
+            var existingKeys = {};
+            for (var e = 0; e < shopNames.length; e = e + 1) {
+                existingKeys[normaliseShopName(shopNames[e])] = true;
+            }
+            for (var j = 0; j < adminBookingsData.length; j = j + 1) {
+                var legacyName = displayShopName(adminBookingsData[j]);
+                var legacyKey = normaliseShopName(legacyName);
+                if (!legacyKey || existingKeys[legacyKey]) continue;
+                existingKeys[legacyKey] = true;
+                shopNames.push(legacyName);
+                counts.push(countByShop[legacyKey] || 0);
+                var legacyWords = legacyName.split(' ');
+                shortNames.push(legacyWords.length > 1 ? legacyWords[0].substring(0, 4) : legacyName.substring(0, 4));
             }
 
             if (shopNames.length === 0) {
@@ -225,10 +258,10 @@
                 if (counts[k] < counts[lowestIdx]) lowestIdx = k;
             }
 
+            var spacing = shopNames.length > 1 ? 470 / (shopNames.length - 1) : 0;
             for (var x = 0; x < shopNames.length; x = x + 1) {
-                var xPos = 45 + (x * 50);
-                var yPos = 250 - ((counts[x] / maxCount) * 180);
-                if (counts[x] === 0) yPos = 250;
+                var xPos = shopNames.length > 1 ? 45 + (x * spacing) : 280;
+                var yPos = counts[x] === 0 ? 250 : 250 - ((counts[x] / maxCount) * 180);
 
                 points = points + xPos + ',' + yPos + ' ';
                 labels = labels + '<text class="chart-label" x="' + xPos + '" y="285" text-anchor="middle">' + shortNames[x] + '</text>';
@@ -299,9 +332,7 @@
         loadAdminBookings();
         renderBookingCalendar('adminCalendar', 'adminCalendarDetails', 'ALL');
 
-        setTimeout(function() {
-            loadAdminShopChart();
-        }, 1000);
+        loadAdminShopChart();
     </script>
 
 </body>

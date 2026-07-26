@@ -1275,7 +1275,9 @@ body:not(.home-body) .qr-box {
 }
 
 .professional-footer {
-    width: min(1180px, calc(100% - 34px));
+    width: min(var(--vaniday-page-width, 1180px), 92%);
+    max-width: none;
+    box-sizing: border-box;
     margin: 32px auto 34px;
     padding: 34px 42px 28px;
     border-radius: 34px;
