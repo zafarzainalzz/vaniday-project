@@ -5720,3 +5720,31 @@ body:not(.home-body) nav .nav-cta:hover {
         overflow: visible !important;
     }
 }
+
+
+/* Merchant admin card fix: keep backend Update/Delete controls below all text. */
+.merchant-page .merchant-card {
+    min-height: 610px !important;
+    height: auto !important;
+    padding-bottom: 24px !important;
+    display: flex !important;
+    flex-direction: column !important;
+}
+
+.merchant-page .merchant-card .admin-shop-actions,
+.merchant-page .merchant-card .shop-card-actions,
+.merchant-page .merchant-card .owner-shop-actions {
+    position: static !important;
+    left: auto !important;
+    right: auto !important;
+    bottom: auto !important;
+    width: 100% !important;
+    margin-top: auto !important;
+    padding-top: 18px !important;
+    flex-shrink: 0 !important;
+    box-sizing: border-box !important;
+}
+
+.merchant-page .merchant-card p:last-of-type {
+    margin-bottom: 10px !important;
+}

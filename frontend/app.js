@@ -841,26 +841,74 @@ function updateOwnerShopFromCard(shopName) {
     }
 }
 
-function deleteShopFromMerchantPage(shopName) {
+async function deleteShopFromMerchantPage(shopName) {
     var confirmDelete = confirm('Are you sure you want to delete ' + shopName + '?');
 
     if (confirmDelete == false) {
         return;
     }
 
-    var deleted = localStorage.getItem('deletedShops');
+    var token = localStorage.getItem('vanidayToken');
 
-    if (deleted == null) {
-        deleted = '|';
+    if (token == null || token == '') {
+        alert('Please log in again before deleting a shop.');
+        return;
     }
 
-    if (deleted.indexOf('|' + getShopKey(shopName) + '|') == -1) {
-        deleted = deleted + getShopKey(shopName) + '|';
-    }
+    try {
+        var listResponse = await fetch('/api/merchants', {
+            method: 'GET',
+            headers: getAuthHeaders()
+        });
 
-    localStorage.setItem('deletedShops', deleted);
-    alert(shopName + ' deleted from merchant page.');
-    location.reload();
+        var merchants = await listResponse.json();
+
+        if (!listResponse.ok || !Array.isArray(merchants)) {
+            throw new Error((merchants && merchants.message) || 'Unable to load merchants.');
+        }
+
+        var selectedMerchant = null;
+
+        for (var i = 0; i < merchants.length; i = i + 1) {
+            if (sameMerchantName(merchants[i].name, shopName)) {
+                selectedMerchant = merchants[i];
+                break;
+            }
+        }
+
+        if (selectedMerchant == null || selectedMerchant._id == null) {
+            throw new Error('This shop could not be found in the backend.');
+        }
+
+        var deleteResponse = await fetch('/api/merchants/' + encodeURIComponent(selectedMerchant._id), {
+            method: 'DELETE',
+            headers: getAuthHeaders()
+        });
+
+        var result = await deleteResponse.json();
+
+        if (!deleteResponse.ok) {
+            throw new Error((result && result.message) || 'Failed to delete shop.');
+        }
+
+        var deleted = localStorage.getItem('deletedShops');
+
+        if (deleted == null) {
+            deleted = '|';
+        }
+
+        if (deleted.indexOf('|' + getShopKey(shopName) + '|') == -1) {
+            deleted = deleted + getShopKey(shopName) + '|';
+        }
+
+        localStorage.setItem('deletedShops', deleted);
+        alert(shopName + ' was removed from the backend and merchant page.');
+        location.reload();
+    }
+    catch (error) {
+        console.log(error);
+        alert(error.message || 'Failed to delete shop. Please try again.');
+    }
 }
 
 function goToShopDetail(shopName) {
