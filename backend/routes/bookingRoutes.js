@@ -51,6 +51,8 @@ router.post("/", optionalAuthenticate, async function (req, res) {
         var service = String(req.body.service || "").trim();
         var bookingDate = String(req.body.bookingDate || "").trim();
         var bookingTime = String(req.body.bookingTime || "").trim();
+        var bookingSource = String(req.body.bookingSource || "Website").trim();
+        if (bookingSource !== "QR Code") bookingSource = "Website";
 
         if (!merchant || !service || !bookingDate || !bookingTime) {
             return res.status(400).json({ message: "Merchant, service, date and time are required." });
@@ -103,6 +105,7 @@ router.post("/", optionalAuthenticate, async function (req, res) {
             amount: serviceDoc.price,
             reward: user ? String(req.body.reward || "").trim() : "",
             loyaltyAwarded: !!user,
+            bookingSource: bookingSource,
             status: "Confirmed"
         });
 

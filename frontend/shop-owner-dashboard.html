@@ -462,6 +462,8 @@
             })
             .then(function(res) { return res.json(); })
             .then(function(bookings) {
+                syncCalendarBookingsFromApi(bookings);
+                renderBookingCalendar('ownerCalendar', 'ownerCalendarDetails', ownerShopName);
                 if (bookings.length > 0) {
                     var output = '';
                     for (var i = 0; i < bookings.length; i = i + 1) {
@@ -476,6 +478,7 @@
                         output = output + '<p><b>Date:</b> ' + b.bookingDate + '</p>';
                         output = output + '<p><b>Time:</b> ' + b.bookingTime + '</p>';
                         output = output + '<p><b>Status:</b> ' + b.status + '</p>';
+                        output = output + '<p><b>Source:</b> ' + (b.bookingSource || 'Website') + '</p>';
                         output = output + '<div class="premium-booking-actions">';
                         output = output + '<button onclick="updateBookingStatus(\'' + b._id + '\', \'Confirmed\')">Confirm</button>';
                         output = output + '<button onclick="updateBookingStatus(\'' + b._id + '\', \'Cancelled\')">Cancel</button>';

@@ -81,64 +81,75 @@ const merchantDetails = {
 
 const servicesByShop = {
   "Glow Beauty Salon": [
-    { name: "Hair Styling", price: 45, duration: 45, description: "Professional cut and style." },
-    { name: "Manicure", price: 25, duration: 30, description: "Classic manicure with polish." },
-    { name: "Pedicure", price: 35, duration: 40, description: "Relaxing pedicure treatment." },
-    { name: "Facial Treatment", price: 60, duration: 60, description: "Deep cleansing facial for radiant skin." }
+    { name: "Haircut", price: 20, duration: 30, description: "Professional haircut service." },
+    { name: "Golden Facial", price: 65, duration: 60, description: "Golden facial treatment." },
+    { name: "HydraFacial", price: 90, duration: 60, description: "Hydrating facial treatment." },
+    { name: "Fruit Facial", price: 55, duration: 50, description: "Refreshing fruit facial." },
+    { name: "Anti-Aging Facial", price: 200, duration: 90, description: "Premium anti-aging facial." },
+    { name: "Chemical Peel Facial", price: 150, duration: 75, description: "Professional chemical peel facial." }
   ],
   "Women-Free": [
-    { name: "Men's Haircut", price: 20, duration: 30, description: "Precision haircut for men." },
-    { name: "Beard Trim", price: 10, duration: 15, description: "Neat and shaped beard trim." },
-    { name: "Hot Towel Shave", price: 15, duration: 20, description: "Classic hot towel razor shave." },
-    { name: "Hair & Beard Combo", price: 28, duration: 40, description: "Full grooming combo package." }
+    { name: "Waxing", price: 90, duration: 60, description: "Professional waxing service." },
+    { name: "Hair Treatment", price: 89, duration: 60, description: "Hair care and treatment." },
+    { name: "Steam Bath", price: 110, duration: 60, description: "Relaxing steam bath." },
+    { name: "Scrub Therapy", price: 69, duration: 50, description: "Exfoliating scrub therapy." },
+    { name: "Fish Pedicure", price: 78, duration: 45, description: "Relaxing fish pedicure." }
   ],
   "Luxury Spa": [
-    { name: "Full Body Massage", price: 90, duration: 60, description: "Aromatherapy full body massage." },
-    { name: "Body Wrap", price: 110, duration: 75, description: "Detoxifying body wrap treatment." },
-    { name: "Hot Stone Therapy", price: 95, duration: 60, description: "Heated stone muscle relief." },
-    { name: "Couples Spa Package", price: 180, duration: 90, description: "Side-by-side spa experience for two." }
+    { name: "Thai Massage", price: 90, duration: 60, description: "Traditional Thai massage." },
+    { name: "Ayurvedic Oil Massage", price: 120, duration: 75, description: "Ayurvedic oil massage." },
+    { name: "Swedish Massage", price: 80, duration: 60, description: "Relaxing Swedish massage." },
+    { name: "Aromatherapy Massage", price: 69, duration: 60, description: "Aromatherapy massage." },
+    { name: "Foot Massage", price: 55, duration: 45, description: "Relaxing foot massage." }
   ],
   "Wellness Center": [
-    { name: "Yoga Session", price: 30, duration: 60, description: "Guided yoga for all levels." },
-    { name: "Meditation Class", price: 20, duration: 45, description: "Guided mindfulness meditation." },
-    { name: "Wellness Consultation", price: 50, duration: 30, description: "Personalized wellness assessment." },
-    { name: "Sound Healing", price: 40, duration: 50, description: "Therapeutic sound bath session." }
+    { name: "Yoga Session", price: 25, duration: 60, description: "Guided yoga session." },
+    { name: "Meditation", price: 25, duration: 45, description: "Guided meditation session." },
+    { name: "Zumba", price: 35, duration: 60, description: "Instructor-led Zumba class." },
+    { name: "Chiropractic", price: 30, duration: 30, description: "Chiropractic consultation and session." }
   ],
   "Make Up Studio": [
-    { name: "Bridal Makeup", price: 150, duration: 90, description: "Elegant bridal makeup with trial." },
-    { name: "Party Makeup", price: 60, duration: 45, description: "Glamorous look for any event." },
-    { name: "HD Makeup", price: 80, duration: 60, description: "Camera-ready high definition makeup." },
-    { name: "Makeup Lesson", price: 100, duration: 75, description: "One-on-one makeup techniques class." }
+    { name: "Bridal Makeup", price: 190, duration: 90, description: "Complete bridal makeup." },
+    { name: "Party Makeup", price: 188, duration: 75, description: "Party makeup service." },
+    { name: "Photoshoot Makeup", price: 188, duration: 75, description: "Camera-ready photoshoot makeup." },
+    { name: "Hair Styling", price: 90, duration: 60, description: "Professional hair styling." },
+    { name: "Customized Makeup", price: 135, duration: 75, description: "Customized makeup look." }
   ],
   "Elite Barber": [
-    { name: "Classic Haircut", price: 22, duration: 30, description: "Traditional barber haircut." },
-    { name: "Beard Sculpting", price: 15, duration: 20, description: "Precision beard shaping and design." },
-    { name: "Scalp Treatment", price: 30, duration: 30, description: "Refreshing scalp massage and treatment." },
-    { name: "Gentleman's Package", price: 45, duration: 55, description: "Haircut, shave, and scalp treatment." }
+    { name: "Hair Styling", price: 25, duration: 30, description: "Professional hair styling." },
+    { name: "Beard Trim", price: 15, duration: 20, description: "Precision beard trim." },
+    { name: "Keratin Treatment", price: 50, duration: 60, description: "Keratin hair treatment." },
+    { name: "Eyebrow Trim", price: 15, duration: 15, description: "Neat eyebrow trimming." }
   ],
   "Manly Mane Salon": [
-    { name: "Hair Coloring", price: 70, duration: 90, description: "Full color or highlights application." },
-    { name: "Hair Treatment", price: 50, duration: 45, description: "Deep conditioning and repair treatment." },
-    { name: "Hair Styling", price: 35, duration: 40, description: "Professional styling for any occasion." },
-    { name: "Keratin Treatment", price: 120, duration: 120, description: "Smoothing keratin hair treatment." }
+    { name: "Hair Styling", price: 25, duration: 30, description: "Professional hair styling." },
+    { name: "Hair Wash", price: 10, duration: 20, description: "Hair wash service." },
+    { name: "Beard Trim", price: 15, duration: 20, description: "Precision beard trim." },
+    { name: "Hair Dye", price: 125, duration: 90, description: "Professional hair dye service." }
   ],
   "Blink Glam": [
-    { name: "Eyelash Extensions", price: 80, duration: 90, description: "Classic full set lash extensions." },
-    { name: "Lash Refill", price: 50, duration: 60, description: "Fill and refresh existing lashes." },
-    { name: "Brow Shaping", price: 20, duration: 20, description: "Precision eyebrow threading and shaping." },
-    { name: "Lash Lift & Tint", price: 65, duration: 50, description: "Natural curl lift with tint." }
+    { name: "Eyelash Extensions", price: 90, duration: 90, description: "Full eyelash extensions." },
+    { name: "Eyelash Lift", price: 77, duration: 60, description: "Natural eyelash lift." },
+    { name: "Under Eye Treatment", price: 80, duration: 45, description: "Under-eye care treatment." },
+    { name: "Eye Spa", price: 58, duration: 45, description: "Relaxing eye spa treatment." },
+    { name: "Eyelash Tint", price: 45, duration: 40, description: "Professional eyelash tint." }
   ],
   "Cosmos Tattoo Art": [
-    { name: "Small Tattoo", price: 80, duration: 60, description: "Designs under 3 inches." },
-    { name: "Medium Tattoo", price: 150, duration: 90, description: "Designs 3 to 6 inches." },
-    { name: "Large Tattoo", price: 300, duration: 150, description: "Complex designs over 6 inches." },
-    { name: "Touch Up Session", price: 40, duration: 30, description: "Refresh and correct existing tattoos." }
+    { name: "Colour Tattoo", price: 99, duration: 90, description: "Custom colour tattoo." },
+    { name: "Hand Tattoo", price: 54, duration: 60, description: "Custom hand tattoo." },
+    { name: "Chest Tattoo", price: 80, duration: 90, description: "Custom chest tattoo." },
+    { name: "Leg Tattoo", price: 69, duration: 75, description: "Custom leg tattoo." },
+    { name: "Sleeve Tattoo", price: 55, duration: 120, description: "Custom sleeve tattoo session." },
+    { name: "Tattoo Removal", price: 190, duration: 60, description: "Tattoo removal session." },
+    { name: "Tattoo Touch-Up", price: 67, duration: 45, description: "Tattoo touch-up session." }
   ],
   "The Nail Hub": [
-    { name: "Gel Nails", price: 35, duration: 45, description: "Long-lasting gel polish application." },
-    { name: "Nail Art", price: 45, duration: 50, description: "Custom hand-painted nail art." },
-    { name: "Acrylic Nails", price: 50, duration: 55, description: "Full set acrylic nail extensions." },
-    { name: "Nail Repair", price: 15, duration: 20, description: "Fix broken or damaged nails." }
+    { name: "Nail Art", price: 20, duration: 45, description: "Custom nail art." },
+    { name: "Manicure", price: 15, duration: 30, description: "Classic manicure." },
+    { name: "Pedicure", price: 20, duration: 40, description: "Classic pedicure." },
+    { name: "Gel Manicure + Pedicure", price: 35, duration: 75, description: "Gel manicure and pedicure package." },
+    { name: "Gel Extensions", price: 35, duration: 60, description: "Gel nail extensions." },
+    { name: "Nail Extensions", price: 35, duration: 60, description: "Nail extension service." }
   ]
 };
 
@@ -218,6 +229,11 @@ async function seedDemoServices() {
       if (!merchant) continue;
 
       var serviceList = servicesByShop[shopName];
+      var approvedNames = serviceList.map(function(item) { return item.name; });
+      await Service.updateMany(
+        { merchant: merchant._id, name: { $nin: approvedNames } },
+        { $set: { active: false } }
+      );
       for (var j = 0; j < serviceList.length; j++) {
         var svc = serviceList[j];
         await Service.findOneAndUpdate(

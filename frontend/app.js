@@ -416,11 +416,34 @@ function getBookingsList() {
     return bookings;
 }
 
+function syncCalendarBookingsFromApi(apiBookings) {
+    var normalized = [];
+    if (!Array.isArray(apiBookings)) return normalized;
+    for (var i = 0; i < apiBookings.length; i++) {
+        var b = apiBookings[i] || {};
+        normalized.push({
+            id: b._id || b.id || '',
+            customer: b.customerName || (b.customer && (b.customer.fullName || b.customer.username)) || 'Guest',
+            merchant: (b.merchant && b.merchant.name) || b.merchantName || b.merchant || '',
+            service: (b.service && b.service.name) || b.serviceName || b.service || '',
+            date: b.bookingDate || b.date || '',
+            time: b.bookingTime || b.time || '',
+            status: b.status || 'Pending',
+            bookingSource: b.bookingSource || 'Website'
+        });
+    }
+    localStorage.setItem('allBookings', JSON.stringify(normalized));
+    return normalized;
+}
+
 function cleanMerchantName(nameValue) {
     var cleanName = '';
 
     if (nameValue != null) {
-        cleanName = nameValue.toLowerCase();
+        if (typeof nameValue === 'object') {
+            nameValue = nameValue.name || nameValue.fullName || nameValue.username || '';
+        }
+        cleanName = String(nameValue).toLowerCase();
         cleanName = cleanName.replace(/ /g, '');
         cleanName = cleanName.replace(/-/g, '');
         cleanName = cleanName.replace(/_/g, '');

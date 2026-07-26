@@ -27,7 +27,7 @@
          <h1 id="bookingFormTitle">Book Appointment</h1>
          <p class="login-loyalty-note" id="bookingFormNote">You can book without logging in. Log in or create an account to earn loyalty points and rewards.</p>
 
-        <input id="customerName" type="text" placeholder="Customer Name" onkeyup="updateBookingSummary()" required>
+        <input id="customerName" type="text" placeholder="Customer Name" autocomplete="name" oninput="updateBookingSummary()" required>
 
         <select id="merchant" onchange="onMerchantChange()">
             <option value="">Select Merchant</option>
@@ -40,11 +40,11 @@
         <div class="booking-date-time-row">
             <div>
                 <label class="booking-label">Date</label>
-                <input id="bookingDate" type="date" onchange="checkTakenTimeBeforeBooking(); updateAvailableSlots(); updateBookingSummary()" required>
+                <input id="bookingDate" type="date" aria-label="Booking date" onchange="checkTakenTimeBeforeBooking(); updateAvailableSlots(); updateBookingSummary()" required>
             </div>
             <div>
                 <label class="booking-label">Time</label>
-                <input id="bookingTime" type="time" onchange="checkTakenTimeBeforeBooking(); updateBookingSummary()" required>
+                <input id="bookingTime" type="time" aria-label="Booking time" onchange="checkTakenTimeBeforeBooking(); updateBookingSummary()" required>
             </div>
         </div>
 
@@ -68,7 +68,8 @@
             <p><b>Time:</b> Not selected</p>
         </div>
 
-         <button id="bookingSubmitBtn" onclick="saveBooking()">Confirm Booking</button>
+         <button id="bookingSubmitBtn" type="button">Confirm Booking</button>
+         <p id="bookingSubmitStatus" aria-live="polite"></p>
     </div>
 
     <script src="app.js"></script>
@@ -373,7 +374,17 @@
                 "<p><b>Time:</b> " + bookingTime + "</p>";
         }
 
+        var bookingSubmitting = false;
+        function setBookingStatus(message, isError) {
+            var status = document.getElementById('bookingSubmitStatus');
+            if (status) {
+                status.textContent = message || '';
+                status.style.color = isError ? '#ffb3b3' : '#ffffff';
+            }
+        }
+
         function saveBooking() {
+            if (bookingSubmitting) return;
             var token = localStorage.getItem('vanidayToken');
             var merchantId = getSelectedMerchantId();
             var serviceId = getSelectedServiceId();
@@ -411,13 +422,16 @@
 
             var url = '/api/bookings';
             var method = 'POST';
+            var bookingSource = new URLSearchParams(window.location.search).get('source') === 'qr' ? 'QR Code' : 'Website';
+
             var body = {
                 merchant: merchantId,
                 service: serviceId,
                 bookingDate: bookingDate,
                 bookingTime: bookingTime,
                 customerName: customerNameInput,
-                reward: localStorage.getItem('selectedReward') || ''
+                reward: localStorage.getItem('selectedReward') || '',
+                bookingSource: bookingSource
             };
 
             if (rescheduleBookingId) {
@@ -430,6 +444,11 @@
                     bookingTime: bookingTime
                 };
             }
+
+            var submitButton = document.getElementById('bookingSubmitBtn');
+            bookingSubmitting = true;
+            if (submitButton) { submitButton.disabled = true; submitButton.textContent = 'Confirming...'; }
+            setBookingStatus('Saving your booking...', false);
 
             fetch(url, {
                 method: method,
@@ -459,12 +478,23 @@
                     localStorage.removeItem("selectedMerchant");
                     localStorage.removeItem("selectedReward");
                     window.location.href = "my-booking.html";
-                } else {
-                    alert('Error: ' + result.data.message);
+                    return;
                 }
+
+                var message = result.data && result.data.message ? result.data.message : 'Booking could not be saved.';
+                setBookingStatus(message, true);
+                alert('Error: ' + message);
             })
             .catch(function(err) {
+                setBookingStatus('Unable to connect to the booking server. Please try again.', true);
                 alert('Error: ' + err.message);
+            })
+            .then(function() {
+                bookingSubmitting = false;
+                if (submitButton) {
+                    submitButton.disabled = false;
+                    submitButton.textContent = rescheduleBookingId ? 'Reschedule Booking' : 'Confirm Booking';
+                }
             });
         }
 
@@ -568,7 +598,29 @@
             alert('Your booking token is required to reschedule this booking.');
             window.location.href = 'my-booking.html';
         } else {
-            loadMerchants();
+    
+        function attachBookingCompatibilityHandlers() {
+            var dateInput = document.getElementById('bookingDate');
+            var timeInput = document.getElementById('bookingTime');
+            var submitButton = document.getElementById('bookingSubmitBtn');
+            [dateInput, timeInput].forEach(function(input) {
+                if (!input) return;
+                input.addEventListener('input', function() {
+                    checkTakenTimeBeforeBooking();
+                    updateAvailableSlots();
+                    updateBookingSummary();
+                });
+                input.addEventListener('click', function() {
+                    if (typeof input.showPicker === 'function') {
+                        try { input.showPicker(); } catch (e) {}
+                    }
+                });
+            });
+            if (submitButton) submitButton.addEventListener('click', saveBooking);
+        }
+        document.addEventListener('DOMContentLoaded', attachBookingCompatibilityHandlers);
+
+        loadMerchants();
             prefillCustomerName();
             updateAvailableSlots();
             updateBookingSummary();

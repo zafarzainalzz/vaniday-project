@@ -5613,3 +5613,22 @@ body:not(.home-body) nav .nav-cta:hover {
     width: 10px !important;
     height: 3px !important;
 }
+
+
+/* Final integration fixes: preserve theme while preventing overlap and improving browser controls */
+.merchant-page .merchant-card { display:flex; flex-direction:column; height:auto; min-height:560px; padding-bottom:22px; }
+.merchant-page .merchant-card .merchant-card-actions-row,
+.merchant-page .merchant-card > button { position:static !important; margin-top:auto !important; flex-shrink:0; }
+.merchant-page .merchant-card p:last-of-type { margin-bottom:16px; }
+.owner-calendar-top-grid .dashboard-panel,
+#ownerBookingBox .single-booking-box,
+#ownerServicesBox .single-booking-box { height:auto; min-height:0; }
+#ownerBookingBox .single-booking-box { padding:16px; margin-bottom:12px; }
+.booking-date-time-row input[type="date"],
+.booking-date-time-row input[type="time"] { color:#fff; background-color:rgba(255,255,255,.12); min-height:52px; width:100%; -webkit-appearance:auto; appearance:auto; }
+.booking-date-time-row input::-webkit-calendar-picker-indicator { opacity:1; cursor:pointer; filter:invert(1); }
+#bookingSubmitBtn:disabled { opacity:.65; cursor:wait; }
+#bookingSubmitStatus { min-height:20px; margin-top:8px; font-weight:600; }
+@supports (-webkit-touch-callout: none) {
+  .booking-date-time-row input[type="date"], .booking-date-time-row input[type="time"] { font-size:16px; }
+}

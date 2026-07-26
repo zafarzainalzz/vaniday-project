@@ -61,6 +61,12 @@ const bookingSchema = new mongoose.Schema({
         default: false
     },
 
+    bookingSource: {
+        type: String,
+        enum: ["Website", "QR Code"],
+        default: "Website"
+    },
+
     status: {
         type: String,
         enum: ["Pending", "Confirmed", "Completed", "Cancelled"],

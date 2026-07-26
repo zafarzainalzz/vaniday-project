@@ -35,18 +35,7 @@
                 Manage Platform
             </button>
         </section>
-
-        <section class="dashboard-feature-grid dashboard-section-spaced">
-            <div class="dashboard-panel soft-panel noise-overlay" id="platformStats">
-                <div class="panel-label left-label">✦ PLATFORM OVERVIEW</div>
-                <h2>Platform Statistics</h2>
-                <div id="adminStatsBox">
-                    <p>Loading platform stats...</p>
-                </div>
-            </div>
-        </section>
-
-        <section class="admin-chart-calendar-row dashboard-section-spaced simple-top-calendar">
+<section class="admin-chart-calendar-row dashboard-section-spaced simple-top-calendar">
             <div class="dashboard-panel soft-panel noise-overlay" id="adminCalendarPanel">
                 <div class="panel-label left-label">✦ PLATFORM BOOKING CALENDAR</div>
                 <h2>All Booking Dates</h2>
@@ -111,38 +100,6 @@
             el.innerHTML = isError ? '<span style="color:red">' + msg + '</span>' : '<span style="color:green">' + msg + '</span>';
         }
 
-        function loadAdminStats() {
-            fetch('/api/state/admin/stats', {
-                method: 'GET',
-                headers: getAuthHeaders()
-            })
-            .then(function(res) {
-                if (res.status === 403) {
-                    document.getElementById('adminStatsBox').innerHTML = '<p style="color:red">Access denied. Admin only.</p>';
-                    return null;
-                }
-                return res.json();
-            })
-            .then(function(data) {
-                if (!data) return;
-                adminStatsData = data;
-
-                var output = '';
-                output = output + '<div class="chart-summary-box">';
-                output = output + '<p><b>Total Users:</b> ' + data.totalUsers + '</p>';
-                output = output + '<p><b>Total Merchants:</b> ' + data.totalMerchants + ' (' + data.activeMerchants + ' active)</p>';
-                output = output + '<p><b>Total Bookings:</b> ' + data.totalBookings + '</p>';
-                output = output + '<p><b>Confirmed:</b> ' + data.confirmedBookings + '</p>';
-                output = output + '<p><b>Completed:</b> ' + data.completedBookings + '</p>';
-                output = output + '<p><b>Cancelled:</b> ' + data.cancelledBookings + '</p>';
-                output = output + '</div>';
-                document.getElementById('adminStatsBox').innerHTML = output;
-            })
-            .catch(function(err) {
-                document.getElementById('adminStatsBox').innerHTML = '<p style="color:red">Failed to load stats: ' + err.message + '</p>';
-            });
-        }
-
         function loadAdminMerchants() {
             fetch('/api/merchants', {
                 method: 'GET',
@@ -186,6 +143,8 @@
             .then(function(bookings) {
                 if (!bookings) return;
                 adminBookingsData = bookings;
+                syncCalendarBookingsFromApi(bookings);
+                renderBookingCalendar('adminCalendar', 'adminCalendarDetails', 'ALL');
 
                 var box = document.getElementById('adminBookingBox');
 
@@ -296,7 +255,7 @@
 
         function openAdminShop(shopName) {
             localStorage.setItem('selectedMerchant', shopName);
-            window.location.href = 'booking.html';
+            window.location.href = 'shop-detail.html?shop=' + encodeURIComponent(shopName);
         }
 
         function clearAllBookings() {
@@ -328,7 +287,6 @@
                 showAdminAction('All bookings cleared. (' + (result.deletedCount || 0) + ' removed)');
                 document.getElementById('adminBookingBox').innerHTML = '<p>No bookings found.</p>';
                 adminBookingsData = [];
-                loadAdminStats();
                 loadAdminShopChart();
                 renderBookingCalendar('adminCalendar', 'adminCalendarDetails', 'ALL');
             })
@@ -337,7 +295,6 @@
             });
         }
 
-        loadAdminStats();
         loadAdminMerchants();
         loadAdminBookings();
         renderBookingCalendar('adminCalendar', 'adminCalendarDetails', 'ALL');
