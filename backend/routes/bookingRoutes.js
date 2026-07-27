@@ -331,10 +331,27 @@ router.put("/:id/cancel", optionalAuthenticate, async function (req, res) {
             return res.status(403).json({ message: "Access denied. You can only cancel your own bookings." });
         }
 
+        var loyaltyPoints = null;
+
+        // A registered customer earns 100 points when the booking is created.
+        // Reverse those points once when that same booking is cancelled.
+        if (booking.customer && booking.loyaltyAwarded) {
+            var customer = await User.findById(booking.customer);
+            if (customer) {
+                customer.loyaltyPoints = Math.max(0, (customer.loyaltyPoints || 0) - 100);
+                await customer.save();
+                loyaltyPoints = customer.loyaltyPoints;
+            }
+            booking.loyaltyAwarded = false;
+        }
+
         booking.status = "Cancelled";
         await booking.save();
 
-        res.status(200).json({ message: "Booking cancelled successfully." });
+        res.status(200).json({
+            message: "Booking cancelled successfully.",
+            loyaltyPoints: loyaltyPoints
+        });
     } catch (error) {
         console.error(error);
         res.status(500).json({ message: "Failed to cancel booking." });

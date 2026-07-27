@@ -198,6 +198,9 @@
             .then(function(res) { return res.json().then(function(data) { return { ok: res.ok, data: data }; }); })
             .then(function(result) {
                 if (result.ok) {
+                    if (result.data.loyaltyPoints !== undefined && result.data.loyaltyPoints !== null) {
+                        localStorage.setItem('vanidayLoyaltyPoints', String(result.data.loyaltyPoints));
+                    }
                     showToast("Booking cancelled.");
                     setTimeout(function () {
                         loadBookingDetails();
