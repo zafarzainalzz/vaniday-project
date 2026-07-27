@@ -198,19 +198,7 @@
             .then(function(res) { return res.json().then(function(data) { return { ok: res.ok, data: data }; }); })
             .then(function(result) {
                 if (result.ok) {
-                    var loyaltyPoints = parseInt(localStorage.getItem('vanidayLoyaltyPoints')) || 100;
-                    loyaltyPoints = loyaltyPoints - 100;
-                    if (loyaltyPoints < 100) {
-                        loyaltyPoints = 100;
-                    }
-                    localStorage.setItem('vanidayLoyaltyPoints', loyaltyPoints);
-
-                    var loyaltyElement = document.getElementById('loyaltyPointsValue');
-                    if (loyaltyElement != null) {
-                        loyaltyElement.innerHTML = loyaltyPoints + ' pts';
-                    }
-
-                    showToast("Booking cancelled. 100 loyalty points deducted.");
+                    showToast("Booking cancelled.");
                     setTimeout(function () {
                         loadBookingDetails();
                     }, 1000);
