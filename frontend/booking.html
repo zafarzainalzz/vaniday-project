@@ -34,7 +34,7 @@
         </select>
 
         <select id="service" onchange="updateBookingSummary()">
-            <option value="">Select Service</option>
+            <option value="">Select a merchant to list services</option>
         </select>
 
         <div class="booking-date-time-row">
@@ -141,7 +141,7 @@
         function loadMerchantServices() {
             var merchantId = document.getElementById("merchant").value;
             var serviceBox = document.getElementById("service");
-            var options = '<option value="">Select Service</option>';
+            var options = '<option value="">Select a merchant to list services</option>';
 
             if (merchantId == '') {
                 serviceBox.innerHTML = options;
